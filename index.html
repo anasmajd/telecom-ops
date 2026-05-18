@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TelecomOps — CTS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0eff1; color: #333; font-size: 13px; }
+
+    /* ── Navbar ── */
+    .o-navbar {
+      position: sticky; top: 0; z-index: 900;
+      background: #875A7B; height: 46px;
+      display: flex; align-items: center; gap: 10px; padding: 0 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    }
+    .o-navbar .nav-home-btn {
+      background: rgba(255,255,255,.15); border: none; color: #fff;
+      width: 34px; height: 34px; border-radius: 4px; font-size: 16px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .o-navbar .nav-home-btn:hover { background: rgba(255,255,255,.28); }
+    .o-navbar .nav-brand { color: #fff; font-size: 17px; font-weight: 700; letter-spacing: .5px; cursor: pointer; }
+    .o-navbar .spacer { flex: 1; }
+    .o-navbar .nav-search {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      color: #fff; padding: 5px 14px; border-radius: 20px; width: 200px; font-size: 12px; outline: none;
+    }
+    .o-navbar .nav-search::placeholder { color: rgba(255,255,255,.6); }
+    .o-navbar .nav-user {
+      width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.25);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff; font-size: 12px; font-weight: 700;
+    }
+
+    /* ── Pages ── */
+    .page { min-height: calc(100vh - 46px); }
+    .page.hidden { display: none !important; }
+
+    /* ── Home ── */
+    #homePage { padding: 44px 40px; }
+    .home-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #aaa; text-transform: uppercase; margin-bottom: 24px; }
+    .app-grid { display: grid; grid-template-columns: repeat(auto-fill, 114px); gap: 8px; }
+    .app-tile { display: flex; flex-direction: column; align-items: center; padding: 16px 8px 14px; border-radius: 8px; cursor: pointer; transition: background .15s; }
+    .app-tile:hover { background: rgba(0,0,0,.07); }
+    .app-tile-icon { width: 72px; height: 72px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; margin-bottom: 10px; transition: transform .2s, box-shadow .2s; }
+    .app-tile:hover .app-tile-icon { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,.22); }
+    .app-tile-label { font-size: 12px; text-align: center; color: #555; font-weight: 500; line-height: 1.35; }
+    .bg-purple{background:linear-gradient(135deg,#875A7B,#6b4663);}
+    .bg-blue  {background:linear-gradient(135deg,#1E7EC5,#1261a0);}
+    .bg-teal  {background:linear-gradient(135deg,#00A09D,#007a78);}
+    .bg-orange{background:linear-gradient(135deg,#E67E22,#c96a12);}
+    .bg-green {background:linear-gradient(135deg,#27AE60,#1a8a4a);}
+    .bg-red   {background:linear-gradient(135deg,#E74C3C,#c0392b);}
+    .bg-indigo{background:linear-gradient(135deg,#5C6BC0,#3949ab);}
+    .bg-amber {background:linear-gradient(135deg,#F59E0B,#D97706);}
+
+    /* ── Dashboard shell ── */
+    #dashboardPage { display: flex; flex-direction: column; }
+
+    .o-breadcrumb {
+      background: #fff; border-bottom: 1px solid #e0e0e0;
+      padding: 7px 20px; display: flex; align-items: center; gap: 7px; font-size: 12px; color: #888;
+    }
+    .o-breadcrumb a { color: #875A7B; text-decoration: none; cursor: pointer; }
+    .o-breadcrumb a:hover { text-decoration: underline; }
+
+    .live-bar {
+      background: #f0faf0; border-bottom: 1px solid #c8e6c9;
+      padding: 4px 20px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: #2e7d32;
+    }
+    .pulse { width: 8px; height: 8px; border-radius: 50%; background: #4CAF50; flex-shrink: 0; animation: pulse 1.6s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.35);} }
+
+    .o-control-panel { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .cp-title { font-size: 17px; font-weight: 600; color: #333; margin-right: 6px; }
+    .f-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 13px; border-radius: 20px; border: 1px solid #ddd; background: #fff; color: #555; font-size: 12px; cursor: pointer; white-space: nowrap; transition: all .15s; user-select: none; }
+    .f-btn:hover  { border-color: #875A7B; color: #875A7B; background: #f7f0f5; }
+    .f-btn.active { border-color: #875A7B; background: #875A7B; color: #fff; }
+    .f-btn .cnt   { background: rgba(0,0,0,.1); border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+    .f-btn.active .cnt { background: rgba(255,255,255,.25); }
+    .f-btn.sla-btn { border-color: #e57373; color: #c62828; }
+    .f-btn.sla-btn:hover,.f-btn.sla-btn.active { background: #E74C3C; border-color: #E74C3C; color: #fff; }
+    .f-btn.oh-btn  { border-color: #FFB74D; color: #E65100; }
+    .f-btn.oh-btn:hover,.f-btn.oh-btn.active   { background: #FF9800; border-color: #FF9800; color: #fff; }
+    .f-btn.oha-btn { border-color: #FF9800; color: #BF360C; background:#fff8f0; }
+    .f-btn.oha-btn:hover,.f-btn.oha-btn.active { background: #E65100; border-color: #E65100; color: #fff; }
+
+    .dept-wrap { position: relative; }
+    .dept-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0; background: #fff; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,.12); z-index: 200; min-width: 190px; padding: 5px 0; }
+    .dept-menu.open { display: block; }
+    .dept-item { padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 9px; color: #444; font-size: 13px; transition: background .12s; }
+    .dept-item:hover { background: #f7f0f5; }
+
+    .o-content { padding: 20px; flex: 1; }
+
+    /* ── KPI ── */
+    .kpi-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 14px; margin-bottom: 22px; }
+    .kpi-card { background: #fff; border-radius: 8px; padding: 16px 18px; border-left: 4px solid; box-shadow: 0 1px 4px rgba(0,0,0,.07); position: relative; overflow: hidden; cursor: pointer; transition: transform .15s, box-shadow .15s; user-select: none; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(0,0,0,.11); }
+    .kpi-purple.kpi-active { box-shadow: 0 4px 14px rgba(135,90,123,.25), 0 0 0 2px #875A7B; transform: translateY(-1px); }
+    .kpi-blue.kpi-active   { box-shadow: 0 4px 14px rgba(30,126,197,.25), 0 0 0 2px #1E7EC5; transform: translateY(-1px); }
+    .kpi-teal.kpi-active   { box-shadow: 0 4px 14px rgba(0,160,157,.25),  0 0 0 2px #00A09D; transform: translateY(-1px); }
+    .kpi-orange.kpi-active { box-shadow: 0 4px 14px rgba(230,126,34,.25), 0 0 0 2px #E67E22; transform: translateY(-1px); }
+    .kpi-green.kpi-active  { box-shadow: 0 4px 14px rgba(39,174,96,.25),  0 0 0 2px #27AE60; transform: translateY(-1px); }
+    .kpi-red.kpi-active    { box-shadow: 0 4px 14px rgba(231,76,60,.25),  0 0 0 2px #E74C3C; transform: translateY(-1px); }
+    .kpi-bg-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 38px; opacity: .07; }
+    .kpi-val { font-size: 34px; font-weight: 700; line-height: 1; }
+    .kpi-lbl { font-size: 11px; color: #999; margin-top: 5px; font-weight: 500; text-transform: uppercase; letter-spacing: .4px; }
+    .kpi-purple{border-color:#875A7B;}.kpi-purple .kpi-val{color:#875A7B;}
+    .kpi-blue  {border-color:#1E7EC5;}.kpi-blue   .kpi-val{color:#1E7EC5;}
+    .kpi-teal  {border-color:#00A09D;}.kpi-teal   .kpi-val{color:#00A09D;}
+    .kpi-orange{border-color:#E67E22;}.kpi-orange .kpi-val{color:#E67E22;}
+    .kpi-green {border-color:#27AE60;}.kpi-green  .kpi-val{color:#27AE60;}
+    .kpi-red   {border-color:#E74C3C;}.kpi-red    .kpi-val{color:#E74C3C;}
+
+    /* ── Table card ── */
+    .o-table-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 22px; }
+    .o-table-head { padding: 12px 18px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .o-table-head h3 { font-size: 14px; font-weight: 600; color: #333; }
+    .o-table-head .rec-count { font-size: 11px; color: #aaa; }
+    .table-scroll { overflow-x: auto; overflow-y: auto; max-height: 460px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1380px; }
+    thead th { background: #fafafa; padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #999; border-bottom: 1px solid #eee; white-space: nowrap; position: sticky; top: 0; z-index: 2; }
+    thead th.th-num { text-align: right; }
+    tbody tr.data-row { border-bottom: 1px solid #f5f5f5; transition: background .12s; cursor: pointer; }
+    tbody tr.data-row:hover { background: #fdf8fc; }
+    tbody td { padding: 8px 12px; color: #444; vertical-align: middle; }
+    tbody tr.row-exceeded { background: rgba(231,76,60,.055); }
+    tbody tr.row-exceeded td:first-child { border-left: 3px solid #E74C3C; }
+    tbody tr.row-exceeded:hover { background: rgba(231,76,60,.10); }
+
+    /* ── CID cell ── */
+    .cid-main { font-family: 'Courier New', monospace; font-size: 12px; font-weight: 700; color: #5C6BC0; letter-spacing: .3px; white-space: nowrap; }
+    .cid-ref  { font-size: 10px; color: #bbb; margin-top: 2px; }
+
+    /* ── Customer cell ── */
+    .cust-name { font-weight: 600; font-size: 13px; color: #333; }
+    .cust-sub  { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+    /* ── Service / Request badges ── */
+    .svc-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .req-badge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .req-new-act  {background:#e8f5e9;color:#2E7D32;}
+    .req-upgrade  {background:#e3f2fd;color:#1565C0;}
+    .req-downgrade{background:#fff3e0;color:#E65100;}
+    .req-disconnect{background:#fde8e8;color:#B71C1C;}
+
+    /* ── Stage badge ── */
+    .stage-badge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .stage-chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
+    .stage-owner-chip { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
+    .stage-dept-tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; background: #f0f0f0; color: #555; white-space: nowrap; }
+    .soc-cts        { background: #e8f5e9; color: #1B5E20; }
+    .soc-wholesale  { background: #e3f2fd; color: #0D47A1; }
+    .soc-legal      { background: #fce4ec; color: #880E4F; }
+    .soc-management { background: #f3e5f5; color: #4A148C; }
+    .soc-finance    { background: #f9fbe7; color: #33691E; }
+
+    /* ── QoS ── */
+    .qos-cell { text-align: right; }
+    .qos-val  { font-size: 14px; font-weight: 700; color: #333; }
+    .qos-unit { font-size: 10px; color: #aaa; }
+
+    /* ── Spent time ── */
+    .spent-cell    { text-align: center; min-width: 140px; }
+    .spent-two     { display: flex; align-items: flex-start; justify-content: center; gap: 10px; }
+    .spent-block   { text-align: center; flex: 1; }
+    .spent-divider { width: 1px; background: #e0e0e0; align-self: stretch; margin: 2px 0; flex-shrink: 0; }
+    .spent-num     { font-size: 22px; font-weight: 700; line-height: 1; }
+    .spent-lbl     { font-size: 9px; color: #aaa; text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
+    .spent-hold    { font-size: 10px; color: #FF9800; margin-top: 2px; }
+    .spent-since   { font-size: 10px; color: #bbb; margin-top: 5px; }
+    .col-neutral { color: #90A4AE; }
+    .col-green   { color: #27AE60; }
+    .col-orange  { color: #E67E22; }
+    .col-red     { color: #E74C3C; }
+
+    /* ── SLA progress ── */
+    .sla-prog-cell { min-width: 160px; }
+    .sla-bar-track { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 4px 0 3px; }
+    .sla-bar-fill  { height: 100%; border-radius: 3px; }
+    .sla-days-row  { font-size: 11px; color: #666; }
+    .sla-dept-pill { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; margin-left: 4px; }
+    .pill-ok  { background:#e8f5e9; color:#2E7D32; }
+    .pill-bad { background:#fde8e8; color:#c62828; }
+    .sla-deadline  { font-size: 10px; color: #bbb; }
+    .sla-exc-depts { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+
+    .dept-tag-exceeded { background:#fde8e8; color:#c62828; border:1px solid #ffcdd2; display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; white-space:nowrap; }
+    .dept-overdue-time { font-size: 9px; font-weight: 600; color: #e53935; opacity: .8; margin-left: 3px; }
+
+    /* ── Charts ── */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
+    @media(max-width:900px){.charts-grid{grid-template-columns:1fr;}}
+    .chart-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.07); padding: 20px 22px; }
+    .chart-card h3 { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 2px; }
+    .chart-card p  { font-size: 11px; color: #aaa; margin-bottom: 16px; }
+    .chart-wrap    { position: relative; height: 260px; }
+
+    .empty-state { padding: 50px; text-align: center; color: #bbb; }
+    .empty-state i { font-size: 40px; margin-bottom: 12px; display: block; }
+
+    /* ── Request detail page ── */
+    .pipeline-wrap { background:#fff; border-bottom:2px solid #e0e0e0; overflow-x:auto; }
+    .pipeline { display:inline-flex; padding:0; min-width:100%; }
+    .pip-step {
+      flex:1; min-width:88px; max-width:130px;
+      padding:11px 8px 11px 20px;
+      font-size:10px; font-weight:600; color:#ccc;
+      background:#f5f5f5; text-align:center; white-space:nowrap;
+      overflow:hidden; text-overflow:ellipsis;
+      clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 50%,100% 100%,10px 100%,0% 50%);
+      margin-left:2px; transition:background .15s;
+    }
+    .pipeline .pip-step:first-child {
+      clip-path:polygon(0% 0%,100% 0%,calc(100% - 10px) 50%,100% 100%,0% 100%);
+      padding-left:12px; margin-left:0;
+    }
+    .pip-step.pip-done    { background:#e8f5e9; color:#2E7D32; }
+    .pip-step.pip-current { background:#875A7B; color:#fff; }
+
+    .req-detail-wrap { padding:22px; }
+    .req-detail-layout { display:grid; grid-template-columns:1fr 380px; gap:18px; align-items:start; }
+    .req-side-col { position:sticky; top:46px; display:flex; flex-direction:column; gap:16px; max-height:calc(100vh - 120px); overflow-y:auto; }
+    @media(max-width:960px){ .req-detail-layout{ grid-template-columns:1fr; } .req-side-col{ position:static; max-height:none; } }
+    .req-detail-card { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:24px 28px; margin-bottom:18px; }
+    .req-detail-card h3 { font-size:13px; font-weight:700; color:#875A7B; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; gap:8px; }
+    .rdg { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+    .rdg-field label { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#bbb; margin-bottom:4px; }
+    .rdg-field span  { font-size:13px; color:#333; font-weight:500; }
+
+    .req-back-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; border:1px solid #ddd; background:#fff; color:#555; font-size:12px; cursor:pointer; margin:10px 0 0 20px; transition:all .15s; }
+    .req-back-btn:hover { border-color:#875A7B; color:#875A7B; }
+
+    /* ── Survey panel ── */
+    .survey-two { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+    @media(max-width:700px){.survey-two{grid-template-columns:1fr;}}
+    .survey-side { background:#fafafa; border-radius:6px; padding:16px; border:1px solid #eee; }
+    .survey-side h5 { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+    .survey-field { margin-bottom:10px; }
+    .survey-field label { font-size:10px; color:#aaa; font-weight:700; text-transform:uppercase; letter-spacing:.4px; display:block; margin-bottom:3px; }
+    .survey-field span { font-size:13px; color:#333; }
+    .avail-badge { display:inline-block; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:700; }
+    .avail-ok   { background:#e8f5e9; color:#1B5E20; }
+    .avail-part { background:#fff3e0; color:#E65100; }
+    .avail-no   { background:#fde8e8; color:#B71C1C; }
+    .avail-pend { background:#f5f5f5; color:#999; }
+
+    /* ── On-Hold panel ── */
+    .oh-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .oh-request-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; border:2px solid #FF9800; background:#fff; color:#E65100; font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; }
+    .oh-request-btn:hover { background:#FF9800; color:#fff; }
+    .oh-form { background:#fff8e1; border:1px solid #FFE082; border-radius:8px; padding:14px; margin-bottom:14px; }
+    .oh-form textarea { width:100%; border:1px solid #FFD54F; border-radius:6px; padding:8px; font-size:12px; font-family:inherit; resize:none; outline:none; margin:8px 0; }
+    .oh-form-btns { display:flex; gap:8px; }
+    .oh-submit { padding:6px 14px; background:#FF9800; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; }
+    .oh-cancel  { padding:6px 14px; background:#f5f5f5; color:#555; border:1px solid #ddd; border-radius:5px; font-size:12px; cursor:pointer; }
+    .oh-card { border-radius:8px; padding:14px 16px; margin-bottom:10px; border-left:4px solid; }
+    .oh-pending  { background:#fff8e1; border-color:#FF9800; }
+    .oh-approved { background:#e8f5e9; border-color:#27AE60; }
+    .oh-rejected { background:#fde8e8; border-color:#E74C3C; }
+    .oh-card-top { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .oh-card-meta { font-size:11px; font-weight:600; color:#555; display:flex; align-items:center; gap:8px; }
+    .oh-card-date { font-size:10px; color:#aaa; }
+    .oh-reason { font-size:12px; color:#444; background:rgba(255,255,255,.6); padding:8px 10px; border-radius:5px; margin-bottom:8px; }
+    .oh-action-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .oh-approve-btn { padding:5px 14px; background:#27AE60; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer; }
+    .oh-reject-form { flex:1; display:flex; gap:6px; }
+    .oh-reject-input { flex:1; border:1px solid #E74C3C; border-radius:5px; padding:5px 8px; font-size:11px; font-family:inherit; outline:none; }
+    .oh-reject-btn { padding:5px 14px; background:#E74C3C; color:#fff; border:none; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer; }
+    .oh-status-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:10px; font-weight:700; }
+    .ohb-pending  { background:#FF9800; color:#fff; }
+    .ohb-approved { background:#1E7EC5; color:#fff; }
+    .ohb-rejected { background:#E74C3C; color:#fff; }
+    .ohb-resumed  { background:#27AE60; color:#fff; }
+    .oh-resumed   { background:#f0f9f4; border-color:#27AE60; }
+    .oh-resume-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; border:2px solid #27AE60; background:#fff; color:#1B5E20; font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; }
+    .oh-resume-btn:hover { background:#27AE60; color:#fff; }
+    .oh-active-banner { background:#e3f2fd; border:1px solid #90CAF9; border-radius:8px; padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .oh-active-banner span { font-size:12px; color:#0D47A1; font-weight:600; }
+
+
+    /* ── Forward Cards ── */
+    .fwd-new-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:6px; border:2px solid #875A7B; background:#fff; color:#875A7B; font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; }
+    .fwd-new-btn:hover { background:#875A7B; color:#fff; }
+    .fwd-form { background:#f7f0f5; border:1px solid #d9b8d0; border-radius:8px; padding:14px; margin-bottom:14px; }
+    .fwd-form input { width:100%; border:1px solid #d9b8d0; border-radius:5px; padding:7px 10px; font-size:12px; font-family:inherit; outline:none; margin-bottom:8px; }
+    .fwd-form input:focus { border-color:#875A7B; }
+    .fwd-form-ta { width:100%; border:1px solid #d9b8d0; border-radius:5px; padding:7px 10px; font-size:12px; font-family:inherit; resize:none; outline:none; }
+    .fwd-form-ta:focus { border-color:#875A7B; }
+    .fwd-submit-btn { padding:6px 14px; background:#875A7B; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; }
+    .fwd-submit-btn:hover { background:#6b4663; }
+    .fwd-cancel-btn { padding:6px 14px; background:#f5f5f5; color:#555; border:1px solid #ddd; border-radius:5px; font-size:12px; cursor:pointer; }
+    .fwd-card { border-radius:8px; padding:14px 16px; margin-bottom:12px; border:1px solid #e0d0eb; background:#fdfafc; }
+    .fwd-card-header { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
+    .fwd-subject { font-size:13px; font-weight:700; color:#333; margin-bottom:3px; }
+    .fwd-meta { font-size:10px; color:#aaa; }
+    .fwd-status-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:10px; font-weight:700; white-space:nowrap; flex-shrink:0; }
+    .fwds-pending  { background:#FF9800; color:#fff; }
+    .fwds-partial  { background:#1E7EC5; color:#fff; }
+    .fwds-complete { background:#27AE60; color:#fff; }
+    .fwd-dest-row { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
+    .fwd-dept-chip { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; }
+    .fwdc-pending  { background:#fff3e0; color:#E65100; border:1px solid #FFD54F; }
+    .fwdc-responded{ background:#e8f5e9; color:#1B5E20; border:1px solid #A5D6A7; }
+    .fwd-body-text { font-size:12px; color:#444; background:#fff; border:1px solid #eee; border-radius:6px; padding:10px 12px; margin-bottom:10px; line-height:1.5; }
+    .fwd-thread { margin:10px 0 6px; }
+    .fwd-msg { display:flex; flex-direction:column; margin-bottom:10px; }
+    .fwd-msg-cts   { align-items:flex-end; }
+    .fwd-msg-other { align-items:flex-start; }
+    .fwd-bubble { max-width:80%; padding:9px 13px; border-radius:12px; font-size:12px; line-height:1.5; word-break:break-word; }
+    .fwd-msg-cts   .fwd-bubble { background:#875A7B; color:#fff; border-bottom-right-radius:3px; }
+    .fwd-msg-other .fwd-bubble { border-bottom-left-radius:3px; }
+    .fwd-msg-meta { font-size:10px; color:#bbb; margin-top:3px; padding:0 4px; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+    .fwd-wait-badge { font-size:9px; background:#fff3e0; color:#E65100; padding:1px 6px; border-radius:10px; font-weight:600; display:inline-flex; align-items:center; gap:2px; }
+    .fwd-reply-area { border-top:1px solid #f0e8f5; padding-top:10px; margin-top:6px; }
+    .fwd-reply-select { border:1px solid #d9b8d0; border-radius:4px; padding:4px 8px; font-size:11px; font-family:inherit; outline:none; color:#333; background:#fff; cursor:pointer; }
+    .fwd-reply-select:focus { border-color:#875A7B; }
+    .fwd-reply-send { padding:7px 14px; background:#875A7B; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; align-self:flex-end; }
+    .fwd-reply-send:hover { background:#6b4663; }
+    .fwd-group-tile { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; border:2px solid; cursor:pointer; font-size:12px; font-weight:700; transition:all .15s; user-select:none; background:#fff; }
+    .fwd-group-tile:hover { opacity:.85; }
+    .fwds-joint    { background:#F59E0B; color:#fff; }
+    .fwds-overdue  { background:#E74C3C; color:#fff; }
+    .fwds-approved { background:#1B5E20; color:#fff; }
+    .fwd-approve-btn { padding:7px 14px; background:#27AE60; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .fwd-approve-btn:hover { background:#1a8a4a; }
+    .fwd-hold-btn  { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; background:#fff; color:#E65100; border:1px solid #FFB74D; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; transition:all .15s; }
+    .fwd-hold-btn:hover { background:#fff8e1; }
+    .fwd-resume-btn-fwd { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; background:#fff; color:#1B5E20; border:1px solid #A5D6A7; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer; transition:all .15s; }
+    .fwd-resume-btn-fwd:hover { background:#e8f5e9; }
+    .fwd-onhold-banner { background:#fff8e1; border:1px solid #FFE082; border-radius:6px; padding:10px 12px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+    .fwd-hold-form { background:#fff8e1; border:1px solid #FFE082; border-radius:6px; padding:12px; margin-bottom:8px; }
+    .fwd-approval-bubble { background:#e8f5e9; border:2px solid #27AE60; border-radius:12px; border-bottom-left-radius:3px; padding:10px 16px; display:inline-flex; align-items:center; gap:8px; max-width:80%; }
+    .f-btn.fwd-btn { border-color:#875A7B; color:#875A7B; }
+    .f-btn.fwd-btn:hover,.f-btn.fwd-btn.active { background:#875A7B; border-color:#875A7B; color:#fff; }
+  </style>
+</head>
+<body>
+
+<!-- ══════ NAVBAR ══════ -->
+<nav class="o-navbar">
+  <button class="nav-home-btn" onclick="nav('home')"><i class="fas fa-th"></i></button>
+  <span class="nav-brand" onclick="nav('home')">TelecomOps — CTS</span>
+  <span class="spacer"></span>
+  <input class="nav-search" type="text" placeholder="Search…" />
+  <div class="nav-user" title="Ahmed Hassan">AH</div>
+</nav>
+
+<!-- ══════ HOME ══════ -->
+<div id="homePage" class="page">
+  <div style="padding:44px 40px;">
+    <div class="home-label">Applications</div>
+    <div class="app-grid">
+      <div class="app-tile" onclick="nav('dashboard')">
+        <div class="app-tile-icon bg-purple"><i class="fas fa-tachometer-alt"></i></div>
+        <span class="app-tile-label">Activation Dashboard</span>
+      </div>
+      <div class="app-tile"><div class="app-tile-icon bg-blue"><i class="fas fa-users"></i></div><span class="app-tile-label">Customers</span></div>
+      <div class="app-tile"><div class="app-tile-icon bg-teal"><i class="fas fa-network-wired"></i></div><span class="app-tile-label">Network Management</span></div>
+      <div class="app-tile"><div class="app-tile-icon bg-orange"><i class="fas fa-file-invoice"></i></div><span class="app-tile-label">Billing</span></div>
+      <div class="app-tile"><div class="app-tile-icon bg-green"><i class="fas fa-chart-bar"></i></div><span class="app-tile-label">Reports</span></div>
+      <div class="app-tile"><div class="app-tile-icon bg-indigo"><i class="fas fa-ticket-alt"></i></div><span class="app-tile-label">Helpdesk</span></div>
+      <div class="app-tile"><div class="app-tile-icon bg-amber"><i class="fas fa-tasks"></i></div><span class="app-tile-label">Project</span></div>
+      <div class="app-tile"><div class="app-tile-icon bg-red"><i class="fas fa-cog"></i></div><span class="app-tile-label">Settings</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ DASHBOARD ══════ -->
+<div id="dashboardPage" class="page hidden">
+
+  <div class="o-breadcrumb">
+    <a onclick="nav('home')"><i class="fas fa-home"></i> Home</a>
+    <span style="font-size:9px;"><i class="fas fa-chevron-right"></i></span>
+    <span style="color:#333;">Activation Dashboard</span>
+  </div>
+
+  <div class="live-bar">
+    <span class="pulse"></span>
+    <strong>LIVE</strong>&nbsp;— Data updates in realtime &nbsp;|&nbsp;
+    Last refreshed: <span id="lastUpdate" style="font-weight:600;">just now</span>
+  </div>
+
+  <div class="o-control-panel">
+    <span class="cp-title">Activation Requests</span>
+    <button class="f-btn active" onclick="setFilter(this,'all')"><span class="pulse"></span> Realtime All Requests <span class="cnt" id="cnt-all">0</span></button>
+    <button class="f-btn" onclick="setFilter(this,'myteam')"><span class="pulse"></span> Realtime My Team Requests <span class="cnt" id="cnt-myteam">0</span></button>
+    <button class="f-btn" onclick="setFilter(this,'mine')"><span class="pulse"></span> Realtime My Requests <span class="cnt" id="cnt-mine">0</span></button>
+    <div class="dept-wrap">
+      <button class="f-btn" id="deptBtn" onclick="toggleDept(event)">
+        <span class="pulse"></span><span id="deptBtnLabel">Realtime Select Department</span>
+        <i class="fas fa-chevron-down" style="font-size:9px;"></i>
+      </button>
+      <div class="dept-menu" id="deptMenu">
+        <div class="dept-item" onclick="selectDept('Wholesale')"><i class="fas fa-handshake" style="color:#1E7EC5;"></i> Wholesale</div>
+        <div class="dept-item" onclick="selectDept('CTS')"><i class="fas fa-tools" style="color:#875A7B;"></i> CTS</div>
+        <div class="dept-item" onclick="selectDept('Fiber Operation')"><i class="fas fa-plug" style="color:#00A09D;"></i> Fiber Operation</div>
+        <div class="dept-item" onclick="selectDept('Fiber Planning')"><i class="fas fa-drafting-compass" style="color:#5C6BC0;"></i> Fiber Planning</div>
+        <div class="dept-item" onclick="selectDept('IP Core')"><i class="fas fa-network-wired" style="color:#E67E22;"></i> IP Core</div>
+        <div class="dept-item" onclick="selectDept('Optics')"><i class="fas fa-eye" style="color:#00ACC1;"></i> Optics</div>
+        <div class="dept-item" onclick="selectDept('Cyber Security')"><i class="fas fa-shield-alt" style="color:#E53935;"></i> Cyber Security</div>
+        <div class="dept-item" onclick="selectDept('IN')"><i class="fas fa-server" style="color:#7B1FA2;"></i> IN</div>
+        <div class="dept-item" onclick="selectDept('Packet Core')"><i class="fas fa-project-diagram" style="color:#1565C0;"></i> Packet Core</div>
+        <div class="dept-item" onclick="selectDept('Procurement')"><i class="fas fa-boxes" style="color:#F57F17;"></i> Procurement</div>
+        <div class="dept-item" onclick="selectDept('Voice (DTD)')"><i class="fas fa-phone-alt" style="color:#2E7D32;"></i> Voice (DTD)</div>
+        <div class="dept-item" onclick="selectDept('RF')"><i class="fas fa-broadcast-tower" style="color:#EF6C00;"></i> RF</div>
+        <div class="dept-item" onclick="selectDept('NOC')"><i class="fas fa-satellite-dish" style="color:#0288D1;"></i> NOC</div>
+        <div class="dept-item" onclick="selectDept('PMO')"><i class="fas fa-tasks" style="color:#558B2F;"></i> PMO</div>
+        <div class="dept-item" onclick="selectDept('CIVIL')"><i class="fas fa-hard-hat" style="color:#795548;"></i> CIVIL</div>
+        <div class="dept-item" onclick="selectDept('Power')"><i class="fas fa-bolt" style="color:#F9A825;"></i> Power</div>
+      </div>
+    </div>
+    <button class="f-btn" onclick="setFilter(this,'survey')"><span class="pulse"></span> Realtime Survey Requests <span class="cnt" id="cnt-survey">0</span></button>
+    <button class="f-btn" onclick="setFilter(this,'delivery')"><span class="pulse"></span> Realtime Service Delivery <span class="cnt" id="cnt-delivery">0</span></button>
+    <button class="f-btn" onclick="setFilter(this,'activation')"><span class="pulse"></span> Realtime Activation <span class="cnt" id="cnt-activation">0</span></button>
+    <button class="f-btn sla-btn" onclick="setFilter(this,'exceeded')"><i class="fas fa-exclamation-triangle"></i> Realtime Exceed SLA Requests <span class="cnt" id="cnt-exceeded">0</span></button>
+    <button class="f-btn oh-btn"  onclick="setFilter(this,'onhold')"><i class="fas fa-pause-circle"></i> On-Hold Requests <span class="cnt" id="cnt-onhold">0</span></button>
+    <button class="f-btn oha-btn" onclick="setFilter(this,'onhold-active')"><i class="fas fa-pause"></i> Still On-Hold <span class="cnt" id="cnt-onhold-active">0</span></button>
+    <button class="f-btn fwd-btn" onclick="setFilter(this,'forwarded')"><i class="fas fa-share-square"></i> Forwarded — Pending Response <span class="cnt" id="cnt-forwarded">0</span></button>
+  </div>
+
+  <div class="o-content">
+
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div id="kpicard-all"      class="kpi-card kpi-purple" onclick="kpiFilter('all')"><i class="fas fa-list kpi-bg-icon"></i><div class="kpi-val" id="kpi-total">0</div><div class="kpi-lbl">Total Requests</div></div>
+      <div id="kpicard-new"      class="kpi-card kpi-blue"   onclick="kpiFilter('new')"><i class="fas fa-clock kpi-bg-icon"></i><div class="kpi-val" id="kpi-new">0</div><div class="kpi-lbl">New / Pending</div></div>
+      <div id="kpicard-survey"   class="kpi-card kpi-teal"   onclick="kpiFilter('survey')"><i class="fas fa-search kpi-bg-icon"></i><div class="kpi-val" id="kpi-survey">0</div><div class="kpi-lbl">In Survey</div></div>
+      <div id="kpicard-delivery" class="kpi-card kpi-orange"  onclick="kpiFilter('delivery')"><i class="fas fa-truck kpi-bg-icon"></i><div class="kpi-val" id="kpi-delivery">0</div><div class="kpi-lbl">Service Delivery</div></div>
+      <div id="kpicard-done"     class="kpi-card kpi-green"  onclick="kpiFilter('done')"><i class="fas fa-check-circle kpi-bg-icon"></i><div class="kpi-val" id="kpi-done">0</div><div class="kpi-lbl">Done / Closed</div></div>
+      <div id="kpicard-exceeded" class="kpi-card kpi-red"    onclick="kpiFilter('exceeded')"><i class="fas fa-exclamation-circle kpi-bg-icon"></i><div class="kpi-val" id="kpi-exceeded">0</div><div class="kpi-lbl">Exceeded SLA</div></div>
+    </div>
+
+    <!-- Table -->
+    <div class="o-table-card">
+      <div class="o-table-head">
+        <h3 id="tableTitle">All Activation Requests</h3>
+        <span class="rec-count" id="recCount"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:150px;">CID Info</th>
+              <th style="min-width:170px;">Customer Name</th>
+              <th style="min-width:100px;">Service Type</th>
+              <th style="min-width:130px;">Request Type</th>
+              <th style="min-width:170px;">Stage / Owner</th>
+              <th class="th-num" style="min-width:110px;">QoS Upload<br><span style="font-weight:400;text-transform:none;font-size:9px;">(Mbps)</span></th>
+              <th class="th-num" style="min-width:110px;">QoS Download<br><span style="font-weight:400;text-transform:none;font-size:9px;">(Mbps)</span></th>
+              <th style="min-width:140px;text-align:center;">Spent Time</th>
+              <th style="min-width:175px;">SLA Progress &amp; Deadline</th>
+            </tr>
+          </thead>
+          <tbody id="reqBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Charts row 1 -->
+    <div class="charts-grid" style="margin-bottom:16px;">
+      <div class="chart-card">
+        <h3><i class="fas fa-chart-bar" style="color:#875A7B;margin-right:7px;"></i>SLA Count by Department</h3>
+        <p>Within SLA vs Exceeded SLA — requests per department</p>
+        <div class="chart-wrap"><canvas id="slaCountChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3><i class="fas fa-stopwatch" style="color:#1E7EC5;margin-right:7px;"></i>Avg Spent Days vs Dept SLA Target</h3>
+        <p>Average working days spent per department vs allowed SLA target</p>
+        <div class="chart-wrap"><canvas id="slaAvgChart"></canvas></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════ REQUEST DETAIL ══════ -->
+<div id="requestPage" class="page hidden">
+  <div class="o-breadcrumb">
+    <a onclick="nav('home')"><i class="fas fa-home"></i> Home</a>
+    <span style="font-size:9px;"><i class="fas fa-chevron-right"></i></span>
+    <a onclick="nav('dashboard')">Activation Dashboard</a>
+    <span style="font-size:9px;"><i class="fas fa-chevron-right"></i></span>
+    <span id="req-cid-crumb" style="color:#333;font-weight:600;"></span>
+  </div>
+
+  <button class="req-back-btn" onclick="nav('dashboard')">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </button>
+
+  <div class="pipeline-wrap" style="margin-top:10px;">
+    <div class="pipeline" id="stagePipeline"></div>
+  </div>
+
+  <div class="req-detail-wrap">
+    <div class="req-detail-layout">
+
+      <!-- LEFT: main content -->
+      <div class="req-main-col">
+        <div class="req-detail-card">
+          <h3><i class="fas fa-plug"></i> Connection & Service</h3>
+          <div class="rdg" id="req-info-grid"></div>
+        </div>
+        <div class="req-detail-card">
+          <h3><i class="fas fa-clock"></i> SLA & Timeline</h3>
+          <div class="rdg" id="req-sla-grid"></div>
+        </div>
+        <!-- Survey section — shown only when stage = Survey -->
+        <div id="req-survey-section" style="display:none;">
+          <div class="req-detail-card">
+            <h3><i class="fas fa-search"></i> Survey — Availability Check</h3>
+            <div id="req-survey-content"></div>
+          </div>
+        </div>
+        <!-- Forwards section — Survey & Service Delivery only -->
+        <div id="req-forwards-wrap" class="req-detail-card">
+          <h3><i class="fas fa-share-square"></i> Stage Forwards <span style="font-size:11px;color:#aaa;font-weight:400;">(tracked inter-department requests)</span></h3>
+          <div id="req-forwards-content"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: on-hold + messages -->
+      <div class="req-side-col">
+
+        <!-- On-Hold -->
+        <div class="req-detail-card">
+          <h3><i class="fas fa-pause-circle" style="color:#FF9800;"></i> On-Hold Requests</h3>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+            <button class="oh-request-btn" onclick="toggleOhForm()"><i class="fas fa-pause"></i> Request On-Hold</button>
+          </div>
+          <div id="oh-form-wrap" style="display:none;" class="oh-form">
+            <div style="font-size:12px;font-weight:600;color:#E65100;margin-bottom:4px;"><i class="fas fa-exclamation-triangle"></i> On-Hold Request</div>
+            <textarea id="oh-reason-input" rows="3" placeholder="Enter reason for on-hold (mandatory)…"></textarea>
+            <div class="oh-form-btns">
+              <button class="oh-submit" onclick="submitOnHold()">Submit Request</button>
+              <button class="oh-cancel" onclick="toggleOhForm()">Cancel</button>
+            </div>
+          </div>
+          <div id="req-onhold-list"></div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SCRIPT ══════ -->
+<script>
+/* ── Core constants ─────────────────────────────────────────── */
+const ME      = 'Ahmed Hassan';
+const MY_TEAM = ['Ahmed Hassan', 'Sara Ali', 'Omar Khalid'];
+const TODAY   = new Date('2026-05-07');
+
+const DEPT_SLA = {
+  'Wholesale':7, 'CTS':7,
+  'Fiber Operation':7, 'Fiber Planning':7, 'IP Core':5, 'Optics':7,
+  'Cyber Security':5, 'IN':5, 'Packet Core':5, 'Procurement':10,
+  'Voice (DTD)':7, 'RF':7, 'NOC':5, 'PMO':10, 'CIVIL':14, 'Power':7,
+};
+
+const FORWARD_GROUPS = {
+  'Fiber Team': { depts:['Fiber Operation','Fiber Planning'], icon:'fa-broadcast-tower', color:'#00A09D' },
+};
+
+function daysDiff(from, to) { return Math.round((new Date(to) - new Date(from)) / 86400000); }
+
+/* ── Stage ownership ────────────────────────────────────────── */
+const STAGE_OWNER = {
+  /* CTS */
+  'Select Related Department':'CTS','Survey':'CTS','Availability Confirm':'CTS',
+  'Service Delivery':'CTS','Service Activation':'CTS',
+  /* Wholesale */
+  'New':'Wholesale','WS Request':'Wholesale','WS Discuss':'Wholesale',
+  'Wholesale Manager (Prior Sign)':'Wholesale','Wholesale Manager (Pre-C)':'Wholesale',
+  'Contract Signed':'Wholesale','Adv Billing':'Wholesale',
+  'Wholesale Manager':'Wholesale','Wh Activity':'Wholesale','Billing':'Wholesale',
+  /* Legal */
+  'Contract Drafted':'Legal','Legal Contract':'Legal','Legal Manager':'Legal',
+  /* Management */
+  'CTO':'Management','CFO':'Management','CEO':'Management',
+  'Finance':'Finance',
+  'Done':null,'Closed':null,
+};
+const OWNER_CLS = { CTS:'soc-cts', Wholesale:'soc-wholesale', Legal:'soc-legal', Management:'soc-management', Finance:'soc-finance' };
+
+/* ── Stage styles ───────────────────────────────────────────── */
+const STAGE_STYLE = {
+  'New':                           {bg:'#e3f2fd',color:'#1565C0'},
+  'WS Request':                    {bg:'#e8eaf6',color:'#3949AB'},
+  'Select Related Department':     {bg:'#fff3e0',color:'#BF360C'},
+  'Survey':                        {bg:'#e0f7fa',color:'#00695C'},
+  'Availability Confirm':          {bg:'#f3e5f5',color:'#6A1B9A'},
+  'WS Discuss':                    {bg:'#fff8e1',color:'#F57F17'},
+  'Contract Drafted':              {bg:'#fce4ec',color:'#AD1457'},
+  'Legal Contract':                {bg:'#fde8e8',color:'#B71C1C'},
+  'Legal Manager':                 {bg:'#fde8e8',color:'#C62828'},
+  'Wholesale Manager (Prior Sign)':{bg:'#ede7f6',color:'#4527A0'},
+  'Wholesale Manager (Pre-C)':     {bg:'#ede7f6',color:'#311B92'},
+  'CTO':                           {bg:'#e8f5e9',color:'#1B5E20'},
+  'CFO':                           {bg:'#e8f5e9',color:'#1B5E20'},
+  'CEO':                           {bg:'#e8f5e9',color:'#1B5E20'},
+  'Contract Signed':               {bg:'#c8e6c9',color:'#1B5E20'},
+  'Adv Billing':                   {bg:'#e0f2f1',color:'#004D40'},
+  'Wholesale Manager':             {bg:'#e1f5fe',color:'#01579B'},
+  'Service Delivery':              {bg:'#fff3e0',color:'#E65100'},
+  'Service Activation':            {bg:'#f3e5f5',color:'#4A148C'},
+  'Wh Activity':                   {bg:'#e8eaf6',color:'#283593'},
+  'Billing':                       {bg:'#fce4ec',color:'#880E4F'},
+  'Finance':                       {bg:'#f9fbe7',color:'#33691E'},
+  'Done':                          {bg:'#dcedc8',color:'#1B5E20'},
+  'Closed':                        {bg:'#a5d6a7',color:'#1B5E20'},
+};
+
+/* ── Service & request type styles ─────────────────────────── */
+const SVC_STYLE = {
+  'Internet':{bg:'#e3f2fd',color:'#1565C0',icon:'fa-globe'},
+  'L2 VPN':  {bg:'#ede7f6',color:'#4527A0',icon:'fa-lock'},
+  'SIP':     {bg:'#e0f7fa',color:'#00695C',icon:'fa-phone-alt'},
+  '4G':      {bg:'#fff3e0',color:'#E65100',icon:'fa-signal'},
+  'DDoS':    {bg:'#fce4ec',color:'#AD1457',icon:'fa-shield-alt'},
+};
+const REQ_CLASS = {
+  'New Activation':'req-new-act','Upgrade':'req-upgrade',
+  'Downgrade':'req-downgrade','Disconnect':'req-disconnect',
+};
+
+/* ── Requests ───────────────────────────────────────────────── */
+const REQUESTS = [
+  {
+    id:'ACT-001',cid:'NT-INT--68001',customer:'Kurdistan Telecom Co.',assignedTo:'Ahmed Hassan',
+    serviceType:'Internet',requestType:'New Activation',stage:'Done',dept:'CTS',
+    qosUp:1000,qosDn:1000,openedDate:'2026-04-30',closedDate:'2026-05-05',sla:'2026-05-06',slaOk:true,
+    holdDays:1,deptExceeded:[],
+  },
+  {
+    id:'ACT-002',cid:'NT-VPN--67890',customer:'Nawroz Holdings Ltd.',assignedTo:'Sara Ali',
+    serviceType:'L2 VPN',requestType:'New Activation',stage:'Service Delivery',dept:'NOC',
+    qosUp:300,qosDn:300,openedDate:'2026-05-02',sla:'2026-05-08',slaOk:true,
+    holdDays:0,deptExceeded:['Fiber Operation','IP Core','Power'],
+  },
+  {
+    id:'ACT-003',cid:'NT-INT--67811',customer:'Erbil City Council',assignedTo:'Zaid Nouri',
+    serviceType:'Internet',requestType:'Upgrade',stage:'Survey',dept:'IP Core',
+    qosUp:10000,qosDn:10000,openedDate:'2026-04-23',sla:'2026-05-03',slaOk:false,
+    holdDays:2,deptExceeded:['IP Core'],
+    surveyData:{
+      wholesaleRequest:{ sentBy:'Ahmed Karwan', dept:'Wholesale', date:'2026-04-23 09:00', capacity:'10 Gbps', notes:'Customer requires fiber upgrade to HQ. Site access confirmed. Urgent — contract signed.' },
+      ctsResponse:{ status:'Partial', estimatedCost:'~$18,000 installation', estimatedTimeline:'45–60 days', notes:'Fiber route available via Node-EB12 but IP Core uplink at 78% — upgrade required. Alternative route via Node-EB07 under assessment.', respondedBy:'Zaid Nouri', date:'2026-04-25 14:00' },
+    },
+    forwards:[
+      {
+        id:'FWD-002',
+        sentBy:'Zaid Nouri', sentByDept:'CTS', sentDate:'2026-04-26 09:00',
+        toDepts:['Fiber Operation','Fiber Planning'],
+        jointGroups:[['Fiber Operation','Fiber Planning']],
+        subject:'Route feasibility — joint sign-off required for EB07 alternative',
+        body:'Please jointly assess and confirm feasibility for the EB07 alternative route. Both teams must approve before we can proceed to the next stage.',
+        messages:[
+          { from:'Hassan Omar', dept:'Fiber Operation', text:'EB07 route confirmed feasible from our side. 5 poles required, estimated 3 working days for installation. Awaiting Fiber Planning to confirm alignment with their cable plan.', date:'2026-04-27 10:00', waitTime:'1d 1h' },
+        ],
+      },
+      {
+        id:'FWD-001',
+        sentBy:'Zaid Nouri', sentByDept:'CTS', sentDate:'2026-04-23 10:00',
+        toDepts:['Fiber Operation','IP Core','Procurement'],
+        subject:'Availability check — 10G fiber upgrade to Erbil City Council',
+        body:'Please assess availability and capacity for 10G internet service to Erbil City Council HQ. Provide BoQ, estimated timeline, and any constraints you foresee.',
+        messages:[
+          { from:'Hassan Omar', dept:'Fiber Operation', text:'Route feasible via Node-EB12. 3 additional poles needed — CIVIL approval required. Estimated installation: 20 days.', date:'2026-04-24 14:00', waitTime:'1d 4h' },
+          { from:'Zaid Nouri',  dept:'CTS',            text:'Thanks Hassan. Is the alternative route via EB07 viable if CIVIL approval is delayed?', date:'2026-04-24 15:30', waitTime:'' },
+          { from:'Hassan Omar', dept:'Fiber Operation', text:'EB07 is viable — 5 poles instead of 3, adds ~3 days but no CIVIL permit needed. Slightly higher cost. I recommend EB07 to avoid delays.', date:'2026-04-24 17:00', waitTime:'1h 30m' },
+          { from:'Rania Salam', dept:'IP Core',        text:'Node-EB12 uplink at 78% — port card replacement required. Lead time 3 weeks from Procurement. I can start config work in parallel once PO is raised.', date:'2026-04-25 10:15', waitTime:'2d 0h 15m' },
+          { from:'Zaid Nouri',  dept:'CTS',            text:'Noted. Please send your BoQ for the port card upgrade so we can raise the PO. Procurement is also tagged on this forward.', date:'2026-04-25 11:00', waitTime:'' },
+          { from:'Rania Salam', dept:'IP Core',        text:'BoQ sent to procurement@newroz.com. Card model: Cisco ASR-X 100G, qty 1. Lead time 3 weeks.', date:'2026-04-25 12:30', waitTime:'1h 30m' },
+        ],
+      },
+    ],
+    onHoldData:[
+      { id:'OH-001', requestedBy:'Zaid Nouri', dept:'IP Core', reason:'Waiting for customer to confirm secondary site GPS coordinates. Cannot finalize fiber route without this.', status:'pending', date:'2026-04-27 09:30', ctsComment:null },
+    ],
+  },
+  {
+    id:'ACT-004',cid:'NT-INT--68150',customer:'Sulaymaniyah Hospital',assignedTo:'Omar Khalid',
+    serviceType:'Internet',requestType:'New Activation',stage:'New',dept:'CTS',
+    qosUp:500,qosDn:500,openedDate:'2026-05-03',sla:'2026-05-10',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-005',cid:'NT-4G--67325',customer:'Kirkuk Oil Services',assignedTo:'Rania Salam',
+    serviceType:'4G',requestType:'Downgrade',stage:'Service Delivery',dept:'Fiber Operation',
+    qosUp:100,qosDn:100,openedDate:'2026-04-26',sla:'2026-05-04',slaOk:false,
+    holdDays:3,deptExceeded:['Fiber Operation'],
+  },
+  {
+    id:'ACT-006',cid:'NT-INT--67654',customer:'Duhok University',assignedTo:'Lara Hassan',
+    serviceType:'Internet',requestType:'New Activation',stage:'Survey',dept:'Wholesale',
+    qosUp:200,qosDn:200,openedDate:'2026-05-04',sla:'2026-05-08',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-007',cid:'NT-VPN--67500',customer:'Baghdad Trade Center',assignedTo:'Karim Aziz',
+    serviceType:'L2 VPN',requestType:'New Activation',stage:'Availability Confirm',dept:'NOC',
+    qosUp:300,qosDn:300,openedDate:'2026-04-28',sla:'2026-05-04',slaOk:false,
+    holdDays:2,deptExceeded:['NOC','CTS'],
+  },
+  {
+    id:'ACT-008',cid:'NT-INT--68222',customer:'Mosul Medical Center',assignedTo:'Sara Ali',
+    serviceType:'Internet',requestType:'Upgrade',stage:'Service Delivery',dept:'CTS',
+    qosUp:500,qosDn:500,openedDate:'2026-05-04',sla:'2026-05-11',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-009',cid:'NT-INT--67100',customer:'Basra Port Authority',assignedTo:'Tariq Salih',
+    serviceType:'Internet',requestType:'New Activation',stage:'WS Request',dept:'CIVIL',
+    qosUp:1000,qosDn:1000,openedDate:'2026-04-24',sla:'2026-05-02',slaOk:false,
+    holdDays:4,deptExceeded:['CIVIL','NOC'],
+  },
+  {
+    id:'ACT-010',cid:'NT-4G--68010',customer:'Zakho Cement Factory',assignedTo:'Dina Majid',
+    serviceType:'4G',requestType:'New Activation',stage:'Survey',dept:'Wholesale',
+    qosUp:25,qosDn:25,openedDate:'2026-05-04',sla:'2026-05-08',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-011',cid:'NT-INT--67720',customer:'Halabja Green Energy',assignedTo:'Omar Khalid',
+    serviceType:'Internet',requestType:'New Activation',stage:'Closed',dept:'CTS',
+    qosUp:200,qosDn:200,openedDate:'2026-04-30',closedDate:'2026-05-06',sla:'2026-05-07',slaOk:true,
+    holdDays:1,deptExceeded:[],
+  },
+  {
+    id:'ACT-012',cid:'NT-VPN--67650',customer:'Koya Industrial Park',assignedTo:'Faris Nouri',
+    serviceType:'L2 VPN',requestType:'Upgrade',stage:'WS Discuss',dept:'IP Core',
+    qosUp:300,qosDn:300,openedDate:'2026-04-23',sla:'2026-05-03',slaOk:false,
+    holdDays:3,deptExceeded:['IP Core','Wholesale'],
+  },
+  {
+    id:'ACT-013',cid:'NT-INT--67600',customer:'Raniya Municipality',assignedTo:'Ahmed Hassan',
+    serviceType:'Internet',requestType:'New Activation',stage:'Done',dept:'NOC',
+    qosUp:500,qosDn:500,openedDate:'2026-04-30',closedDate:'2026-05-05',sla:'2026-05-06',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-014',cid:'NT-INT--68300',customer:'Penjwin Resort Hotels',assignedTo:'Sara Ali',
+    serviceType:'Internet',requestType:'Downgrade',stage:'Survey',dept:'Fiber Planning',
+    qosUp:100,qosDn:100,openedDate:'2026-05-05',sla:'2026-05-13',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-015',cid:'NT-SIP--67450',customer:'Darbandikhan Authority',assignedTo:'Ahmed Hassan',
+    serviceType:'SIP',requestType:'New Activation',stage:'New',dept:'IP Core',
+    qosUp:10,qosDn:10,openedDate:'2026-05-04',sla:'2026-05-14',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-016',cid:'NT-4G--67200',customer:'Shaqlawa Tourism Board',assignedTo:'Lara Hassan',
+    serviceType:'4G',requestType:'Disconnect',stage:'WS Request',dept:'Wholesale',
+    qosUp:50,qosDn:50,openedDate:'2026-04-27',sla:'2026-05-01',slaOk:false,
+    holdDays:2,deptExceeded:['Wholesale'],
+  },
+  {
+    id:'ACT-017',cid:'NT-INT--68400',customer:'Makhmur Steel Co.',assignedTo:'Omar Khalid',
+    serviceType:'Internet',requestType:'Upgrade',stage:'Survey',dept:'CTS',
+    qosUp:2000,qosDn:2000,openedDate:'2026-05-01',sla:'2026-05-08',slaOk:true,
+    holdDays:1,deptExceeded:[],
+  },
+  {
+    id:'ACT-018',cid:'NT-VPN--67380',customer:'Ranya Hospital Group',assignedTo:'Sara Ali',
+    serviceType:'L2 VPN',requestType:'New Activation',stage:'Closed',dept:'NOC',
+    qosUp:300,qosDn:300,openedDate:'2026-05-01',closedDate:'2026-05-06',sla:'2026-05-07',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+];
+
+/* ── Stage order ────────────────────────────────────────────── */
+const ALL_STAGES = [
+  'New','WS Request','Select Related Department','Survey',
+  'Availability Confirm','WS Discuss','Contract Drafted',
+  'Legal Contract','Legal Manager','Wholesale Manager (Prior Sign)',
+  'Wholesale Manager (Pre-C)','CTO','CFO','CEO',
+  'Contract Signed','Adv Billing','Wholesale Manager',
+  'Service Delivery','Service Activation','Wh Activity',
+  'Billing','Finance','Done','Closed'
+];
+
+/* ── Navigation ─────────────────────────────────────────────── */
+function nav(page) {
+  document.getElementById('homePage').classList.toggle('hidden', page !== 'home');
+  document.getElementById('dashboardPage').classList.toggle('hidden', page !== 'dashboard');
+  document.getElementById('requestPage').classList.toggle('hidden', page !== 'request');
+  if (page === 'dashboard') initDashboard();
+}
+
+/* ── Request detail ─────────────────────────────────────────── */
+function openRequest(id) {
+  const r = REQUESTS.find(x => x.id === id);
+  if (!r) return;
+
+  /* breadcrumb */
+  document.getElementById('req-cid-crumb').textContent = r.cid + '  ·  ' + r.id;
+
+  /* pipeline */
+  const curIdx = ALL_STAGES.indexOf(r.stage);
+  document.getElementById('stagePipeline').innerHTML = ALL_STAGES.map((s, i) => {
+    let cls = 'pip-step';
+    if (i < curIdx)  cls += ' pip-done';
+    if (i === curIdx) cls += ' pip-current';
+    return `<div class="${cls}" title="${s}">${s}</div>`;
+  }).join('');
+
+  /* info grid */
+  const svc = SVC_STYLE[r.serviceType]||{bg:'#eee',color:'#555',icon:'fa-circle'};
+  const stg = STAGE_STYLE[r.stage]||{bg:'#eee',color:'#555'};
+  document.getElementById('req-info-grid').innerHTML = `
+    <div class="rdg-field"><label>CID</label><span class="cid-main">${r.cid}</span></div>
+    <div class="rdg-field"><label>Request ID</label><span>${r.id}</span></div>
+    <div class="rdg-field"><label>Customer</label><span>${r.customer}</span></div>
+    <div class="rdg-field"><label>Assigned To</label><span>${r.assignedTo}</span></div>
+    <div class="rdg-field"><label>Service Type</label><span><span class="svc-badge" style="background:${svc.bg};color:${svc.color};"><i class="fas ${svc.icon}" style="font-size:10px;"></i>${r.serviceType}</span></span></div>
+    <div class="rdg-field"><label>Request Type</label><span><span class="req-badge ${REQ_CLASS[r.requestType]||''}">${r.requestType}</span></span></div>
+    <div class="rdg-field"><label>Current Stage</label><span><span class="stage-badge" style="background:${stg.bg};color:${stg.color};">${r.stage}</span></span></div>
+    <div class="rdg-field"><label>Department</label><span>${r.dept}</span></div>
+    <div class="rdg-field"><label>QoS Upload</label><span>${fmtQoS(r.qosUp)} ${r.qosUp<1000?'Mbps':''}</span></div>
+    <div class="rdg-field"><label>QoS Download</label><span>${fmtQoS(r.qosDn)} ${r.qosDn<1000?'Mbps':''}</span></div>
+  `;
+
+  /* SLA grid */
+  const endDate   = r.closedDate ? new Date(r.closedDate) : TODAY;
+  const totalDays = daysDiff(r.openedDate, endDate);
+  const workDays  = Math.max(0, totalDays - (r.holdDays||0));
+  const totalSla  = daysDiff(r.openedDate, r.sla);
+  const pct       = Math.min(Math.round(workDays/totalSla*100), 100);
+  const barColor  = !r.slaOk ? '#E74C3C' : pct>=80 ? '#FF9800' : '#27AE60';
+  const excTags   = (r.deptExceeded||[]).length
+    ? r.deptExceeded.map(d=>`<span class="dept-tag-exceeded" style="margin-right:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:3px;"><i class="fas fa-exclamation-circle" style="font-size:9px;"></i>${d}</span>`).join('')
+    : `<span style="color:#27AE60;font-weight:600;font-size:12px;"><i class="fas fa-check-circle"></i> All departments on time</span>`;
+  document.getElementById('req-sla-grid').innerHTML = `
+    <div class="rdg-field"><label>Opened Date</label><span>${r.openedDate}</span></div>
+    <div class="rdg-field"><label>SLA Deadline</label><span style="color:${r.slaOk?'#27AE60':'#E74C3C'};font-weight:700;">${r.sla}</span></div>
+    ${r.closedDate?`<div class="rdg-field"><label>Closed Date</label><span>${r.closedDate}</span></div>`:''}
+    <div class="rdg-field"><label>Hold Days</label><span>${r.holdDays||0}d</span></div>
+    <div class="rdg-field"><label>Total Days</label><span>${totalDays}d</span></div>
+    <div class="rdg-field"><label>Working Days</label><span style="color:${barColor};font-weight:700;">${workDays}d / ${totalSla}d</span></div>
+    <div class="rdg-field" style="grid-column:1/-1;">
+      <label>SLA Progress</label>
+      <div class="sla-bar-track" style="margin-top:6px;max-width:400px;"><div class="sla-bar-fill" style="width:${pct}%;background:${barColor};"></div></div>
+      <div style="font-size:11px;color:#888;margin-top:4px;">${pct}% used</div>
+    </div>
+    <div class="rdg-field" style="grid-column:1/-1;"><label>Departments Exceeded SLA</label><div style="margin-top:4px;">${excTags}</div></div>
+  `;
+
+  /* Survey section */
+  const survSec = document.getElementById('req-survey-section');
+  if (r.stage === 'Survey' && r.surveyData) {
+    survSec.style.display = '';
+    buildSurveyPanel(r);
+  } else { survSec.style.display = 'none'; }
+
+  /* Forwards — only in Survey and Service Delivery */
+  const fwdWrap = document.getElementById('req-forwards-wrap');
+  if (r.stage === 'Survey' || r.stage === 'Service Delivery') {
+    fwdWrap.style.display = '';
+    buildForwardsSection(r);
+  } else {
+    fwdWrap.style.display = 'none';
+  }
+
+  /* On-Hold list */
+  buildOnHoldList(r);
+
+  nav('request');
+}
+
+/* ── Survey panel ───────────────────────────────────────────── */
+function buildSurveyPanel(r) {
+  const sd = r.surveyData;
+  const availMap = {
+    'Available':    ['avail-ok',  'fa-check-circle',       'Available'],
+    'Partial':      ['avail-part','fa-exclamation-circle',  'Partially Available'],
+    'NotAvailable': ['avail-no',  'fa-times-circle',        'Not Available'],
+    'Pending':      ['avail-pend','fa-clock',               'Pending Response'],
+  };
+  const av = availMap[sd.ctsResponse.status] || availMap['Pending'];
+
+  document.getElementById('req-survey-content').innerHTML = `
+    <div class="survey-two">
+      <div class="survey-side">
+        <h5 style="color:#1565C0;"><i class="fas fa-building"></i> Wholesale Request</h5>
+        <div class="survey-field"><label>Sent By</label><span>${sd.wholesaleRequest.sentBy} — ${sd.wholesaleRequest.dept}</span></div>
+        <div class="survey-field"><label>Date</label><span>${sd.wholesaleRequest.date}</span></div>
+        <div class="survey-field"><label>Required Capacity</label><span style="font-weight:700;font-size:14px;">${sd.wholesaleRequest.capacity}</span></div>
+        <div class="survey-field"><label>Notes</label><span>${sd.wholesaleRequest.notes}</span></div>
+      </div>
+      <div class="survey-side">
+        <h5 style="color:#4A148C;"><i class="fas fa-reply"></i> CTS Response</h5>
+        <div class="survey-field"><label>Availability</label><span><span class="avail-badge ${av[0]}"><i class="fas ${av[1]}"></i> ${av[2]}</span></span></div>
+        <div class="survey-field"><label>Estimated Cost</label><span>${sd.ctsResponse.estimatedCost||'—'}</span></div>
+        <div class="survey-field"><label>Estimated Timeline</label><span>${sd.ctsResponse.estimatedTimeline||'—'}</span></div>
+        <div class="survey-field"><label>Notes</label><span>${sd.ctsResponse.notes||'—'}</span></div>
+        <div class="survey-field"><label>Responded By</label><span>${sd.ctsResponse.respondedBy} · ${sd.ctsResponse.date}</span></div>
+      </div>
+    </div>`;
+}
+
+/* ── On-Hold panel ──────────────────────────────────────────── */
+let _currentReqId = null;
+function buildOnHoldList(r) {
+  _currentReqId = r.id;
+  const list = document.getElementById('req-onhold-list');
+  const ohBtn = document.getElementById('oh-request-btn-wrap');
+
+  const hasApproved = r.onHoldData && r.onHoldData.some(o => o.status === 'approved');
+
+  /* show/hide Resume banner at top */
+  const banner = document.getElementById('oh-active-banner');
+  if (banner) banner.remove();
+  if (hasApproved) {
+    const b = document.createElement('div');
+    b.id = 'oh-active-banner';
+    b.className = 'oh-active-banner';
+    b.innerHTML = `<span><i class="fas fa-pause-circle"></i> This request is currently On-Hold — time is paused.</span>
+      <button class="oh-resume-btn" onclick="resumeOnHold('${r.id}')"><i class="fas fa-play"></i> Resume</button>`;
+    list.parentNode.insertBefore(b, list);
+  }
+
+  if (!r.onHoldData || !r.onHoldData.length) {
+    list.innerHTML = `<div style="font-size:12px;color:#bbb;padding:8px 0;"><i class="fas fa-check-circle" style="color:#27AE60;"></i> No on-hold requests for this record.</div>`;
+    return;
+  }
+
+  const clsMap   = { pending:'oh-pending ohb-pending', approved:'oh-approved ohb-approved', rejected:'oh-rejected ohb-rejected', resumed:'oh-resumed ohb-resumed' };
+  const labelMap  = { pending:'Pending CTS Approval', approved:'⏸ On-Hold (Approved)', rejected:'Rejected', resumed:'Resumed' };
+
+  list.innerHTML = r.onHoldData.map(oh => {
+    const cls = clsMap[oh.status] || 'oh-pending ohb-pending';
+    const [cardCls, badgeCls] = cls.split(' ');
+    let actionHtml = '';
+    if (oh.status === 'pending') {
+      actionHtml = `
+        <div class="oh-action-row">
+          <button class="oh-approve-btn" onclick="approveOnHold('${r.id}','${oh.id}')"><i class="fas fa-check"></i> Approve</button>
+          <div class="oh-reject-form">
+            <input class="oh-reject-input" id="rej-${oh.id}" placeholder="Rejection reason (required)…">
+            <button class="oh-reject-btn" onclick="rejectOnHold('${r.id}','${oh.id}')"><i class="fas fa-times"></i> Reject</button>
+          </div>
+        </div>`;
+    } else if (oh.ctsComment) {
+      actionHtml = `<div style="font-size:11px;color:#666;margin-top:6px;"><i class="fas fa-comment"></i> CTS: ${oh.ctsComment}</div>`;
+    }
+    if (oh.resumeDate) {
+      actionHtml += `<div style="font-size:11px;color:#27AE60;margin-top:4px;"><i class="fas fa-play"></i> Resumed: ${oh.resumeDate} &nbsp;·&nbsp; Hold duration: ${oh.holdDuration||'—'}</div>`;
+    }
+    return `<div class="oh-card ${cardCls}">
+      <div class="oh-card-top">
+        <div class="oh-card-meta"><i class="fas fa-user"></i> ${oh.requestedBy} &nbsp;·&nbsp; ${oh.dept}</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="oh-status-badge ${badgeCls}">${labelMap[oh.status]||oh.status}</span>
+          <span class="oh-card-date">${oh.date}</span>
+        </div>
+      </div>
+      <div class="oh-reason"><i class="fas fa-align-left" style="font-size:10px;color:#aaa;margin-right:5px;"></i>${oh.reason}</div>
+      ${actionHtml}
+    </div>`;
+  }).join('');
+}
+
+function toggleOhForm() {
+  const f = document.getElementById('oh-form-wrap');
+  f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+
+function submitOnHold() {
+  const reason = document.getElementById('oh-reason-input').value.trim();
+  if (!reason) { alert('Please enter a reason for the on-hold request.'); return; }
+  const r = REQUESTS.find(x => x.id === _currentReqId);
+  if (!r) return;
+  if (!r.onHoldData) r.onHoldData = [];
+  r.onHoldData.unshift({ id:'OH-'+(Date.now()), requestedBy:ME, dept:'CTS', reason, status:'pending', date:new Date().toLocaleString(), ctsComment:null });
+  document.getElementById('oh-reason-input').value = '';
+  toggleOhForm();
+  buildOnHoldList(r);
+}
+
+function approveOnHold(reqId, ohId) {
+  const r = REQUESTS.find(x => x.id === reqId);
+  const oh = r && r.onHoldData && r.onHoldData.find(x => x.id === ohId);
+  if (!oh) return;
+  oh.status = 'approved';
+  oh.ctsComment = 'Approved by CTS.';
+  oh.approvedDate = new Date().toLocaleString();
+  buildOnHoldList(r);
+  updateKPIs();
+}
+
+function resumeOnHold(reqId) {
+  const r = REQUESTS.find(x => x.id === reqId);
+  if (!r) return;
+  const oh = r.onHoldData && r.onHoldData.find(x => x.status === 'approved');
+  if (!oh) return;
+  const now = new Date();
+  oh.status = 'resumed';
+  oh.resumeDate = now.toLocaleString();
+  /* calc hold duration */
+  if (oh.approvedDate) {
+    const start = new Date(oh.approvedDate);
+    const diffMs = now - start;
+    const dd = Math.floor(diffMs/86400000);
+    const hh = Math.floor((diffMs%86400000)/3600000);
+    const mm = Math.floor((diffMs%3600000)/60000);
+    oh.holdDuration = dd>0 ? `${dd}d ${hh}h ${mm}m` : hh>0 ? `${hh}h ${mm}m` : `${mm}m`;
+    r.holdDays = (r.holdDays||0) + Math.max(1, dd);
+  }
+  buildOnHoldList(r);
+  updateKPIs();
+}
+
+function rejectOnHold(reqId, ohId) {
+  const comment = document.getElementById('rej-'+ohId).value.trim();
+  if (!comment) { alert('Please provide a rejection reason.'); return; }
+  const r = REQUESTS.find(x => x.id === reqId);
+  const oh = r && r.onHoldData && r.onHoldData.find(x => x.id === ohId);
+  if (!oh) return;
+  oh.status = 'rejected'; oh.ctsComment = comment;
+  buildOnHoldList(r);
+}
+
+
+/* ── Forward Cards ──────────────────────────────────────────── */
+const FWD_PALETTE = ['#1E7EC5','#00A09D','#E67E22','#27AE60','#5C6BC0','#AD1457','#00838F'];
+
+function buildForwardsSection(r) {
+  const wrap = document.getElementById('req-forwards-content');
+  if (!wrap) return;
+  const forwards = r.forwards || [];
+
+  const cardsHtml = forwards.map(fwd => {
+    /* dept → color map based on position in toDepts */
+    const colorMap = {};
+    fwd.toDepts.forEach((d, i) => { colorMap[d] = FWD_PALETTE[i % FWD_PALETTE.length]; });
+
+    const msgs          = fwd.messages || [];
+    const respondedSet  = new Set(msgs.filter(m => fwd.toDepts.includes(m.dept)).map(m => m.dept));
+    const approvedSet   = new Set(msgs.filter(m => m.type==='approval' && fwd.toDepts.includes(m.dept)).map(m => m.dept));
+    const jointGroups   = fwd.jointGroups || [];
+    const allJointDepts = jointGroups.flat();
+    const now_fwd       = new Date();
+    const sentMs        = now_fwd - new Date(fwd.sentDate);
+
+    const allResponded  = fwd.toDepts.every(d => respondedSet.has(d));
+    const allApproved   = fwd.toDepts.length > 0 && fwd.toDepts.every(d => approvedSet.has(d));
+    const statusText    = allApproved  ? 'Approved' : allResponded ? 'All Responded' : respondedSet.size > 0 ? 'Active' : 'Pending';
+    const statusCls     = allApproved  ? 'fwds-approved' : allResponded ? 'fwds-complete' : respondedSet.size > 0 ? 'fwds-partial' : 'fwds-pending';
+
+    /* thread messages */
+    const threadHtml = msgs.map(m => {
+      const isCts  = !fwd.toDepts.includes(m.dept);
+      const color  = isCts ? '#875A7B' : (colorMap[m.dept] || '#555');
+      const waitBadge = (!isCts && m.waitTime)
+        ? `<span class="fwd-wait-badge"><i class="fas fa-stopwatch"></i> ${m.waitTime}</span>` : '';
+      const deptPill = isCts
+        ? `<span style="font-size:9px;background:#f3e5f5;color:#6A1B9A;padding:1px 6px;border-radius:3px;font-weight:700;">CTS</span>`
+        : `<span style="font-size:9px;padding:1px 7px;border-radius:3px;font-weight:700;background:${color}22;color:${color};">${m.dept}</span>`;
+      if (m.type === 'approval') {
+        return `<div class="fwd-msg fwd-msg-other">
+          <div class="fwd-approval-bubble"><i class="fas fa-check-circle" style="color:#27AE60;font-size:15px;"></i><span style="font-size:13px;font-weight:700;color:#1B5E20;">Approved</span></div>
+          <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date} ${waitBadge}</div>
+        </div>`;
+      }
+      if (m.type === 'onhold') {
+        return `<div class="fwd-msg fwd-msg-other">
+          <div style="background:#fff8e1;border:2px solid #FF9800;border-radius:12px;border-bottom-left-radius:3px;padding:10px 14px;max-width:80%;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-pause-circle" style="color:#FF9800;font-size:14px;"></i><span style="font-size:12px;font-weight:700;color:#E65100;">On-Hold: <span style="font-weight:400;">${m.text}</span></span></div>
+          <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date}</div>
+        </div>`;
+      }
+      if (m.type === 'resume') {
+        return `<div class="fwd-msg fwd-msg-other">
+          <div style="background:#e8f5e9;border:2px solid #27AE60;border-radius:12px;border-bottom-left-radius:3px;padding:10px 14px;max-width:80%;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-play-circle" style="color:#27AE60;font-size:14px;"></i><span style="font-size:12px;font-weight:700;color:#1B5E20;">Resumed — hold duration: ${m.holdDuration||'—'}</span></div>
+          <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date}</div>
+        </div>`;
+      }
+      return `<div class="fwd-msg ${isCts ? 'fwd-msg-cts' : 'fwd-msg-other'}">
+        <div class="fwd-bubble" style="${isCts ? '' : 'background:'+color+'18;color:#333;border:1px solid '+color+'30;'}">${m.text}</div>
+        <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date} ${waitBadge}</div>
+      </div>`;
+    }).join('');
+
+    /* ── joint-aware TO: chips ── */
+    const toChips  = [];
+    const rendered = new Set();
+    jointGroups.forEach(group => {
+      const grpComplete = group.every(d => respondedSet.has(d));
+      const grpOverdue  = !grpComplete && group.some(d => sentMs > (DEPT_SLA[d]||7)*86400000);
+      group.forEach((d, di) => {
+        let style, icon;
+        if (grpComplete) {
+          style = `background:${colorMap[d]}18;color:${colorMap[d]};border:1px solid ${colorMap[d]}44;`;
+          icon  = `<i class="fas fa-check" style="font-size:8px;color:#27AE60;margin-left:3px;"></i>`;
+        } else if (grpOverdue) {
+          style = 'background:#fde8e8;color:#c62828;border:1px solid #ffcdd2;';
+          icon  = `<i class="fas fa-exclamation-circle" style="font-size:8px;margin-left:3px;"></i>`;
+        } else if (respondedSet.has(d)) {
+          style = 'background:#fff3e0;color:#E65100;border:1px solid #FFD54F;';
+          icon  = `<i class="fas fa-clock" style="font-size:8px;margin-left:3px;" title="Responded — waiting for partner"></i>`;
+        } else {
+          style = `background:${colorMap[d]}18;color:${colorMap[d]};border:1px solid ${colorMap[d]}44;`;
+          icon  = '';
+        }
+        if (di > 0) toChips.push(`<i class="fas fa-link" style="font-size:9px;color:#F59E0B;"></i>`);
+        toChips.push(`<span class="fwd-dept-chip" style="${style}">${d}${icon}</span>`);
+        rendered.add(d);
+      });
+      const grpApproved = group.every(d => approvedSet.has(d));
+      const jText  = grpApproved ? 'Joint Approved ✓' : grpComplete ? 'Joint ✓' : grpOverdue ? 'Joint Overdue' : 'Joint Pending';
+      const jColor = grpApproved ? '#1B5E20' : grpComplete ? '#27AE60' : grpOverdue ? '#E74C3C' : '#F59E0B';
+      toChips.push(`<span style="background:${jColor};color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:2px;">${jText}</span>`);
+    });
+    fwd.toDepts.filter(d => !rendered.has(d)).forEach(d => {
+      const chk = respondedSet.has(d) ? `<i class="fas fa-check" style="font-size:8px;margin-left:3px;"></i>` : '';
+      toChips.push(`<span class="fwd-dept-chip" style="background:${colorMap[d]}18;color:${colorMap[d]};border:1px solid ${colorMap[d]}44;">${d}${chk}</span>`);
+    });
+
+    /* ── awaiting section (joint-aware) ── */
+    const awParts = [];
+    jointGroups.forEach(group => {
+      const grpComplete      = group.every(d => respondedSet.has(d));
+      if (grpComplete) return;
+      const grpOverdue       = group.some(d => sentMs > (DEPT_SLA[d]||7)*86400000);
+      const respondedInGroup = group.filter(d => respondedSet.has(d));
+      const pendingInGroup   = group.filter(d => !respondedSet.has(d));
+      const od = Math.floor(sentMs/86400000), oh = Math.floor((sentMs%86400000)/3600000);
+      const overdueLabel = od > 0 ? `${od}d ${oh}h` : `${oh}h`;
+      if (grpOverdue) {
+        awParts.push(`<div style="background:#fde8e8;border:1px dashed #E74C3C;border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:700;color:#c62828;margin-bottom:7px;display:flex;align-items:center;gap:6px;"><i class="fas fa-link"></i> Joint Group Overdue <span style="font-weight:400;font-size:10px;color:#e57373;">${overdueLabel} without joint approval</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;">
+            ${respondedInGroup.map(d=>`<span style="background:#fff3e0;color:#E65100;border:1px solid #FFD54F;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;">${d} <i class="fas fa-check-circle" style="font-size:9px;"></i><span style="font-size:9px;font-weight:400;margin-left:3px;">responded — awaiting partner</span></span>`).join('')}
+            ${pendingInGroup.map(d=>`<span style="background:#fde8e8;color:#c62828;border:1px solid #ffcdd2;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;">${d} <i class="fas fa-exclamation-circle" style="font-size:9px;"></i><span style="font-size:9px;font-weight:400;margin-left:3px;">no response</span></span>`).join('')}
+          </div></div>`);
+      } else {
+        awParts.push(`<div style="background:#fffbeb;border:1px solid #FDE68A;border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:7px;display:flex;align-items:center;gap:6px;"><i class="fas fa-link"></i> Joint Approval Required — both departments must respond</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;">
+            ${respondedInGroup.map(d=>`<span style="background:#e8f5e9;color:#1B5E20;border:1px solid #A5D6A7;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;">${d} <i class="fas fa-check" style="font-size:9px;"></i></span>`).join('')}
+            ${pendingInGroup.map(d=>`<span style="background:#fff3e0;color:#E65100;border:1px solid #FFD54F;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;">${d}<span style="font-size:9px;font-weight:400;margin-left:4px;">awaiting…</span></span>`).join('')}
+          </div></div>`);
+      }
+    });
+    const indivPending = fwd.toDepts.filter(d => !allJointDepts.includes(d) && !respondedSet.has(d));
+    if (indivPending.length) {
+      awParts.push(`<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:8px;"><span style="font-size:10px;color:#aaa;font-weight:700;">Awaiting:</span>${indivPending.map(d=>`<span style="background:#fff3e0;color:#E65100;border:1px solid #FFD54F;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">${d}</span>`).join('')}</div>`);
+    }
+
+    /* "Reply as" options: CTS + all toDepts */
+    const deptOpts = [`<option value="CTS">CTS — ${ME}</option>`,
+      ...fwd.toDepts.map(d => `<option value="${d}">${d}</option>`)].join('');
+
+    /* on-hold state for this forward */
+    const fwdHold = fwd.holdState;
+    const holdBanner = fwdHold && fwdHold.status === 'active' ? `
+      <div class="fwd-onhold-banner">
+        <span style="font-size:12px;color:#E65100;font-weight:600;"><i class="fas fa-pause-circle"></i> On-Hold — ${fwdHold.reason} <span style="font-size:10px;color:#aaa;font-weight:400;">(${fwdHold.dept} · ${fwdHold.startDate})</span></span>
+        <button class="fwd-resume-btn-fwd" onclick="resumeFwdHold('${r.id}','${fwd.id}')"><i class="fas fa-play"></i> Resume</button>
+      </div>` : '';
+    const holdFormHtml = (!fwdHold || fwdHold.status !== 'active') ? `
+      <div id="fwd-hold-form-${fwd.id}" style="display:none;" class="fwd-hold-form">
+        <div style="font-size:11px;font-weight:700;color:#E65100;margin-bottom:8px;"><i class="fas fa-pause-circle"></i> Request On-Hold</div>
+        <div style="margin-bottom:6px;">
+          <label style="font-size:10px;color:#aaa;font-weight:700;display:block;margin-bottom:4px;">Department requesting hold</label>
+          <select id="fwd-hold-dept-${fwd.id}" class="fwd-reply-select" style="width:100%;">${fwd.toDepts.map(d=>`<option value="${d}">${d}</option>`).join('')}</select>
+        </div>
+        <textarea id="fwd-hold-reason-${fwd.id}" rows="2" class="fwd-form-ta" placeholder="Reason for on-hold…" style="margin-bottom:8px;"></textarea>
+        <div style="display:flex;gap:6px;">
+          <button style="padding:5px 12px;background:#FF9800;color:#fff;border:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;" onclick="submitFwdHold('${r.id}','${fwd.id}')"><i class="fas fa-pause"></i> Submit Hold</button>
+          <button style="padding:5px 12px;background:#f5f5f5;color:#555;border:1px solid #ddd;border-radius:4px;font-size:11px;cursor:pointer;" onclick="document.getElementById('fwd-hold-form-${fwd.id}').style.display='none'">Cancel</button>
+        </div>
+      </div>` : '';
+    const holdToggleBtn = (!fwdHold || fwdHold.status !== 'active')
+      ? `<button class="fwd-hold-btn" onclick="(function(){var f=document.getElementById('fwd-hold-form-${fwd.id}');f.style.display=f.style.display==='none'?'':'none';})()"><i class="fas fa-pause"></i> On-Hold</button>` : '';
+
+    return `<div class="fwd-card">
+      <div class="fwd-card-header">
+        <div style="flex:1;">
+          <div class="fwd-subject">${fwd.subject}</div>
+          <div class="fwd-meta"><i class="fas fa-user" style="font-size:9px;"></i> ${fwd.sentBy} · ${fwd.sentByDept} &nbsp;·&nbsp; <i class="fas fa-clock" style="font-size:9px;"></i> ${fwd.sentDate}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          ${holdToggleBtn}
+          <span class="fwd-status-badge ${statusCls}">${statusText} (${respondedSet.size}/${fwd.toDepts.length})</span>
+        </div>
+      </div>
+      ${holdBanner}
+      ${holdFormHtml}
+      <div class="fwd-dest-row">
+        <span style="font-size:10px;color:#aaa;font-weight:700;margin-right:4px;">TO:</span>
+        ${toChips.join('')}
+      </div>
+      <div class="fwd-body-text"><i class="fas fa-share-square" style="font-size:10px;color:#875A7B;margin-right:4px;"></i>${fwd.body}</div>
+      ${awParts.join('')}
+      <div class="fwd-thread">${threadHtml || '<div style="font-size:11px;color:#bbb;text-align:center;padding:8px 0;"><i class="fas fa-comments"></i> No replies yet</div>'}</div>
+      <div class="fwd-reply-area">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+          <label style="font-size:10px;color:#aaa;font-weight:700;white-space:nowrap;">Reply as:</label>
+          <select id="reply-dept-${fwd.id}" class="fwd-reply-select">${deptOpts}</select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <textarea id="reply-input-${fwd.id}" rows="2" class="fwd-form-ta" placeholder="Type your reply…" style="flex:1;"></textarea>
+          <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
+            <button class="fwd-approve-btn" onclick="approveFwd('${r.id}','${fwd.id}')"><i class="fas fa-check-circle"></i> Approve</button>
+            <button class="fwd-reply-send" style="align-self:stretch;" onclick="addFwdMessage('${r.id}','${fwd.id}')"><i class="fas fa-paper-plane"></i> Send</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const groupTiles = Object.entries(FORWARD_GROUPS).map(([name, g]) =>
+    `<div class="fwd-group-tile" id="grptile-${name.replace(/\s+/g,'-')}" onclick="toggleFwdGroup('${name}')" style="border-color:${g.color};color:${g.color};">
+       <i class="fas ${g.icon}"></i> ${name}
+       <span style="font-size:9px;font-weight:400;color:#999;">${g.depts.join(' + ')}</span>
+     </div>`).join('');
+
+  const deptCheckboxes = Object.keys(DEPT_SLA).map(d =>
+    `<label style="display:inline-flex;align-items:center;gap:4px;background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:4px 9px;font-size:11px;cursor:pointer;">
+       <input type="checkbox" value="${d}" style="margin:0;"> ${d}
+     </label>`).join('');
+
+  wrap.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <button class="fwd-new-btn" onclick="toggleFwdForm('${r.id}')"><i class="fas fa-share-square"></i> Forward to Department</button>
+    </div>
+    <div id="fwd-form-wrap" style="display:none;" class="fwd-form">
+      <div style="font-size:12px;font-weight:700;color:#875A7B;margin-bottom:12px;"><i class="fas fa-share-square"></i> New Forward Request</div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">
+          Department Groups <span style="font-size:9px;color:#F59E0B;font-weight:600;text-transform:none;letter-spacing:0;">(joint — all in group must respond)</span>
+        </label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">${groupTiles}</div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Individual Departments</label>
+        <div id="fwd-dept-selector" style="display:flex;flex-wrap:wrap;gap:6px;">${deptCheckboxes}</div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px;">Subject</label>
+        <input id="fwd-subject-input" type="text" placeholder="Forward subject…">
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px;">Message</label>
+        <textarea id="fwd-body-input" rows="3" class="fwd-form-ta" placeholder="Describe what you need…"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="fwd-submit-btn" onclick="submitForward('${r.id}')"><i class="fas fa-paper-plane"></i> Send Forward</button>
+        <button class="fwd-cancel-btn" onclick="toggleFwdForm('${r.id}')">Cancel</button>
+      </div>
+    </div>
+    ${forwards.length ? cardsHtml : '<div style="font-size:12px;color:#bbb;padding:14px 0;text-align:center;"><i class="fas fa-share-square" style="font-size:22px;display:block;margin-bottom:8px;"></i>No forwards sent for this stage yet.</div>'}
+  `;
+}
+
+function toggleFwdForm(reqId) {
+  const f = document.getElementById('fwd-form-wrap');
+  f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+
+const _selectedGroups = new Set();
+
+function toggleFwdGroup(name) {
+  const g = FORWARD_GROUPS[name];
+  if (!g) return;
+  const tile = document.getElementById('grptile-' + name.replace(/\s+/g, '-'));
+  if (_selectedGroups.has(name)) {
+    _selectedGroups.delete(name);
+    if (tile) { tile.style.background = '#fff'; tile.style.boxShadow = ''; }
+    g.depts.forEach(d => {
+      const cb = document.querySelector(`#fwd-dept-selector input[value="${d}"]`);
+      if (cb) { cb.checked = false; cb.disabled = false; if (cb.parentElement) cb.parentElement.style.opacity = '1'; }
+    });
+  } else {
+    _selectedGroups.add(name);
+    if (tile) { tile.style.background = g.color + '18'; tile.style.boxShadow = `0 0 0 2px ${g.color}`; }
+    g.depts.forEach(d => {
+      const cb = document.querySelector(`#fwd-dept-selector input[value="${d}"]`);
+      if (cb) { cb.checked = true; cb.disabled = true; if (cb.parentElement) cb.parentElement.style.opacity = '.5'; }
+    });
+  }
+}
+
+function submitForward(reqId) {
+  const subject = (document.getElementById('fwd-subject-input').value || '').trim();
+  const body    = (document.getElementById('fwd-body-input').value || '').trim();
+  const checked = [...document.querySelectorAll('#fwd-dept-selector input[type=checkbox]:checked')].map(cb => cb.value);
+  /* build jointGroups from selected group tiles */
+  const jointGroups = [..._selectedGroups].map(name => [...FORWARD_GROUPS[name].depts]);
+  /* ensure group depts are included in toDepts */
+  jointGroups.flat().forEach(d => { if (!checked.includes(d)) checked.push(d); });
+  if (!subject)        { alert('Please enter a subject.'); return; }
+  if (!checked.length) { alert('Please select at least one department or group.'); return; }
+  if (!body)           { alert('Please enter a message.'); return; }
+  const r = REQUESTS.find(x => x.id === reqId);
+  if (!r) return;
+  if (!r.forwards) r.forwards = [];
+  const now     = new Date();
+  const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+  r.forwards.unshift({ id:'FWD-'+Date.now(), sentBy:ME, sentByDept:'CTS', sentDate:dateStr, toDepts:checked, jointGroups, subject, body, messages:[] });
+  /* reset form */
+  document.getElementById('fwd-subject-input').value = '';
+  document.getElementById('fwd-body-input').value    = '';
+  _selectedGroups.clear();
+  document.querySelectorAll('.fwd-group-tile').forEach(el => { el.style.background = '#fff'; el.style.boxShadow = ''; });
+  document.querySelectorAll('#fwd-dept-selector input[type=checkbox]').forEach(cb => { cb.checked = false; cb.disabled = false; if (cb.parentElement) cb.parentElement.style.opacity = '1'; });
+  toggleFwdForm(reqId);
+  buildForwardsSection(r);
+  updateKPIs();
+}
+
+function addFwdMessage(reqId, fwdId) {
+  const deptSel = document.getElementById('reply-dept-' + fwdId);
+  const input   = document.getElementById('reply-input-' + fwdId);
+  const dept    = deptSel ? deptSel.value : 'CTS';
+  const text    = input ? input.value.trim() : '';
+  if (!text) return;
+  const r   = REQUESTS.find(x => x.id === reqId);
+  const fwd = r && r.forwards && r.forwards.find(x => x.id === fwdId);
+  if (!fwd) return;
+  if (!fwd.messages) fwd.messages = [];
+
+  /* wait time: for dept replies, measure from the last CTS message (or sentDate) */
+  let waitTime = '';
+  const isDept = fwd.toDepts.includes(dept);
+  if (isDept) {
+    const lastCts = [...fwd.messages].reverse().find(m => !fwd.toDepts.includes(m.dept));
+    const from    = lastCts ? new Date(lastCts.date) : new Date(fwd.sentDate);
+    const diffMs  = new Date() - from;
+    const dd = Math.floor(diffMs / 86400000);
+    const hh = Math.floor((diffMs % 86400000) / 3600000);
+    const mm = Math.floor((diffMs % 3600000)  / 60000);
+    waitTime = dd > 0 ? `${dd}d ${hh}h ${mm}m` : hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+  }
+
+  const now = new Date();
+  fwd.messages.push({ from: dept === 'CTS' ? ME : dept + ' Team', dept, text, date: now.toLocaleDateString() + ' ' + now.toLocaleTimeString(), waitTime });
+  if (input) input.value = '';
+  buildForwardsSection(r);
+  updateKPIs();
+}
+
+function approveFwd(reqId, fwdId) {
+  const deptSel = document.getElementById('reply-dept-' + fwdId);
+  const dept    = deptSel ? deptSel.value : '';
+  const r   = REQUESTS.find(x => x.id === reqId);
+  const fwd = r && r.forwards && r.forwards.find(x => x.id === fwdId);
+  if (!fwd || !fwd.toDepts.includes(dept)) { alert('Please select a receiving department to approve.'); return; }
+  if (!fwd.messages) fwd.messages = [];
+  const lastCts = [...fwd.messages].reverse().find(m => !fwd.toDepts.includes(m.dept));
+  const from    = lastCts ? new Date(lastCts.date) : new Date(fwd.sentDate);
+  const diffMs  = new Date() - from;
+  const dd = Math.floor(diffMs/86400000), hh = Math.floor((diffMs%86400000)/3600000), mm = Math.floor((diffMs%3600000)/60000);
+  const waitTime = dd > 0 ? `${dd}d ${hh}h ${mm}m` : hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+  const now = new Date();
+  fwd.messages.push({ type:'approval', from: dept + ' Team', dept, text:'', date: now.toLocaleDateString()+' '+now.toLocaleTimeString(), waitTime });
+  buildForwardsSection(r);
+  updateKPIs();
+}
+
+function submitFwdHold(reqId, fwdId) {
+  const deptSel  = document.getElementById('fwd-hold-dept-' + fwdId);
+  const reasonEl = document.getElementById('fwd-hold-reason-' + fwdId);
+  const dept     = deptSel ? deptSel.value : '';
+  const reason   = reasonEl ? reasonEl.value.trim() : '';
+  if (!reason) { alert('Please enter a reason for the hold.'); return; }
+  const r   = REQUESTS.find(x => x.id === reqId);
+  const fwd = r && r.forwards && r.forwards.find(x => x.id === fwdId);
+  if (!fwd) return;
+  const now = new Date();
+  fwd.holdState = { status:'active', dept, reason, startDate: now.toLocaleDateString()+' '+now.toLocaleTimeString(), startMs: now.getTime() };
+  if (!fwd.messages) fwd.messages = [];
+  fwd.messages.push({ type:'onhold', from: dept + ' Team', dept, text: reason, date: now.toLocaleDateString()+' '+now.toLocaleTimeString() });
+  if (reasonEl) reasonEl.value = '';
+  buildForwardsSection(r);
+}
+
+function resumeFwdHold(reqId, fwdId) {
+  const r   = REQUESTS.find(x => x.id === reqId);
+  const fwd = r && r.forwards && r.forwards.find(x => x.id === fwdId);
+  if (!fwd || !fwd.holdState) return;
+  const now     = new Date();
+  const diffMs  = now.getTime() - (fwd.holdState.startMs || now.getTime());
+  const dd = Math.floor(diffMs/86400000), hh = Math.floor((diffMs%86400000)/3600000), mm = Math.floor((diffMs%3600000)/60000);
+  const holdDuration = dd > 0 ? `${dd}d ${hh}h ${mm}m` : hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+  const dept = fwd.holdState.dept;
+  fwd.holdState = null;
+  fwd.messages.push({ type:'resume', from: dept + ' Team', dept, text:'', date: now.toLocaleDateString()+' '+now.toLocaleTimeString(), holdDuration });
+  buildForwardsSection(r);
+}
+
+/* ── Filtering ──────────────────────────────────────────────── */
+let chartCount=null, chartAvg=null;
+
+function filterData(f, dept) {
+  return REQUESTS.filter(r => {
+    if (f==='all')        return true;
+    if (f==='myteam')     return MY_TEAM.includes(r.assignedTo);
+    if (f==='mine')       return r.assignedTo === ME;
+    if (f==='dept')       return dept ? r.dept === dept : true;
+    if (f==='survey')     return r.stage === 'Survey';
+    if (f==='delivery')   return r.stage === 'Service Delivery';
+    if (f==='activation') return r.stage === 'Activation';
+    if (f==='done')       return r.stage === 'Done' || r.stage === 'Closed';
+    if (f==='new')        return r.stage === 'New';
+    if (f==='exceeded')      return !r.slaOk || r.deptExceeded.length > 0;
+    if (f==='onhold')        return r.onHoldData && r.onHoldData.some(o => o.status === 'pending');
+    if (f==='onhold-active') return r.onHoldData && r.onHoldData.some(o => o.status === 'approved');
+    if (f==='forwarded')     return r.forwards && r.forwards.some(fwd => {
+      const responded = new Set((fwd.messages||[]).filter(m => fwd.toDepts.includes(m.dept)).map(m => m.dept));
+      return fwd.toDepts.some(d => !responded.has(d));
+    });
+    return true;
+  });
+}
+
+function clearKpiActive() {
+  document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('kpi-active'));
+}
+
+function setFilter(btn, f) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('deptBtnLabel').textContent = 'Realtime Select Department';
+  clearKpiActive();
+  renderTable(f, null);
+}
+
+function kpiFilter(f) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  clearKpiActive();
+  document.getElementById('kpicard-' + f).classList.add('kpi-active');
+  renderTable(f, null);
+}
+
+function toggleDept(e) { e.stopPropagation(); document.getElementById('deptMenu').classList.toggle('open'); }
+
+function selectDept(dept) {
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('deptBtn').classList.add('active');
+  document.getElementById('deptBtnLabel').textContent = dept;
+  document.getElementById('deptMenu').classList.remove('open');
+  renderTable('dept', dept);
+}
+
+document.addEventListener('click', () => { const m = document.getElementById('deptMenu'); if (m) m.classList.remove('open'); });
+
+/* ── Table rendering ────────────────────────────────────────── */
+const TITLE_MAP = {
+  all:'All Activation Requests', myteam:'My Team Requests', mine:'My Requests',
+  dept:'Department Requests', survey:'Survey Stage Requests',
+  delivery:'Service Delivery Requests', activation:'Activation Stage Requests',
+  exceeded:'Exceeded SLA Requests',
+  'onhold':'On-Hold Requests', 'onhold-active':'Still Active On-Hold Requests',
+  'forwarded':'Forwarded — Pending Response',
+};
+
+function fmtQoS(val) {
+  return val >= 1000 ? (val/1000).toFixed(val%1000===0?0:1)+' Gbps' : val.toFixed(2);
+}
+
+function renderTable(f, dept) {
+  const data  = filterData(f, dept);
+  const title = dept ? `${dept} — Requests` : TITLE_MAP[f];
+  document.getElementById('tableTitle').textContent = title;
+  document.getElementById('recCount').textContent   = `${data.length} record(s)`;
+  if (!data.length) {
+    document.getElementById('reqBody').innerHTML =
+      `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-inbox"></i>No records match this filter</div></td></tr>`;
+    return;
+  }
+
+  const rows = data.map(r => {
+    /* time calc */
+    const endDate      = r.closedDate ? new Date(r.closedDate) : TODAY;
+    const totalDays    = daysDiff(r.openedDate, endDate);
+    const holdDays     = r.holdDays || 0;
+    const workDays     = Math.max(0, totalDays - holdDays);
+    const totalSlaDays = daysDiff(r.openedDate, r.sla);
+    const deptTarget   = DEPT_SLA[r.dept] || totalSlaDays;
+    const remainDays   = daysDiff(TODAY.toISOString().slice(0,10), r.sla);
+    const pct          = Math.min(Math.round(workDays / totalSlaDays * 100), 100);
+    const barColor     = !r.slaOk ? '#E74C3C' : pct>=80 ? '#FF9800' : '#27AE60';
+    const workColor    = !r.slaOk ? 'col-red'  : pct>=80 ? 'col-orange' : 'col-green';
+
+    /* SLA status text */
+    let slaStatus;
+    if (r.slaOk) {
+      slaStatus = r.closedDate
+        ? `<span style="color:#27AE60;font-size:11px;font-weight:600;"><i class="fas fa-check-circle"></i> Completed on time</span>`
+        : `<span style="color:#27AE60;font-size:11px;font-weight:600;"><i class="fas fa-check-circle"></i> ${remainDays}d left</span>`;
+    } else {
+      slaStatus = `<span style="color:#E74C3C;font-size:11px;font-weight:600;"><i class="fas fa-times-circle"></i> Overdue ${Math.abs(remainDays)}d</span>`;
+    }
+
+    /* badges */
+    const svc = SVC_STYLE[r.serviceType]||{bg:'#eee',color:'#555',icon:'fa-circle'};
+    const svcBadge = `<span class="svc-badge" style="background:${svc.bg};color:${svc.color};"><i class="fas ${svc.icon}" style="font-size:10px;"></i>${r.serviceType}</span>`;
+    const stg = STAGE_STYLE[r.stage]||{bg:'#eee',color:'#555'};
+
+    return `
+    <tr class="data-row ${!r.slaOk||r.deptExceeded.length>0?'row-exceeded':''}">
+      <td onclick="openRequest('${r.id}')" style="cursor:pointer;" title="Open request detail">
+        <div class="cid-main" style="text-decoration:underline;text-underline-offset:3px;">${r.cid}</div>
+        <div class="cid-ref">${r.id}</div>
+      </td>
+      <td><div class="cust-name">${r.customer}</div></td>
+      <td>${svcBadge}</td>
+      <td><span class="req-badge ${REQ_CLASS[r.requestType]||''}">${r.requestType}</span></td>
+      <td>
+        <span class="stage-badge" style="background:${stg.bg};color:${stg.color};">${r.stage}</span>
+        ${(()=>{
+          const o = STAGE_OWNER[r.stage];
+          const chips = [];
+          if (o) chips.push(`<span class="stage-owner-chip ${OWNER_CLS[o]||''}">${o}</span>`);
+          if (o && r.dept && r.dept !== o) chips.push(`<span class="stage-dept-tag">${r.dept}</span>`);
+          return chips.length ? `<div class="stage-chips">${chips.join('')}</div>` : '';
+        })()}
+        ${(()=>{
+          if (r.stage !== 'Survey' && r.stage !== 'Service Delivery') return '';
+          if (!r.forwards || !r.forwards.length) return '';
+          const pendingDepts = [...new Set(r.forwards.flatMap(fwd => {
+            const respondedSet = new Set((fwd.messages||[]).filter(m => fwd.toDepts.includes(m.dept)).map(m => m.dept));
+            return fwd.toDepts.filter(d => !respondedSet.has(d));
+          }))];
+          if (!pendingDepts.length) return '';
+          return `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px;align-items:center;">
+            <i class="fas fa-share-square" style="font-size:9px;color:#875A7B;"></i>
+            ${pendingDepts.map(d=>`<span style="background:#f3e5f5;color:#6A1B9A;border:1px solid #e1bee7;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;">${d}</span>`).join('')}
+          </div>`;
+        })()}
+      </td>
+      <td class="qos-cell"><div class="qos-val">${fmtQoS(r.qosUp)}</div><div class="qos-unit">${r.qosUp>=1000?'':'Mbps'}</div></td>
+      <td class="qos-cell"><div class="qos-val">${fmtQoS(r.qosDn)}</div><div class="qos-unit">${r.qosDn>=1000?'':'Mbps'}</div></td>
+      <td class="spent-cell">
+        <div class="spent-two">
+          <div class="spent-block">
+            <div class="spent-num col-neutral">${totalDays}</div>
+            <div class="spent-lbl">Total days</div>
+          </div>
+          <div class="spent-divider"></div>
+          <div class="spent-block">
+            <div class="spent-num ${workColor}">${workDays}</div>
+            <div class="spent-lbl">Working days</div>
+            ${holdDays>0?`<div class="spent-hold"><i class="fas fa-pause-circle" style="font-size:9px;"></i> ${holdDays}d on hold</div>`:''}
+          </div>
+        </div>
+        <div class="spent-since">Since ${r.openedDate}</div>
+      </td>
+      <td class="sla-prog-cell">
+        <div class="sla-days-row">${workDays}d working / ${totalSlaDays}d</div>
+        <div class="sla-bar-track"><div class="sla-bar-fill" style="width:${pct}%;background:${barColor};"></div></div>
+        <div class="sla-deadline">${slaStatus} &nbsp;·&nbsp; ${r.sla}</div>
+        ${r.deptExceeded&&r.deptExceeded.length>0
+          ?`<div class="sla-exc-depts">${r.deptExceeded.map(d=>{
+            const dl  = new Date(new Date(r.openedDate).getTime() + (DEPT_SLA[d]||7) * 86400000);
+            const ms  = Math.max(0, new Date() - dl);
+            const od  = Math.floor(ms / 86400000);
+            const oh  = Math.floor((ms % 86400000) / 3600000);
+            const om  = Math.floor((ms % 3600000)  / 60000);
+            const t   = od>0 ? `${od}d ${oh}h ${om}m` : oh>0 ? `${oh}h ${om}m` : `${om}m`;
+            return `<span class="dept-tag dept-tag-exceeded"><i class="fas fa-exclamation-circle" style="font-size:9px;"></i>${d}<span class="dept-overdue-time">${t}</span></span>`;
+          }).join('')}</div>`
+          :''}
+      </td>
+    </tr>`;
+  });
+
+  document.getElementById('reqBody').innerHTML = rows.join('');
+}
+
+/* ── KPI & badge counts ─────────────────────────────────────── */
+function updateKPIs() {
+  const R = REQUESTS;
+  document.getElementById('kpi-total').textContent     = R.length;
+  document.getElementById('kpi-new').textContent       = R.filter(r=>r.stage==='New').length;
+  document.getElementById('kpi-survey').textContent    = R.filter(r=>r.stage==='Survey').length;
+  document.getElementById('kpi-delivery').textContent  = R.filter(r=>r.stage==='Service Delivery').length;
+  document.getElementById('kpi-done').textContent      = R.filter(r=>r.stage==='Done'||r.stage==='Closed').length;
+  document.getElementById('kpi-exceeded').textContent  = R.filter(r=>!r.slaOk||r.deptExceeded.length>0).length;
+  document.getElementById('cnt-all').textContent        = R.length;
+  document.getElementById('cnt-myteam').textContent     = filterData('myteam').length;
+  document.getElementById('cnt-mine').textContent       = filterData('mine').length;
+  document.getElementById('cnt-survey').textContent     = filterData('survey').length;
+  document.getElementById('cnt-delivery').textContent   = filterData('delivery').length;
+  document.getElementById('cnt-activation').textContent = filterData('activation').length;
+  document.getElementById('cnt-exceeded').textContent      = filterData('exceeded').length;
+  document.getElementById('cnt-onhold').textContent        = filterData('onhold').length;
+  document.getElementById('cnt-onhold-active').textContent = filterData('onhold-active').length;
+  document.getElementById('cnt-forwarded').textContent     = filterData('forwarded').length;
+}
+
+/* ── Charts ─────────────────────────────────────────────────── */
+function buildCharts() {
+  const depts = Object.keys(DEPT_SLA);
+
+  /* Chart 1: SLA count */
+  const within   = depts.map(d=>REQUESTS.filter(r=>r.dept===d&&r.slaOk&&r.deptExceeded.length===0).length);
+  const exceeded = depts.map(d=>REQUESTS.filter(r=>r.dept===d&&(!r.slaOk||r.deptExceeded.includes(d))).length);
+  if (chartCount) chartCount.destroy();
+  chartCount = new Chart(document.getElementById('slaCountChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:depts,datasets:[
+      {label:'Within SLA',data:within,backgroundColor:'rgba(39,174,96,.75)',borderColor:'#27AE60',borderWidth:1,borderRadius:4},
+      {label:'Exceeded SLA',data:exceeded,backgroundColor:'rgba(231,76,60,.75)',borderColor:'#E74C3C',borderWidth:1,borderRadius:4},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},tooltip:{callbacks:{footer:items=>`Total: ${items.reduce((s,i)=>s+i.raw,0)}`}}},
+      scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}},x:{grid:{display:false}}},
+    },
+  });
+
+  /* Chart 2: avg spent vs target */
+  const avgSpent = depts.map(d=>{
+    const dr=REQUESTS.filter(r=>r.dept===d);
+    if(!dr.length)return 0;
+    const tot=dr.reduce((s,r)=>{const e=r.closedDate?new Date(r.closedDate):TODAY;return s+Math.max(0,daysDiff(r.openedDate,e)-(r.holdDays||0));},0);
+    return Math.round((tot/dr.length)*10)/10;
+  });
+  const targets = depts.map(d=>DEPT_SLA[d]);
+  if (chartAvg) chartAvg.destroy();
+  chartAvg = new Chart(document.getElementById('slaAvgChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:depts,datasets:[
+      {type:'bar',label:'Avg Working Days',data:avgSpent,
+        backgroundColor:avgSpent.map((v,i)=>v>targets[i]?'rgba(231,76,60,.70)':'rgba(30,126,197,.70)'),
+        borderColor:avgSpent.map((v,i)=>v>targets[i]?'#E74C3C':'#1E7EC5'),borderWidth:1,borderRadius:4},
+      {type:'line',label:'Dept SLA Target (days)',data:targets,
+        borderColor:'#E67E22',backgroundColor:'transparent',borderDash:[5,4],
+        pointBackgroundColor:'#E67E22',pointRadius:5,tension:0},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},tooltip:{mode:'index',intersect:false}},
+      scales:{y:{beginAtZero:true,title:{display:true,text:'Days',color:'#999',font:{size:11}},grid:{color:'#f0f0f0'}},x:{grid:{display:false}}},
+    },
+  });
+
+}
+
+/* ── Live clock ─────────────────────────────────────────────── */
+function startClock() {
+  setInterval(()=>{const el=document.getElementById('lastUpdate');if(el)el.textContent=new Date().toLocaleTimeString();},5000);
+}
+
+/* ── Init ───────────────────────────────────────────────────── */
+let initialized = false;
+function initDashboard() {
+  if (initialized) return;
+  initialized = true;
+  updateKPIs();
+  renderTable('all', null);
+  buildCharts();
+  startClock();
+}
+
+nav('home');
+</script>
+</body>
+</html>
