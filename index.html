@@ -338,6 +338,115 @@
     .fwd-approval-bubble { background:#e8f5e9; border:2px solid #27AE60; border-radius:12px; border-bottom-left-radius:3px; padding:10px 16px; display:inline-flex; align-items:center; gap:8px; max-width:80%; }
     .f-btn.fwd-btn { border-color:#875A7B; color:#875A7B; }
     .f-btn.fwd-btn:hover,.f-btn.fwd-btn.active { background:#875A7B; border-color:#875A7B; color:#fff; }
+
+    /* ── Settings ── */
+    .settings-overlay { position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center; }
+    .settings-overlay.hidden { display:none; }
+    .settings-panel { background:#fff;border-radius:10px;width:800px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden; }
+    .settings-header { background:#875A7B;color:#fff;padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .settings-header h2 { font-size:16px;font-weight:700;flex:1;margin:0; }
+    .settings-close-btn { background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:5px;cursor:pointer;font-size:14px; }
+    .settings-tabs { display:flex;border-bottom:2px solid #e0e0e0;background:#fafafa;flex-shrink:0; }
+    .settings-tab { padding:10px 22px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:#888;transition:all .15s; }
+    .settings-tab.active { color:#875A7B;border-bottom-color:#875A7B;background:#fff; }
+    .settings-body { flex:1;overflow-y:auto;padding:20px; }
+    .settings-section-title { font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px; }
+    .settings-stage-table { width:100%;border-collapse:collapse;font-size:12px; }
+    .settings-stage-table th { background:#f5f5f5;padding:7px 12px;text-align:left;font-weight:600;color:#555;border:1px solid #e0e0e0; }
+    .settings-stage-table td { padding:6px 12px;border:1px solid #e0e0e0; }
+    .settings-sla-input { width:65px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;font-size:12px;text-align:center; }
+    .settings-dept-col { display:flex;height:420px;border:1px solid #e0e0e0;border-radius:6px;overflow:hidden; }
+    .settings-dept-list { width:200px;border-right:1px solid #e0e0e0;overflow-y:auto;flex-shrink:0; }
+    .settings-dept-item { padding:9px 14px;font-size:12px;cursor:pointer;border-bottom:1px solid #f0f0f0;transition:background .1s; }
+    .settings-dept-item:hover { background:#f5f5f5; }
+    .settings-dept-item.active { background:#f3e5f5;color:#6A1B9A;font-weight:700; }
+    .settings-wt-panel { flex:1;padding:14px;overflow-y:auto; }
+    .settings-wt-row { display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5; }
+    .settings-wt-row:last-child { border-bottom:none; }
+    .settings-wt-name { flex:1;font-size:12px;font-weight:600;color:#333; }
+    .settings-wt-sla { background:#e8f5e9;color:#1B5E20;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700; }
+    .settings-wt-del { background:none;border:none;color:#ccc;cursor:pointer;font-size:12px;padding:3px; }
+    .settings-wt-del:hover { color:#E74C3C; }
+    .settings-add-form { display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #e0e0e0; }
+    .settings-add-input { flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:12px; }
+    .settings-add-sla { width:70px;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:12px;text-align:center; }
+    .settings-add-btn { padding:6px 14px;background:#875A7B;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer; }
+    .settings-save-bar { padding:12px 20px;border-top:1px solid #e0e0e0;background:#fafafa;display:flex;justify-content:flex-end;gap:10px;flex-shrink:0; }
+    .settings-save-btn { padding:8px 22px;background:#875A7B;color:#fff;border:none;border-radius:5px;font-size:13px;font-weight:700;cursor:pointer; }
+    .nav-settings-btn { background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:4px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:4px; }
+    .nav-settings-btn:hover { background:rgba(255,255,255,.28); }
+    .fwd-wt-section { background:#f9f5fb;border:1px solid #e1bee7;border-radius:6px;padding:10px 12px;margin-bottom:10px; }
+    .fwd-wt-row { display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #ede7f6; }
+    .fwd-wt-row:last-child { border-bottom:none; }
+    .fwd-wt-dept-label { width:140px;font-size:11px;font-weight:700;color:#6A1B9A;flex-shrink:0; }
+    .fwd-wt-select { flex:1;padding:4px 8px;border:1px solid #ce93d8;border-radius:4px;font-size:11px;background:#fff; }
+    .fwd-wt-sla-badge { background:#e8f5e9;color:#1B5E20;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap; }
+    .fwd-wt-manual { width:65px;padding:4px 8px;border:1px solid #ce93d8;border-radius:4px;font-size:11px;text-align:center; }
+
+/* ── Justification & Reports modals ── */
+.jus-overlay,.rpt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center;}
+.jus-overlay.hidden,.rpt-overlay.hidden{display:none;}
+.jus-panel,.rpt-panel{background:#fff;border-radius:10px;width:860px;max-width:96vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden;}
+.jus-header,.rpt-header{padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;color:#fff;}
+.jus-header{background:#C62828;}
+.rpt-header{background:#1565C0;}
+.jus-header h2,.rpt-header h2{font-size:16px;font-weight:700;flex:1;margin:0;}
+.modal-close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:5px;cursor:pointer;font-size:14px;}
+.jus-body,.rpt-body{flex:1;overflow-y:auto;padding:18px;}
+.jus-card{border:1px solid #ffcdd2;border-radius:8px;padding:14px 16px;margin-bottom:12px;background:#fff9f9;}
+.jus-card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.jus-overdue-badge{background:#E74C3C;color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;}
+.jus-approved-badge{background:#1B5E20;color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+.jus-submitted-badge{background:#1565C0;color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+.jus-textarea{width:100%;border:1px solid #ddd;border-radius:4px;padding:8px;font-size:12px;resize:vertical;min-height:70px;font-family:inherit;}
+.jus-action-row{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+.jus-submit-btn{padding:6px 14px;background:#E74C3C;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;}
+.jus-approve-btn{padding:6px 14px;background:#1B5E20;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;}
+.rpt-tabs{display:flex;border-bottom:2px solid #e0e0e0;background:#fafafa;flex-shrink:0;}
+.rpt-tab{padding:10px 20px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:#888;transition:all .15s;}
+.rpt-tab.active{color:#1565C0;border-bottom-color:#1565C0;background:#fff;}
+.rpt-period{display:flex;gap:6px;margin-bottom:14px;}
+.rpt-period-btn{padding:5px 14px;border:1px solid #ddd;background:#fff;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;color:#555;}
+.rpt-period-btn.active{background:#1565C0;color:#fff;border-color:#1565C0;}
+.rpt-table{width:100%;border-collapse:collapse;font-size:12px;}
+.rpt-table th{background:#f5f5f5;padding:8px 12px;text-align:left;font-weight:700;color:#555;border:1px solid #e0e0e0;white-space:nowrap;}
+.rpt-table td{padding:7px 12px;border:1px solid #e0e0e0;}
+.rpt-table tr:hover td{background:#f9f9f9;}
+.rpt-pct-bar{height:8px;border-radius:4px;background:#e0e0e0;margin-top:3px;}
+.rpt-pct-fill{height:100%;border-radius:4px;}
+.rpt-kpi-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.rpt-kpi{flex:1;min-width:120px;background:#f5f5f5;border-radius:8px;padding:12px 14px;text-align:center;}
+.rpt-kpi-val{font-size:24px;font-weight:700;color:#1565C0;}
+.rpt-kpi-lbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.4px;}
+
+/* ── Reports page ── */
+#reportsPage { padding: 0; }
+.rpt-page-header { background:#1565C0; color:#fff; padding:16px 24px; display:flex; align-items:center; gap:14px; }
+.rpt-page-header h2 { font-size:18px; font-weight:700; margin:0; flex:1; }
+.rpt-page-content { padding:20px 24px; }
+.rpt-period-bar { display:flex; gap:8px; margin-bottom:18px; align-items:center; }
+.rpt-period-bar span { font-size:12px; font-weight:600; color:#666; margin-right:4px; }
+.rpt-prd-btn { padding:6px 16px; border:1px solid #ddd; background:#fff; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; color:#555; transition:all .15s; }
+.rpt-prd-btn.active { background:#1565C0; color:#fff; border-color:#1565C0; }
+.rpt-kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px; }
+@media(max-width:900px){.rpt-kpi-row{grid-template-columns:repeat(3,1fr);}}
+.rpt-kpi-card { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:16px 18px; text-align:center; }
+.rpt-kpi-card .val { font-size:28px; font-weight:700; line-height:1.1; }
+.rpt-kpi-card .lbl { font-size:10px; color:#aaa; text-transform:uppercase; letter-spacing:.5px; margin-top:4px; }
+.rpt-charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+@media(max-width:900px){.rpt-charts-grid{grid-template-columns:1fr;}}
+.rpt-chart-card { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:20px 22px; }
+.rpt-chart-card h3 { font-size:14px; font-weight:600; color:#333; margin:0 0 2px; }
+.rpt-chart-card p { font-size:11px; color:#aaa; margin:0 0 14px; }
+.rpt-chart-wrap { position:relative; height:240px; }
+.rpt-chart-wrap-sm { position:relative; height:200px; }
+.rpt-emp-table { width:100%; border-collapse:collapse; font-size:12px; }
+.rpt-emp-table th { background:#f5f5f5; padding:8px 12px; text-align:left; font-weight:700; color:#555; border-bottom:2px solid #e0e0e0; }
+.rpt-emp-table td { padding:8px 12px; border-bottom:1px solid #f0f0f0; }
+.rpt-emp-table tr:hover td { background:#f9f9f9; }
+.rpt-mini-bar-track { height:6px; background:#f0f0f0; border-radius:3px; margin-top:3px; min-width:80px; }
+.rpt-mini-bar-fill { height:100%; border-radius:3px; }
+.rpt-section-title { font-size:13px; font-weight:700; color:#333; margin:0 0 12px; display:flex; align-items:center; gap:8px; }
   </style>
 </head>
 <body>
@@ -348,6 +457,7 @@
   <span class="nav-brand" onclick="nav('home')">TelecomOps — CTS</span>
   <span class="spacer"></span>
   <input class="nav-search" type="text" placeholder="Search…" />
+  <button class="nav-settings-btn" onclick="openSettings()" title="Settings"><i class="fas fa-cog"></i></button>
   <div class="nav-user" title="Ahmed Hassan">AH</div>
 </nav>
 
@@ -363,7 +473,7 @@
       <div class="app-tile"><div class="app-tile-icon bg-blue"><i class="fas fa-users"></i></div><span class="app-tile-label">Customers</span></div>
       <div class="app-tile"><div class="app-tile-icon bg-teal"><i class="fas fa-network-wired"></i></div><span class="app-tile-label">Network Management</span></div>
       <div class="app-tile"><div class="app-tile-icon bg-orange"><i class="fas fa-file-invoice"></i></div><span class="app-tile-label">Billing</span></div>
-      <div class="app-tile"><div class="app-tile-icon bg-green"><i class="fas fa-chart-bar"></i></div><span class="app-tile-label">Reports</span></div>
+      <div class="app-tile" onclick="nav('reports')"><div class="app-tile-icon bg-green"><i class="fas fa-chart-bar"></i></div><span class="app-tile-label">Reports</span></div>
       <div class="app-tile"><div class="app-tile-icon bg-indigo"><i class="fas fa-ticket-alt"></i></div><span class="app-tile-label">Helpdesk</span></div>
       <div class="app-tile"><div class="app-tile-icon bg-amber"><i class="fas fa-tasks"></i></div><span class="app-tile-label">Project</span></div>
       <div class="app-tile"><div class="app-tile-icon bg-red"><i class="fas fa-cog"></i></div><span class="app-tile-label">Settings</span></div>
@@ -422,6 +532,8 @@
     <button class="f-btn oh-btn"  onclick="setFilter(this,'onhold')"><i class="fas fa-pause-circle"></i> On-Hold Requests <span class="cnt" id="cnt-onhold">0</span></button>
     <button class="f-btn oha-btn" onclick="setFilter(this,'onhold-active')"><i class="fas fa-pause"></i> Still On-Hold <span class="cnt" id="cnt-onhold-active">0</span></button>
     <button class="f-btn fwd-btn" onclick="setFilter(this,'forwarded')"><i class="fas fa-share-square"></i> Forwarded — Pending Response <span class="cnt" id="cnt-forwarded">0</span></button>
+    <button class="f-btn" onclick="openJustificationModal()" style="border-color:#E74C3C;color:#E74C3C;" id="jus-btn"><i class="fas fa-exclamation-circle"></i> SLA Justification <span class="cnt" id="cnt-jus" style="background:#E74C3C;">0</span></button>
+    <button class="f-btn" onclick="openReportsModal()" style="border-color:#1E7EC5;color:#1E7EC5;"><i class="fas fa-chart-bar"></i> Reports</button>
   </div>
 
   <div class="o-content">
@@ -476,6 +588,73 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ══════ REPORTS PAGE ══════ -->
+<div id="reportsPage" class="page hidden">
+  <div class="o-breadcrumb">
+    <a onclick="nav('home')"><i class="fas fa-home"></i> Home</a>
+    <span style="font-size:9px;"><i class="fas fa-chevron-right"></i></span>
+    <span style="color:#333;font-weight:600;">Reports</span>
+  </div>
+  <div class="rpt-page-header">
+    <i class="fas fa-chart-bar" style="font-size:22px;opacity:.8;"></i>
+    <h2>Performance Reports</h2>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span style="font-size:12px;opacity:.7;">Period:</span>
+      <button class="rpt-prd-btn active" data-period="month" onclick="setRptPeriod(this,'month')">Last 30 Days</button>
+      <button class="rpt-prd-btn" data-period="week" onclick="setRptPeriod(this,'week')">Last 7 Days</button>
+      <button class="rpt-prd-btn" data-period="all" onclick="setRptPeriod(this,'all')">All Time</button>
+    </div>
+  </div>
+  <div class="rpt-page-content">
+    <!-- KPI row -->
+    <div class="rpt-kpi-row" id="rpt-kpis"></div>
+    <!-- Charts row 1: Dept SLA + Avg Days -->
+    <div class="rpt-charts-grid">
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-building" style="color:#875A7B;margin-right:7px;"></i>SLA Performance by Department</h3>
+        <p>On-time vs exceeded SLA — direct stage ownership</p>
+        <div class="rpt-chart-wrap"><canvas id="rptDeptSlaChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-stopwatch" style="color:#1E7EC5;margin-right:7px;"></i>Avg Working Days vs SLA Target</h3>
+        <p>Average days spent per department vs their allowed SLA</p>
+        <div class="rpt-chart-wrap"><canvas id="rptAvgDaysChart"></canvas></div>
+      </div>
+    </div>
+    <!-- Charts row 2: Stage + Forward -->
+    <div class="rpt-charts-grid">
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-layer-group" style="color:#00A09D;margin-right:7px;"></i>Stage Performance</h3>
+        <p>On-time % per stage — horizontal view</p>
+        <div class="rpt-chart-wrap"><canvas id="rptStageChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-share-square" style="color:#E67E22;margin-right:7px;"></i>Forward Response Rate by Department</h3>
+        <p>On-time vs overdue forward responses per receiving dept</p>
+        <div class="rpt-chart-wrap"><canvas id="rptFwdChart"></canvas></div>
+      </div>
+    </div>
+    <!-- Charts row 3: Trend + Volume -->
+    <div class="rpt-charts-grid">
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-chart-line" style="color:#27AE60;margin-right:7px;"></i>On-Time Rate Trend</h3>
+        <p>Weekly on-time compliance rate over time</p>
+        <div class="rpt-chart-wrap"><canvas id="rptTrendChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-chart-pie" style="color:#5C6BC0;margin-right:7px;"></i>Request Volume by Stage</h3>
+        <p>Distribution of requests currently across all stages</p>
+        <div class="rpt-chart-wrap-sm"><canvas id="rptStageVolChart"></canvas></div>
+      </div>
+    </div>
+    <!-- Employee table -->
+    <div class="rpt-chart-card" style="margin-bottom:20px;">
+      <div class="rpt-section-title"><i class="fas fa-users" style="color:#875A7B;"></i> Employee Activity</div>
+      <div id="rpt-emp-table-wrap"></div>
+    </div>
   </div>
 </div>
 
@@ -568,7 +747,65 @@ const FORWARD_GROUPS = {
   'Fiber Team': { depts:['Fiber Operation','Fiber Planning'], icon:'fa-broadcast-tower', color:'#00A09D' },
 };
 
+/* ── User-configurable settings (persisted to localStorage) ── */
+let SETTINGS = (function(){
+  const defaults = {
+    stageSLA: {
+      'New':2,'Select Related Department':1,'Availability Confirm':3,
+      'Survey':10,'Service Delivery':14,'Service Activation':3,
+      'WS Request':3,'WS Discuss':5,'Wholesale Manager (Prior Sign)':3,
+      'Wholesale Manager (Pre-C)':3,'Contract Signed':2,'Adv Billing':2,
+      'Wholesale Manager':3,'Wh Activity':5,'Billing':2,
+      'Contract Drafted':5,'Legal Contract':5,'Legal Manager':3,'Done':0,'Closed':0,
+    },
+    weekends: ['Friday','Saturday'],
+    justificationThreshold: 2,
+    deptManagers: {
+      'Wholesale':'Mahmoud Hassan','CTS':'Ahmed Hassan',
+      'Fiber Operation':'Hassan Omar','Fiber Planning':'Ali Karimi',
+      'IP Core':'Rania Salam','Optics':'Karim Adel',
+      'Cyber Security':'Lena Mustafa','IN':'Faris Hadi',
+      'Packet Core':'Sana Ibrahim','Procurement':'Sara Ahmed',
+      'Voice (DTD)':'Tariq Moussa','RF':'Nour Salih',
+      'NOC':'Zaid Nouri','PMO':'Layla Hassan','CIVIL':'Murad Farhan','Power':'Basim Kamal',
+    },
+    holidays: [],
+    stageWorkTypes: {
+      'Survey': {
+        'Fiber Operation': [{name:'Arial Fiber',sla:5},{name:'Trench Fiber',sla:10},{name:'Splicing',sla:3}],
+        'Fiber Planning':  [{name:'Route Survey',sla:7},{name:'Design Review',sla:5}],
+        'IP Core':         [{name:'IP Config',sla:3},{name:'BGP Setup',sla:5}],
+        'Procurement':     [{name:'Material Request',sla:10}],
+        'NOC':             [{name:'Link Test',sla:2}],
+      },
+      'Service Delivery': {
+        'Fiber Operation': [{name:'Arial Fiber',sla:5},{name:'Trench Fiber',sla:10},{name:'Splicing',sla:3}],
+        'Fiber Planning':  [{name:'Route Survey',sla:7}],
+        'IP Core':         [{name:'IP Config',sla:3},{name:'BGP Setup',sla:5},{name:'MPLS Config',sla:4}],
+        'Procurement':     [{name:'Material Request',sla:10},{name:'Quotation',sla:7}],
+        'NOC':             [{name:'Link Test',sla:2},{name:'Monitoring Setup',sla:3}],
+      },
+    }
+  };
+  try { const s=localStorage.getItem('telecom_settings'); if(s) return JSON.parse(s); } catch(e){}
+  return defaults;
+})();
+
 function daysDiff(from, to) { return Math.round((new Date(to) - new Date(from)) / 86400000); }
+
+function calcWorkDays(fromStr, toDate) {
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const wkdNums  = (SETTINGS.weekends || []).map(d => dayNames.indexOf(d)).filter(n => n >= 0);
+  const hdSet    = new Set(SETTINGS.holidays || []);
+  let count = 0;
+  const cur = new Date(fromStr); cur.setHours(0,0,0,0);
+  const end = new Date(toDate);  end.setHours(0,0,0,0);
+  while (cur < end) {
+    if (!wkdNums.includes(cur.getDay()) && !hdSet.has(cur.toISOString().slice(0,10))) count++;
+    cur.setDate(cur.getDate() + 1);
+  }
+  return count;
+}
 
 /* ── Stage ownership ────────────────────────────────────────── */
 const STAGE_OWNER = {
@@ -793,7 +1030,9 @@ function nav(page) {
   document.getElementById('homePage').classList.toggle('hidden', page !== 'home');
   document.getElementById('dashboardPage').classList.toggle('hidden', page !== 'dashboard');
   document.getElementById('requestPage').classList.toggle('hidden', page !== 'request');
+  document.getElementById('reportsPage').classList.toggle('hidden', page !== 'reports');
   if (page === 'dashboard') initDashboard();
+  if (page === 'reports') buildReportsPage();
 }
 
 /* ── Request detail ─────────────────────────────────────────── */
@@ -832,7 +1071,7 @@ function openRequest(id) {
   /* SLA grid */
   const endDate   = r.closedDate ? new Date(r.closedDate) : TODAY;
   const totalDays = daysDiff(r.openedDate, endDate);
-  const workDays  = Math.max(0, totalDays - (r.holdDays||0));
+  const workDays  = Math.max(0, calcWorkDays(r.openedDate, endDate) - (r.holdDays||0));
   const totalSla  = daysDiff(r.openedDate, r.sla);
   const pct       = Math.min(Math.round(workDays/totalSla*100), 100);
   const barColor  = !r.slaOk ? '#E74C3C' : pct>=80 ? '#FF9800' : '#27AE60';
@@ -1036,6 +1275,7 @@ const FWD_PALETTE = ['#1E7EC5','#00A09D','#E67E22','#27AE60','#5C6BC0','#AD1457'
 function buildForwardsSection(r) {
   const wrap = document.getElementById('req-forwards-content');
   if (!wrap) return;
+  _currentFwdStage = r.stage;
   const forwards = r.forwards || [];
 
   const cardsHtml = forwards.map(fwd => {
@@ -1094,7 +1334,7 @@ function buildForwardsSection(r) {
     const rendered = new Set();
     jointGroups.forEach(group => {
       const grpComplete = group.every(d => respondedSet.has(d));
-      const grpOverdue  = !grpComplete && group.some(d => sentMs > (DEPT_SLA[d]||7)*86400000);
+      const grpOverdue  = !grpComplete && group.some(d => sentMs > ((fwd.deptSLAs&&fwd.deptSLAs[d])||DEPT_SLA[d]||7)*86400000);
       group.forEach((d, di) => {
         let style, icon;
         if (grpComplete) {
@@ -1129,7 +1369,7 @@ function buildForwardsSection(r) {
     jointGroups.forEach(group => {
       const grpComplete      = group.every(d => respondedSet.has(d));
       if (grpComplete) return;
-      const grpOverdue       = group.some(d => sentMs > (DEPT_SLA[d]||7)*86400000);
+      const grpOverdue       = group.some(d => sentMs > ((fwd.deptSLAs&&fwd.deptSLAs[d])||DEPT_SLA[d]||7)*86400000);
       const respondedInGroup = group.filter(d => respondedSet.has(d));
       const pendingInGroup   = group.filter(d => !respondedSet.has(d));
       const od = Math.floor(sentMs/86400000), oh = Math.floor((sentMs%86400000)/3600000);
@@ -1187,6 +1427,7 @@ function buildForwardsSection(r) {
         <div style="flex:1;">
           <div class="fwd-subject">${fwd.subject}</div>
           <div class="fwd-meta"><i class="fas fa-user" style="font-size:9px;"></i> ${fwd.sentBy} · ${fwd.sentByDept} &nbsp;·&nbsp; <i class="fas fa-clock" style="font-size:9px;"></i> ${fwd.sentDate}</div>
+          ${fwd.deptWorkTypes && Object.keys(fwd.deptWorkTypes).length ? `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">${Object.entries(fwd.deptWorkTypes).map(([d,wt])=>`<span style="background:#e8f5e9;color:#1B5E20;border:1px solid #A5D6A7;padding:1px 7px;border-radius:10px;font-size:9px;font-weight:700;"><i class="fas fa-tools" style="font-size:8px;margin-right:2px;"></i>${d}: ${wt} <span style="color:#aaa;font-weight:400;">${fwd.deptSLAs&&fwd.deptSLAs[d]?'('+fwd.deptSLAs[d]+'d SLA)':''}</span></span>`).join('')}</div>` : ''}
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
           ${holdToggleBtn}
@@ -1226,7 +1467,7 @@ function buildForwardsSection(r) {
 
   const deptCheckboxes = Object.keys(DEPT_SLA).map(d =>
     `<label style="display:inline-flex;align-items:center;gap:4px;background:#f5f5f5;border:1px solid #ddd;border-radius:4px;padding:4px 9px;font-size:11px;cursor:pointer;">
-       <input type="checkbox" value="${d}" style="margin:0;"> ${d}
+       <input type="checkbox" value="${d}" style="margin:0;" onchange="updateFwdWorkTypes()"> ${d}
      </label>`).join('');
 
   wrap.innerHTML = `
@@ -1245,6 +1486,7 @@ function buildForwardsSection(r) {
         <label style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Individual Departments</label>
         <div id="fwd-dept-selector" style="display:flex;flex-wrap:wrap;gap:6px;">${deptCheckboxes}</div>
       </div>
+      <div id="fwd-wt-container"></div>
       <div style="margin-bottom:8px;">
         <label style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px;">Subject</label>
         <input id="fwd-subject-input" type="text" placeholder="Forward subject…">
@@ -1288,6 +1530,7 @@ function toggleFwdGroup(name) {
       if (cb) { cb.checked = true; cb.disabled = true; if (cb.parentElement) cb.parentElement.style.opacity = '.5'; }
     });
   }
+  updateFwdWorkTypes();
 }
 
 function submitForward(reqId) {
@@ -1301,12 +1544,27 @@ function submitForward(reqId) {
   if (!subject)        { alert('Please enter a subject.'); return; }
   if (!checked.length) { alert('Please select at least one department or group.'); return; }
   if (!body)           { alert('Please enter a message.'); return; }
+  /* collect work types & SLAs per dept */
+  const deptWorkTypes = {}, deptSLAs = {};
+  checked.forEach(d => {
+    const key  = 'fwd-wt-' + d.replace(/\s+/g,'-');
+    const wtEl = document.getElementById(key);
+    if (wtEl && wtEl.tagName === 'SELECT' && wtEl.value) {
+      const opt = wtEl.options[wtEl.selectedIndex];
+      deptWorkTypes[d] = wtEl.value;
+      deptSLAs[d]      = parseInt(opt.dataset.sla) || DEPT_SLA[d] || 7;
+    } else if (wtEl && wtEl.tagName === 'INPUT') {
+      deptSLAs[d] = parseInt(wtEl.value) || DEPT_SLA[d] || 7;
+    } else {
+      deptSLAs[d] = DEPT_SLA[d] || 7;
+    }
+  });
   const r = REQUESTS.find(x => x.id === reqId);
   if (!r) return;
   if (!r.forwards) r.forwards = [];
   const now     = new Date();
   const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-  r.forwards.unshift({ id:'FWD-'+Date.now(), sentBy:ME, sentByDept:'CTS', sentDate:dateStr, toDepts:checked, jointGroups, subject, body, messages:[] });
+  r.forwards.unshift({ id:'FWD-'+Date.now(), sentBy:ME, sentByDept:'CTS', sentDate:dateStr, toDepts:checked, jointGroups, deptWorkTypes, deptSLAs, subject, body, messages:[] });
   /* reset form */
   document.getElementById('fwd-subject-input').value = '';
   document.getElementById('fwd-body-input').value    = '';
@@ -1484,7 +1742,7 @@ function renderTable(f, dept) {
     const endDate      = r.closedDate ? new Date(r.closedDate) : TODAY;
     const totalDays    = daysDiff(r.openedDate, endDate);
     const holdDays     = r.holdDays || 0;
-    const workDays     = Math.max(0, totalDays - holdDays);
+    const workDays     = Math.max(0, calcWorkDays(r.openedDate, endDate) - holdDays);
     const totalSlaDays = daysDiff(r.openedDate, r.sla);
     const deptTarget   = DEPT_SLA[r.dept] || totalSlaDays;
     const remainDays   = daysDiff(TODAY.toISOString().slice(0,10), r.sla);
@@ -1563,7 +1821,7 @@ function renderTable(f, dept) {
         ${r.deptExceeded&&r.deptExceeded.length>0
           ?`<div class="sla-exc-depts">${r.deptExceeded.map(d=>{
             const dl  = new Date(new Date(r.openedDate).getTime() + (DEPT_SLA[d]||7) * 86400000);
-            const ms  = Math.max(0, new Date() - dl);
+            const ms  = Math.max(0, TODAY - dl);
             const od  = Math.floor(ms / 86400000);
             const oh  = Math.floor((ms % 86400000) / 3600000);
             const om  = Math.floor((ms % 3600000)  / 60000);
@@ -1597,6 +1855,7 @@ function updateKPIs() {
   document.getElementById('cnt-onhold').textContent        = filterData('onhold').length;
   document.getElementById('cnt-onhold-active').textContent = filterData('onhold-active').length;
   document.getElementById('cnt-forwarded').textContent     = filterData('forwarded').length;
+  updateJusBadge();
 }
 
 /* ── Charts ─────────────────────────────────────────────────── */
@@ -1662,7 +1921,923 @@ function initDashboard() {
   startClock();
 }
 
+/* ── Settings panel ─────────────────────────────────────────── */
+let _settingsActiveStage = null;
+let _settingsActiveTab   = 'stage';
+
+function openSettings() {
+  _settingsActiveTab = 'stage';
+  document.getElementById('settings-tab-stage').style.display = '';
+  document.getElementById('settings-tab-dept').style.display  = 'none';
+  document.getElementById('stab-stage').classList.add('active');
+  document.getElementById('stab-dept').classList.remove('active');
+  renderSettingsStageTab();
+  document.getElementById('settingsOverlay').classList.remove('hidden');
+}
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.add('hidden');
+}
+function switchSettingsTab(tab) {
+  _settingsActiveTab = tab;
+  ['stage','dept','holidays','managers'].forEach(t => {
+    document.getElementById('settings-tab-'+t).style.display = tab===t ? '' : 'none';
+    document.getElementById('stab-'+t).classList.toggle('active', tab===t);
+  });
+  if (tab === 'dept')     renderSettingsDeptTab();
+  if (tab === 'holidays') renderSettingsHolidaysTab();
+  if (tab === 'managers') renderSettingsManagersTab();
+}
+
+function renderSettingsStageTab() {
+  const stages = [...new Set(Object.keys(STAGE_OWNER))];
+  const rows = stages.map(s => {
+    const owner = STAGE_OWNER[s] || '';
+    const sla   = SETTINGS.stageSLA[s] !== undefined ? SETTINGS.stageSLA[s] : '';
+    return `<tr>
+      <td>${s}</td>
+      <td style="text-align:center;"><span style="font-size:10px;color:#aaa;">${owner}</span></td>
+      <td style="text-align:center;"><input class="settings-sla-input" type="number" min="0" max="365" value="${sla}" data-stage="${s}" placeholder="—"></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('settings-tab-stage').innerHTML = `
+    <div class="settings-section-title">Main Stage SLA (working days)</div>
+    <table class="settings-stage-table">
+      <thead><tr><th>Stage</th><th style="text-align:center;">Owner</th><th style="width:100px;text-align:center;">SLA (days)</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderSettingsDeptTab() {
+  const stages    = [...new Set(Object.keys(STAGE_OWNER))];
+  const stageList = stages.map(s => {
+    const fwdOk  = s === 'Survey' || s === 'Service Delivery';
+    const active = s === _settingsActiveStage;
+    const sd     = SETTINGS.stageWorkTypes[s] || {};
+    const count  = Object.values(sd).reduce((n, arr) => n + arr.length, 0);
+    return `<div class="settings-dept-item${active?' active':''}" onclick="selectSettingsStage('${s.replace(/'/g,"\\'")}')" style="${fwdOk?'':'opacity:.55'}">
+      ${fwdOk?'<i class="fas fa-share-square" style="font-size:9px;color:#875A7B;margin-right:3px;"></i>':''}${s}
+      <span style="float:right;font-size:10px;color:#aaa;">${count||''}</span>
+    </div>`;
+  }).join('');
+  const rightPanel = _settingsActiveStage
+    ? renderStageWorkTypesPanel(_settingsActiveStage)
+    : `<div style="color:#bbb;font-size:12px;padding:24px;text-align:center;"><i class="fas fa-arrow-left" style="margin-right:5px;"></i>Select a stage</div>`;
+  document.getElementById('settings-tab-dept').innerHTML = `
+    <div class="settings-section-title">Work Types & SLA — Stage → Department → Work Type</div>
+    <div class="settings-dept-col">
+      <div class="settings-dept-list">${stageList}</div>
+      <div class="settings-wt-panel" id="settings-wt-panel">${rightPanel}</div>
+    </div>`;
+}
+
+function renderStageWorkTypesPanel(stage) {
+  const fwdOk    = stage === 'Survey' || stage === 'Service Delivery';
+  const depts    = Object.keys(DEPT_SLA);
+  const stageData = SETTINGS.stageWorkTypes[stage] || {};
+  const accordion = depts.map(d => {
+    const dk    = d.replace(/\s+/g, '-');
+    const types = stageData[d] || [];
+    const typeRows = types.map((wt, i) =>
+      `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f0f0f0;">
+        <span style="flex:1;font-size:12px;">${wt.name}</span>
+        <span class="settings-wt-sla">${wt.sla}d</span>
+        <button class="settings-wt-del" onclick="deleteStageWorkType('${stage.replace(/'/g,"\\'")}','${d.replace(/'/g,"\\'")}',${i})" title="Delete"><i class="fas fa-trash"></i></button>
+      </div>`).join('') || `<div style="color:#bbb;font-size:11px;padding:4px 0 8px;">No work types yet</div>`;
+    return `<div style="border:1px solid #e0e0e0;border-radius:6px;margin-bottom:6px;overflow:hidden;">
+      <div onclick="toggleDeptAcc('dacc-${dk}')" style="background:#f9f5fb;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#6A1B9A;">
+        <i class="fas fa-chevron-right" id="daccicon-${dk}" style="font-size:9px;transition:transform .15s;"></i>
+        ${d}
+        ${types.length?`<span style="background:#e0d0eb;color:#6A1B9A;padding:0 7px;border-radius:10px;font-size:10px;">${types.length}</span>`:''}
+      </div>
+      <div id="dacc-${dk}" style="display:none;padding:10px 14px;">
+        <div id="dacc-list-${dk}">${typeRows}</div>
+        <div style="display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #ede7f6;">
+          <input type="text"   id="swt-name-${dk}" placeholder="Work type name…" style="flex:1;padding:5px 9px;border:1px solid #ce93d8;border-radius:4px;font-size:11px;">
+          <input type="number" id="swt-sla-${dk}"  placeholder="Days" min="1" max="365" style="width:64px;padding:5px 8px;border:1px solid #ce93d8;border-radius:4px;font-size:11px;text-align:center;">
+          <button onclick="addStageWorkType('${stage.replace(/'/g,"\\'")}','${d.replace(/'/g,"\\'")}','${dk}')" style="padding:5px 12px;background:#875A7B;color:#fff;border:none;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;"><i class="fas fa-plus"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:13px;font-weight:700;color:#333;">${stage}</span>
+    ${fwdOk
+      ? `<span style="background:#e8f5e9;color:#1B5E20;padding:1px 8px;border-radius:10px;font-size:9px;font-weight:700;"><i class="fas fa-share-square"></i> Forwards Enabled</span>`
+      : `<span style="background:#f5f5f5;color:#aaa;padding:1px 8px;border-radius:10px;font-size:9px;">Forwards not enabled in this stage</span>`}
+  </div>${accordion}`;
+}
+
+function selectSettingsStage(stage) {
+  _settingsActiveStage = stage;
+  renderSettingsDeptTab();
+}
+
+function toggleDeptAcc(id) {
+  const el   = document.getElementById(id);
+  const icon = document.getElementById('daccicon-' + id.replace('dacc-',''));
+  if (!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display   = open ? 'none' : '';
+  if (icon) icon.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+function addStageWorkType(stage, dept, dk) {
+  const nameEl = document.getElementById('swt-name-' + dk);
+  const slaEl  = document.getElementById('swt-sla-'  + dk);
+  const name   = (nameEl.value || '').trim();
+  const sla    = parseInt(slaEl.value);
+  if (!name)    { alert('Enter a work type name.'); return; }
+  if (!(sla>0)) { alert('Enter SLA days (min 1).'); return; }
+  if (!SETTINGS.stageWorkTypes[stage])       SETTINGS.stageWorkTypes[stage] = {};
+  if (!SETTINGS.stageWorkTypes[stage][dept]) SETTINGS.stageWorkTypes[stage][dept] = [];
+  SETTINGS.stageWorkTypes[stage][dept].push({ name, sla });
+  nameEl.value = ''; slaEl.value = '';
+  renderSettingsDeptTab();
+  setTimeout(() => {
+    const el   = document.getElementById('dacc-' + dk);
+    const icon = document.getElementById('daccicon-' + dk);
+    if (el)   { el.style.display = ''; }
+    if (icon) { icon.style.transform = 'rotate(90deg)'; }
+  }, 30);
+}
+
+function deleteStageWorkType(stage, dept, idx) {
+  if (!SETTINGS.stageWorkTypes[stage] || !SETTINGS.stageWorkTypes[stage][dept]) return;
+  SETTINGS.stageWorkTypes[stage][dept].splice(idx, 1);
+  renderSettingsDeptTab();
+}
+
+function saveSettings() {
+  document.querySelectorAll('.settings-sla-input').forEach(inp => {
+    const stage = inp.dataset.stage;
+    const val   = parseInt(inp.value);
+    if (stage && val >= 0) SETTINGS.stageSLA[stage] = val;
+  });
+  const thrEl = document.getElementById('jus-threshold-input');
+  if (thrEl) SETTINGS.justificationThreshold = parseInt(thrEl.value) || 1;
+  document.querySelectorAll('[data-dept]').forEach(inp => {
+    const dept = inp.dataset.dept;
+    const val  = (inp.value||'').trim();
+    if (dept) { if (!SETTINGS.deptManagers) SETTINGS.deptManagers={}; if(val) SETTINGS.deptManagers[dept]=val; }
+  });
+  try { localStorage.setItem('telecom_settings', JSON.stringify(SETTINGS)); } catch(e) {}
+  closeSettings();
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#27AE60;color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;z-index:3000;box-shadow:0 4px 14px rgba(0,0,0,.2);';
+  t.innerHTML = '<i class="fas fa-check-circle" style="margin-right:6px;"></i>Settings saved';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+/* ── Holidays & Weekends tab ─────────────────────────────────── */
+const ALL_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function renderSettingsHolidaysTab() {
+  const wkd = SETTINGS.weekends || [];
+  const dayCheckboxes = ALL_DAYS.map(d => {
+    const checked = wkd.includes(d) ? 'checked' : '';
+    return `<label style="display:inline-flex;align-items:center;gap:6px;background:${checked?'#f3e5f5':'#f5f5f5'};border:2px solid ${checked?'#875A7B':'#ddd'};border-radius:6px;padding:6px 14px;font-size:12px;font-weight:${checked?'700':'500'};cursor:pointer;transition:all .15s;" id="wkdlbl-${d}">
+      <input type="checkbox" ${checked} onchange="toggleWeekend('${d}')" style="display:none;"> ${d}
+    </label>`;
+  }).join('');
+
+  const hols = (SETTINGS.holidays || []).slice().sort();
+  const holRows = hols.length
+    ? hols.map((h, i) => {
+        const label = SETTINGS.holidayLabels && SETTINGS.holidayLabels[h] ? SETTINGS.holidayLabels[h] : '';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f0f0f0;">
+          <span style="font-size:12px;font-weight:700;color:#333;min-width:110px;">${h}</span>
+          <span style="flex:1;font-size:12px;color:#666;">${label||'—'}</span>
+          <button onclick="deleteHoliday(${i})" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:12px;padding:3px;" title="Remove"><i class="fas fa-trash"></i></button>
+        </div>`;
+      }).join('')
+    : `<div style="color:#bbb;font-size:12px;padding:10px 0;text-align:center;">No holidays added</div>`;
+
+  document.getElementById('settings-tab-holidays').innerHTML = `
+    <div class="settings-section-title">Weekend Days</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">${dayCheckboxes}</div>
+
+    <div class="settings-section-title">Public Holidays</div>
+    <div style="border:1px solid #e0e0e0;border-radius:6px;padding:14px;margin-bottom:12px;min-height:80px;">${holRows}</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="date" id="hol-date-input" style="padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:12px;">
+      <input type="text" id="hol-label-input" placeholder="Holiday name (optional)…" style="flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:12px;">
+      <button onclick="addHoliday()" style="padding:6px 16px;background:#875A7B;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;"><i class="fas fa-plus"></i> Add</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#aaa;"><i class="fas fa-info-circle"></i> Weekends and holidays will not count toward SLA days.</div>`;
+}
+
+function toggleWeekend(day) {
+  if (!SETTINGS.weekends) SETTINGS.weekends = [];
+  const idx = SETTINGS.weekends.indexOf(day);
+  if (idx >= 0) SETTINGS.weekends.splice(idx, 1);
+  else          SETTINGS.weekends.push(day);
+  renderSettingsHolidaysTab();
+}
+
+function addHoliday() {
+  const dateEl  = document.getElementById('hol-date-input');
+  const labelEl = document.getElementById('hol-label-input');
+  const date    = dateEl.value;
+  const label   = (labelEl.value || '').trim();
+  if (!date) { alert('Please select a date.'); return; }
+  if (!SETTINGS.holidays)      SETTINGS.holidays = [];
+  if (!SETTINGS.holidayLabels) SETTINGS.holidayLabels = {};
+  if (!SETTINGS.holidays.includes(date)) {
+    SETTINGS.holidays.push(date);
+    if (label) SETTINGS.holidayLabels[date] = label;
+  }
+  dateEl.value = ''; labelEl.value = '';
+  renderSettingsHolidaysTab();
+}
+
+function deleteHoliday(idx) {
+  const date = (SETTINGS.holidays || [])[idx];
+  SETTINGS.holidays.splice(idx, 1);
+  if (date && SETTINGS.holidayLabels) delete SETTINGS.holidayLabels[date];
+  renderSettingsHolidaysTab();
+}
+
+/* ── Forward work-type section (dynamic) ── */
+let _currentFwdStage = null;
+
+function updateFwdWorkTypes() {
+  const container = document.getElementById('fwd-wt-container');
+  if (!container) return;
+  const checked = [...document.querySelectorAll('#fwd-dept-selector input[type=checkbox]:checked')].map(cb => cb.value);
+  if (!checked.length) { container.innerHTML = ''; return; }
+  const stageData = (_currentFwdStage && SETTINGS.stageWorkTypes[_currentFwdStage]) || {};
+  const rows = checked.map(d => {
+    const key   = d.replace(/\s+/g, '-');
+    const types = stageData[d] || [];
+    const wtCtrl = types.length
+      ? `<select class="fwd-wt-select" id="fwd-wt-${key}" onchange="updateFwdWTSla('${d}')">
+           <option value="">— Select work type —</option>
+           ${types.map(wt=>`<option value="${wt.name}" data-sla="${wt.sla}">${wt.name} · ${wt.sla}d</option>`).join('')}
+         </select>
+         <span class="fwd-wt-sla-badge" id="fwd-wt-sla-${key}" style="background:#f5f5f5;color:#aaa;">—</span>`
+      : `<input class="fwd-wt-manual" id="fwd-wt-${key}" type="number" min="1" placeholder="days">
+         <span style="font-size:10px;color:#aaa;">manual SLA (no presets)</span>`;
+    return `<div class="fwd-wt-row">
+      <span class="fwd-wt-dept-label"><i class="fas fa-building" style="font-size:9px;margin-right:3px;"></i>${d}</span>
+      ${wtCtrl}
+    </div>`;
+  }).join('');
+  container.innerHTML = `<div class="fwd-wt-section" style="margin-bottom:8px;">
+    <div style="font-size:10px;font-weight:700;color:#6A1B9A;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;"><i class="fas fa-clock" style="margin-right:4px;"></i>Work Type & SLA per Department</div>
+    ${rows}
+  </div>`;
+}
+
+function updateFwdWTSla(dept) {
+  const key   = dept.replace(/\s+/g, '-');
+  const sel   = document.getElementById('fwd-wt-' + key);
+  const badge = document.getElementById('fwd-wt-sla-' + key);
+  if (!sel || !badge) return;
+  const opt = sel.options[sel.selectedIndex];
+  const sla = opt && opt.dataset.sla ? opt.dataset.sla : null;
+  badge.textContent = sla ? sla + 'd SLA' : '—';
+  badge.style.background = sla ? '#e8f5e9' : '#f5f5f5';
+  badge.style.color       = sla ? '#1B5E20' : '#aaa';
+}
+
+/* ══════ SLA Justification ══════ */
+const _jusData = {};
+
+function getJustificationItems() {
+  const thr  = (SETTINGS.justificationThreshold || 1) * 86400000;
+  const now  = TODAY;
+  const items = [];
+  REQUESTS.forEach(r => {
+    /* stage-level overdue */
+    if (!r.slaOk) {
+      const overdueMs = Math.max(0, now - new Date(r.sla));
+      if (overdueMs >= thr) {
+        const id = `${r.id}-STAGE`;
+        if (!_jusData[id]) _jusData[id] = { explanation:'', managerApproved:false, managerNote:'', status:'pending' };
+        items.push({ id, type:'stage', reqId:r.id, customer:r.customer, stage:r.stage,
+          dept: STAGE_OWNER[r.stage]||'CTS',
+          overdueMs, overdueDays: Math.floor(overdueMs/86400000),
+          sla: r.sla, openedDate: r.openedDate });
+      }
+    }
+    /* forward-level overdue */
+    (r.forwards||[]).forEach(fwd => {
+      const sentMs = now - new Date(fwd.sentDate);
+      const respondedSet = new Set((fwd.messages||[]).filter(m=>fwd.toDepts.includes(m.dept)).map(m=>m.dept));
+      fwd.toDepts.forEach(d => {
+        if (respondedSet.has(d)) return;
+        const slaMs = ((fwd.deptSLAs&&fwd.deptSLAs[d])||DEPT_SLA[d]||7)*86400000;
+        const overdueMs = sentMs - slaMs;
+        if (overdueMs >= thr) {
+          const id = `${r.id}-${fwd.id}-${d}`;
+          if (!_jusData[id]) _jusData[id] = { explanation:'', managerApproved:false, managerNote:'', status:'pending' };
+          items.push({ id, type:'forward', reqId:r.id, fwdId:fwd.id, customer:r.customer,
+            stage:r.stage, dept:d, fwdSubject:fwd.subject, sentDate:fwd.sentDate,
+            workType:(fwd.deptWorkTypes&&fwd.deptWorkTypes[d])||'—',
+            overdueMs, overdueDays:Math.floor(overdueMs/86400000) });
+        }
+      });
+    });
+  });
+  return items;
+}
+
+function openJustificationModal() {
+  const items = getJustificationItems();
+  renderJustificationBody(items);
+  document.getElementById('jusOverlay').classList.remove('hidden');
+}
+
+function renderJustificationBody(items) {
+  const body = document.getElementById('jus-body');
+  if (!items.length) {
+    body.innerHTML = `<div style="text-align:center;padding:40px;color:#bbb;"><i class="fas fa-check-circle" style="font-size:40px;display:block;margin-bottom:10px;color:#27AE60;"></i>No pending SLA justifications</div>`;
+    return;
+  }
+  const pending   = items.filter(i=>_jusData[i.id].status==='pending');
+  const reviewing = items.filter(i=>_jusData[i.id].status==='review');
+  const submitted = items.filter(i=>_jusData[i.id].status==='submitted');
+
+  function renderItem(item) {
+    const d   = _jusData[item.id];
+    const mgr = (SETTINGS.deptManagers||{})[item.dept] || '—';
+    const statusBadge = d.status==='submitted'
+      ? `<span class="jus-submitted-badge"><i class="fas fa-check"></i> Submitted</span>`
+      : d.status==='review'
+      ? `<span class="jus-approved-badge"><i class="fas fa-user-check"></i> Manager Approved</span>`
+      : `<span class="jus-overdue-badge"><i class="fas fa-clock"></i> Pending</span>`;
+    const typeLabel = item.type==='forward'
+      ? `<span style="background:#e3f2fd;color:#1565C0;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;"><i class="fas fa-share-square"></i> Forward</span>`
+      : `<span style="background:#f3e5f5;color:#6A1B9A;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;"><i class="fas fa-layer-group"></i> Stage</span>`;
+    const context = item.type==='forward'
+      ? `<div style="font-size:11px;color:#666;margin-top:3px;"><i class="fas fa-share-square" style="color:#1565C0;font-size:9px;"></i> ${item.fwdSubject||''} · Work: ${item.workType}</div>`
+      : '';
+    const canEdit = d.status !== 'submitted';
+    return `<div class="jus-card" id="juscard-${item.id.replace(/[^a-z0-9]/gi,'-')}">
+      <div class="jus-card-header">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+            ${typeLabel}
+            <span style="font-size:12px;font-weight:700;">${item.customer}</span>
+            <span style="font-size:10px;color:#aaa;">${item.reqId}</span>
+            <span style="background:#f5f5f5;color:#555;padding:1px 7px;border-radius:4px;font-size:10px;">${item.stage}</span>
+          </div>
+          <div style="font-size:11px;color:#666;display:flex;gap:10px;flex-wrap:wrap;">
+            <span><i class="fas fa-building" style="font-size:9px;"></i> ${item.dept}</span>
+            <span><i class="fas fa-user-tie" style="font-size:9px;"></i> Manager: <b>${mgr}</b></span>
+          </div>
+          ${context}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          ${statusBadge}
+          <span style="font-size:11px;color:#E74C3C;font-weight:700;"><i class="fas fa-clock"></i> ${item.overdueDays}d overdue</span>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;">Justification / Explanation</div>
+      ${canEdit
+        ? `<textarea class="jus-textarea" id="jus-exp-${item.id.replace(/[^a-z0-9]/gi,'-')}" placeholder="Explain the reason for delay…">${d.explanation||''}</textarea>`
+        : `<div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:4px;padding:8px;font-size:12px;color:#333;">${d.explanation||'—'}</div>`}
+      ${canEdit && d.status==='pending' ? `
+        <div class="jus-action-row">
+          <button class="jus-submit-btn" onclick="saveJusExplanation('${item.id}')"><i class="fas fa-paper-plane"></i> Submit for Manager Approval</button>
+        </div>` : ''}
+      ${d.status==='review' ? `
+        <div style="background:#e8f5e9;border:1px solid #A5D6A7;border-radius:6px;padding:10px 12px;margin-top:8px;">
+          <div style="font-size:10px;font-weight:700;color:#1B5E20;margin-bottom:6px;"><i class="fas fa-user-tie"></i> Manager Approval — ${mgr}</div>
+          <textarea class="jus-textarea" style="min-height:50px;" id="jus-mgrnote-${item.id.replace(/[^a-z0-9]/gi,'-')}" placeholder="Manager note (optional)…">${d.managerNote||''}</textarea>
+          <div class="jus-action-row">
+            <button class="jus-approve-btn" onclick="approveJustification('${item.id}')"><i class="fas fa-check-circle"></i> Approve & Submit Report</button>
+          </div>
+        </div>` : ''}
+      ${d.status==='submitted' ? `
+        <div style="background:#e3f2fd;border:1px solid #90CAF9;border-radius:6px;padding:8px 12px;margin-top:8px;font-size:11px;color:#1565C0;">
+          <i class="fas fa-check-circle"></i> Justification submitted — Manager: ${mgr}${d.managerNote?` · Note: "${d.managerNote}"`:''}</div>` : ''}
+    </div>`;
+  }
+
+  let html = '';
+  if (pending.length)   html += `<div style="font-size:11px;font-weight:700;color:#E74C3C;margin-bottom:8px;"><i class="fas fa-clock"></i> PENDING (${pending.length})</div>${pending.map(renderItem).join('')}`;
+  if (reviewing.length) html += `<div style="font-size:11px;font-weight:700;color:#1B5E20;margin:12px 0 8px;"><i class="fas fa-user-check"></i> AWAITING MANAGER APPROVAL (${reviewing.length})</div>${reviewing.map(renderItem).join('')}`;
+  if (submitted.length) html += `<div style="font-size:11px;font-weight:700;color:#1565C0;margin:12px 0 8px;"><i class="fas fa-check"></i> SUBMITTED (${submitted.length})</div>${submitted.map(renderItem).join('')}`;
+  body.innerHTML = html;
+}
+
+function saveJusExplanation(id) {
+  const key     = id.replace(/[^a-z0-9]/gi,'-');
+  const expEl   = document.getElementById('jus-exp-'+key);
+  const exp     = expEl ? expEl.value.trim() : '';
+  if (!exp) { alert('Please enter an explanation before submitting.'); return; }
+  _jusData[id].explanation = exp;
+  _jusData[id].status = 'review';
+  renderJustificationBody(getJustificationItems());
+}
+
+function approveJustification(id) {
+  const key    = id.replace(/[^a-z0-9]/gi,'-');
+  const noteEl = document.getElementById('jus-mgrnote-'+key);
+  _jusData[id].managerNote     = noteEl ? noteEl.value.trim() : '';
+  _jusData[id].managerApproved = true;
+  _jusData[id].status          = 'submitted';
+  renderJustificationBody(getJustificationItems());
+  updateJusBadge();
+}
+
+function updateJusBadge() {
+  const items   = getJustificationItems();
+  const pending = items.filter(i=>_jusData[i.id].status==='pending').length;
+  const el = document.getElementById('cnt-jus');
+  if (el) el.textContent = pending;
+}
+
+/* ══════ Reports ══════ */
+let _rptActiveTab   = 'dept';
+let _rptActivePeriod = 'month';
+
+function openReportsModal() { nav('reports'); }
+
+function switchRptTab(tab) {
+  _rptActiveTab = tab;
+  ['dept','stage','employee','compare'].forEach(t => {
+    document.getElementById('rtab-'+t).classList.toggle('active', t===tab);
+  });
+  renderRptBody();
+}
+
+function rptPeriodFilter(period) {
+  _rptActivePeriod = period;
+  document.querySelectorAll('.rpt-period-btn').forEach(b => b.classList.toggle('active', b.dataset.period===period));
+  renderRptBody();
+}
+
+function getCutoff() {
+  const d = new Date(TODAY);
+  if (_rptActivePeriod==='week')  d.setDate(d.getDate()-7);
+  if (_rptActivePeriod==='month') d.setMonth(d.getMonth()-1);
+  if (_rptActivePeriod==='all')   d.setFullYear(2000);
+  return d;
+}
+
+function renderRptBody() {
+  const body = document.getElementById('rpt-body');
+  const periodBtns = `<div class="rpt-period">
+    <button class="rpt-period-btn ${_rptActivePeriod==='week'?'active':''}" data-period="week" onclick="rptPeriodFilter('week')">Last 7 Days</button>
+    <button class="rpt-period-btn ${_rptActivePeriod==='month'?'active':''}" data-period="month" onclick="rptPeriodFilter('month')">Last 30 Days</button>
+    <button class="rpt-period-btn ${_rptActivePeriod==='all'?'active':''}" data-period="all" onclick="rptPeriodFilter('all')">All Time</button>
+  </div>`;
+  if (_rptActiveTab==='dept')     body.innerHTML = periodBtns + buildDeptReportHtml();
+  if (_rptActiveTab==='stage')    body.innerHTML = periodBtns + buildStageReportHtml();
+  if (_rptActiveTab==='employee') body.innerHTML = periodBtns + buildEmployeeReportHtml();
+  if (_rptActiveTab==='compare')  body.innerHTML = periodBtns + buildCompareReportHtml();
+}
+
+function buildDeptReportHtml() {
+  const cutoff = getCutoff();
+  const stats = {};
+  Object.keys(DEPT_SLA).forEach(d => { stats[d] = {onTime:0,overdue:0,fwdOnTime:0,fwdOverdue:0,totalOverdueDays:0}; });
+
+  REQUESTS.filter(r => new Date(r.openedDate) >= cutoff).forEach(r => {
+    const owner = STAGE_OWNER[r.stage];
+    if (owner && stats[owner]) {
+      if (r.slaOk) stats[owner].onTime++;
+      else { stats[owner].overdue++; stats[owner].totalOverdueDays += Math.max(0,daysDiff(r.sla, TODAY.toISOString().slice(0,10))); }
+    }
+    (r.forwards||[]).forEach(fwd => {
+      const sentMs = TODAY - new Date(fwd.sentDate);
+      const respondedSet = new Set((fwd.messages||[]).filter(m=>fwd.toDepts.includes(m.dept)).map(m=>m.dept));
+      fwd.toDepts.forEach(d => {
+        if (!stats[d]) return;
+        const slaMs = ((fwd.deptSLAs&&fwd.deptSLAs[d])||DEPT_SLA[d]||7)*86400000;
+        if (respondedSet.has(d)) {
+          const firstMsg = (fwd.messages||[]).find(m=>m.dept===d);
+          const respMs = firstMsg ? (new Date(firstMsg.date) - new Date(fwd.sentDate)) : slaMs;
+          if (respMs <= slaMs) stats[d].fwdOnTime++; else stats[d].fwdOverdue++;
+        } else {
+          if (sentMs > slaMs) stats[d].fwdOverdue++; else stats[d].fwdOnTime++;
+        }
+      });
+    });
+  });
+
+  const rows = Object.entries(stats).filter(([,s])=>s.onTime+s.overdue+s.fwdOnTime+s.fwdOverdue>0).map(([d,s])=>{
+    const total = s.onTime+s.overdue; const fwdTotal = s.fwdOnTime+s.fwdOverdue;
+    const stagePct = total ? Math.round(s.onTime/total*100) : 0;
+    const fwdPct   = fwdTotal ? Math.round(s.fwdOnTime/fwdTotal*100) : null;
+    const mgr = (SETTINGS.deptManagers||{})[d]||'—';
+    return `<tr>
+      <td style="font-weight:700;">${d}</td>
+      <td style="font-size:10px;color:#888;">${mgr}</td>
+      <td style="text-align:center;">${s.onTime+s.overdue}</td>
+      <td><span style="color:${stagePct>=80?'#27AE60':stagePct>=50?'#F59E0B':'#E74C3C'};font-weight:700;">${stagePct}%</span>
+        <div class="rpt-pct-bar"><div class="rpt-pct-fill" style="width:${stagePct}%;background:${stagePct>=80?'#27AE60':stagePct>=50?'#F59E0B':'#E74C3C'};"></div></div></td>
+      <td style="text-align:center;color:#E74C3C;">${s.overdue||'—'}</td>
+      <td style="text-align:center;">${fwdTotal||'—'}</td>
+      <td>${fwdPct!==null?`<span style="color:${fwdPct>=80?'#27AE60':fwdPct>=50?'#F59E0B':'#E74C3C'};font-weight:700;">${fwdPct}%</span>`:'—'}</td>
+      <td style="text-align:center;color:#E74C3C;">${s.fwdOverdue||'—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="rpt-table"><thead><tr>
+    <th>Department</th><th>Manager</th><th>Requests</th><th>Stage On-Time %</th><th>Stage Overdue</th><th>Forwards</th><th>Fwd On-Time %</th><th>Fwd Overdue</th>
+  </tr></thead><tbody>${rows||'<tr><td colspan="8" style="text-align:center;color:#bbb;padding:20px;">No data for this period</td></tr>'}</tbody></table>`;
+}
+
+function buildStageReportHtml() {
+  const cutoff = getCutoff();
+  const stats = {};
+  REQUESTS.filter(r => new Date(r.openedDate) >= cutoff).forEach(r => {
+    if (!stats[r.stage]) stats[r.stage] = {onTime:0,overdue:0,totalDays:0};
+    const wdays = calcWorkDays(r.openedDate, r.closedDate ? new Date(r.closedDate) : TODAY) - (r.holdDays||0);
+    if (r.slaOk) stats[r.stage].onTime++; else stats[r.stage].overdue++;
+    stats[r.stage].totalDays += wdays;
+  });
+  const rows = Object.entries(stats).map(([s,st])=>{
+    const total = st.onTime+st.overdue;
+    const pct   = total ? Math.round(st.onTime/total*100) : 0;
+    const avg   = total ? Math.round(st.totalDays/total*10)/10 : 0;
+    const owner = STAGE_OWNER[s]||'—';
+    return `<tr>
+      <td style="font-weight:700;">${s}</td>
+      <td style="font-size:11px;color:#888;">${owner}</td>
+      <td style="text-align:center;">${total}</td>
+      <td><span style="color:${pct>=80?'#27AE60':pct>=50?'#F59E0B':'#E74C3C'};font-weight:700;">${pct}%</span>
+        <div class="rpt-pct-bar"><div class="rpt-pct-fill" style="width:${pct}%;background:${pct>=80?'#27AE60':pct>=50?'#F59E0B':'#E74C3C'};"></div></div></td>
+      <td style="text-align:center;color:#E74C3C;">${st.overdue||'—'}</td>
+      <td style="text-align:center;color:#888;">${avg}d avg</td>
+    </tr>`;
+  }).join('');
+  return `<table class="rpt-table"><thead><tr>
+    <th>Stage</th><th>Owner Dept</th><th>Requests</th><th>On-Time %</th><th>Overdue</th><th>Avg Working Days</th>
+  </tr></thead><tbody>${rows||'<tr><td colspan="6" style="text-align:center;color:#bbb;padding:20px;">No data for this period</td></tr>'}</tbody></table>`;
+}
+
+function buildEmployeeReportHtml() {
+  const cutoff = getCutoff();
+  const emp = {};
+  function addEmp(name, dept) {
+    if (!name) return;
+    if (!emp[name]) emp[name] = { dept, reqsHandled:0, msgsSent:0, fwdsSent:0, fwdsReceived:0, onTime:0, overdue:0 };
+  }
+  REQUESTS.filter(r => new Date(r.openedDate) >= cutoff).forEach(r => {
+    /* who owns this stage */
+    const owner = STAGE_OWNER[r.stage];
+    const mgr   = owner ? (SETTINGS.deptManagers||{})[owner] : null;
+    if (mgr) { addEmp(mgr, owner); emp[mgr].reqsHandled++; if(r.slaOk) emp[mgr].onTime++; else emp[mgr].overdue++; }
+    /* messages in forwards */
+    (r.forwards||[]).forEach(fwd => {
+      if (fwd.sentBy) { addEmp(fwd.sentBy,'CTS'); emp[fwd.sentBy].fwdsSent++; }
+      (fwd.messages||[]).forEach(m => {
+        if (m.from) {
+          addEmp(m.from, m.dept||'');
+          emp[m.from].msgsSent++;
+          if (fwd.toDepts && fwd.toDepts.includes(m.dept)) emp[m.from].fwdsReceived++;
+        }
+      });
+    });
+  });
+  const rows = Object.entries(emp).map(([name,e])=>{
+    const total = e.onTime+e.overdue;
+    const pct = total ? Math.round(e.onTime/total*100) : null;
+    return `<tr>
+      <td style="font-weight:700;">${name}</td>
+      <td style="font-size:11px;color:#888;">${e.dept}</td>
+      <td style="text-align:center;">${e.reqsHandled||'—'}</td>
+      <td style="text-align:center;">${e.msgsSent||'—'}</td>
+      <td style="text-align:center;">${e.fwdsSent||'—'}</td>
+      <td style="text-align:center;">${e.fwdsReceived||'—'}</td>
+      <td>${pct!==null?`<span style="color:${pct>=80?'#27AE60':pct>=50?'#F59E0B':'#E74C3C'};font-weight:700;">${pct}%</span>`:'—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="rpt-table"><thead><tr>
+    <th>Employee</th><th>Department</th><th>Requests</th><th>Messages Sent</th><th>Fwds Sent</th><th>Fwds Received</th><th>On-Time %</th>
+  </tr></thead><tbody>${rows||'<tr><td colspan="7" style="text-align:center;color:#bbb;padding:20px;">No data for this period</td></tr>'}</tbody></table>`;
+}
+
+function buildCompareReportHtml() {
+  const cutoff = getCutoff();
+  const byWeek = {};
+  REQUESTS.filter(r => new Date(r.openedDate) >= cutoff).forEach(r => {
+    const d   = new Date(r.openedDate);
+    const wk  = `${d.getFullYear()}-W${String(Math.ceil((d.getDate())/7)).padStart(2,'0')} (${d.toLocaleDateString('en',{month:'short'})})`;
+    if (!byWeek[wk]) byWeek[wk] = {onTime:0,overdue:0};
+    if (r.slaOk) byWeek[wk].onTime++; else byWeek[wk].overdue++;
+  });
+  const totalOnTime  = REQUESTS.filter(r=>new Date(r.openedDate)>=cutoff&&r.slaOk).length;
+  const totalOverdue = REQUESTS.filter(r=>new Date(r.openedDate)>=cutoff&&!r.slaOk).length;
+  const total = totalOnTime+totalOverdue;
+  const pct   = total ? Math.round(totalOnTime/total*100) : 0;
+
+  const kpis = `<div class="rpt-kpi-row">
+    <div class="rpt-kpi"><div class="rpt-kpi-val" style="color:#27AE60;">${totalOnTime}</div><div class="rpt-kpi-lbl">On-Time</div></div>
+    <div class="rpt-kpi"><div class="rpt-kpi-val" style="color:#E74C3C;">${totalOverdue}</div><div class="rpt-kpi-lbl">Overdue</div></div>
+    <div class="rpt-kpi"><div class="rpt-kpi-val">${total}</div><div class="rpt-kpi-lbl">Total</div></div>
+    <div class="rpt-kpi"><div class="rpt-kpi-val" style="color:${pct>=80?'#27AE60':pct>=50?'#F59E0B':'#E74C3C'};">${pct}%</div><div class="rpt-kpi-lbl">On-Time Rate</div></div>
+  </div>`;
+
+  const rows = Object.entries(byWeek).sort(([a],[b])=>a.localeCompare(b)).map(([wk,s])=>{
+    const t = s.onTime+s.overdue;
+    const p = t ? Math.round(s.onTime/t*100) : 0;
+    const barW1 = t ? Math.round(s.onTime/t*200) : 0;
+    const barW2 = t ? Math.round(s.overdue/t*200) : 0;
+    return `<tr>
+      <td style="font-weight:600;">${wk}</td>
+      <td style="text-align:center;">${t}</td>
+      <td><div style="display:flex;gap:2px;align-items:center;">
+        <div style="width:${barW1}px;height:14px;background:#27AE60;border-radius:2px;min-width:${s.onTime?2:0}px;" title="On-Time: ${s.onTime}"></div>
+        <div style="width:${barW2}px;height:14px;background:#E74C3C;border-radius:2px;min-width:${s.overdue?2:0}px;" title="Overdue: ${s.overdue}"></div>
+        <span style="font-size:10px;margin-left:5px;color:#888;">${s.onTime} vs ${s.overdue}</span>
+      </div></td>
+      <td><span style="color:${p>=80?'#27AE60':p>=50?'#F59E0B':'#E74C3C'};font-weight:700;">${p}%</span></td>
+    </tr>`;
+  }).join('');
+
+  return kpis + `<table class="rpt-table"><thead><tr><th>Period</th><th>Total</th><th>On-Time vs Overdue</th><th>On-Time %</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="4" style="text-align:center;color:#bbb;padding:20px;">No data for this period</td></tr>'}</tbody></table>`;
+}
+
+function renderSettingsManagersTab() {
+  const depts = Object.keys(DEPT_SLA);
+  const rows = depts.map(d => {
+    const mgr = (SETTINGS.deptManagers||{})[d] || '';
+    return `<tr>
+      <td style="font-weight:600;">${d}</td>
+      <td><input class="settings-sla-input" style="width:180px;" type="text" value="${mgr}" data-dept="${d}" placeholder="Manager name…"></td>
+    </tr>`;
+  }).join('');
+  const thr = SETTINGS.justificationThreshold || 1;
+  document.getElementById('settings-tab-managers').innerHTML = `
+    <div class="settings-section-title">Justification Threshold</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:12px 16px;background:#fff8e1;border:1px solid #FFE082;border-radius:6px;">
+      <span style="font-size:12px;color:#555;">Require SLA justification after</span>
+      <input type="number" min="1" max="30" value="${thr}" id="jus-threshold-input" style="width:60px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;font-size:13px;font-weight:700;text-align:center;">
+      <span style="font-size:12px;color:#555;">day(s) past SLA deadline</span>
+    </div>
+    <div class="settings-section-title">Department Managers</div>
+    <table class="settings-stage-table">
+      <thead><tr><th>Department</th><th>Manager Name</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* ══════ Reports Page ══════ */
+let _rptPeriod = 'month';
+let _rptCharts = {};
+
+function setRptPeriod(btn, period) {
+  _rptPeriod = period;
+  document.querySelectorAll('.rpt-prd-btn').forEach(b => b.classList.toggle('active', b.dataset.period === period));
+  buildReportsPage();
+}
+
+function getRptCutoff() {
+  const d = new Date(TODAY);
+  if (_rptPeriod === 'week')  d.setDate(d.getDate() - 7);
+  if (_rptPeriod === 'month') d.setMonth(d.getMonth() - 1);
+  if (_rptPeriod === 'all')   d.setFullYear(2000);
+  return d;
+}
+
+function buildReportsPage() {
+  const cutoff = getRptCutoff();
+  const filtered = REQUESTS.filter(r => new Date(r.openedDate) >= cutoff);
+
+  /* ── KPIs ── */
+  const totalReqs  = filtered.length;
+  const onTimeReqs = filtered.filter(r => r.slaOk).length;
+  const overdueReqs= filtered.filter(r => !r.slaOk).length;
+  const onTimePct  = totalReqs ? Math.round(onTimeReqs / totalReqs * 100) : 0;
+  const fwdCount   = filtered.reduce((s, r) => s + (r.forwards||[]).length, 0);
+  const kpiColor   = onTimePct >= 80 ? '#27AE60' : onTimePct >= 50 ? '#F59E0B' : '#E74C3C';
+  document.getElementById('rpt-kpis').innerHTML = `
+    <div class="rpt-kpi-card"><div class="val" style="color:#875A7B;">${totalReqs}</div><div class="lbl">Total Requests</div></div>
+    <div class="rpt-kpi-card"><div class="val" style="color:#27AE60;">${onTimeReqs}</div><div class="lbl">On-Time</div></div>
+    <div class="rpt-kpi-card"><div class="val" style="color:#E74C3C;">${overdueReqs}</div><div class="lbl">Overdue</div></div>
+    <div class="rpt-kpi-card"><div class="val" style="color:${kpiColor};">${onTimePct}%</div><div class="lbl">On-Time Rate</div></div>
+    <div class="rpt-kpi-card"><div class="val" style="color:#1E7EC5;">${fwdCount}</div><div class="lbl">Forwards Sent</div></div>`;
+
+  /* ── Chart 1: Dept SLA ── */
+  const depts      = Object.keys(DEPT_SLA);
+  const dOnTime    = depts.map(d => filtered.filter(r => STAGE_OWNER[r.stage] === d && r.slaOk).length);
+  const dOverdue   = depts.map(d => filtered.filter(r => STAGE_OWNER[r.stage] === d && !r.slaOk).length);
+  const deptLabels = depts.map(d => d.length > 12 ? d.slice(0,12)+'…' : d);
+  _destroyRptChart('rptDeptSlaChart');
+  _rptCharts['rptDeptSlaChart'] = new Chart(document.getElementById('rptDeptSlaChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: deptLabels, datasets: [
+      { label:'On-Time', data:dOnTime,  backgroundColor:'rgba(39,174,96,.75)',  borderColor:'#27AE60', borderWidth:1, borderRadius:4 },
+      { label:'Overdue', data:dOverdue, backgroundColor:'rgba(231,76,60,.75)', borderColor:'#E74C3C', borderWidth:1, borderRadius:4 },
+    ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'top'}, tooltip:{mode:'index',intersect:false} },
+      scales:{ x:{stacked:true,grid:{display:false}}, y:{stacked:true,beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}} },
+    },
+  });
+
+  /* ── Chart 2: Avg Days vs Target ── */
+  const avgSpent = depts.map(d => {
+    const dr = filtered.filter(r => STAGE_OWNER[r.stage] === d);
+    if (!dr.length) return 0;
+    const tot = dr.reduce((s,r)=>{ const e=r.closedDate?new Date(r.closedDate):TODAY; return s+Math.max(0,calcWorkDays(r.openedDate,e)-(r.holdDays||0)); },0);
+    return Math.round(tot/dr.length*10)/10;
+  });
+  const targets = depts.map(d => DEPT_SLA[d]);
+  _destroyRptChart('rptAvgDaysChart');
+  _rptCharts['rptAvgDaysChart'] = new Chart(document.getElementById('rptAvgDaysChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: deptLabels, datasets: [
+      { type:'bar',  label:'Avg Working Days', data:avgSpent,
+        backgroundColor: avgSpent.map((v,i)=>v>targets[i]?'rgba(231,76,60,.70)':'rgba(30,126,197,.70)'),
+        borderColor: avgSpent.map((v,i)=>v>targets[i]?'#E74C3C':'#1E7EC5'), borderWidth:1, borderRadius:4 },
+      { type:'line', label:'SLA Target (days)', data:targets,
+        borderColor:'#E67E22', backgroundColor:'transparent', borderDash:[5,4],
+        pointBackgroundColor:'#E67E22', pointRadius:4, tension:0 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'top'}, tooltip:{mode:'index',intersect:false} },
+      scales:{ y:{beginAtZero:true,title:{display:true,text:'Days',color:'#999',font:{size:11}},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} },
+    },
+  });
+
+  /* ── Chart 3: Stage performance (horizontal bar) ── */
+  const stageStats = {};
+  filtered.forEach(r => {
+    if (!stageStats[r.stage]) stageStats[r.stage] = { on:0, ov:0 };
+    if (r.slaOk) stageStats[r.stage].on++; else stageStats[r.stage].ov++;
+  });
+  const sLabels = Object.keys(stageStats);
+  const sPct    = sLabels.map(s => { const t=stageStats[s].on+stageStats[s].ov; return t?Math.round(stageStats[s].on/t*100):0; });
+  _destroyRptChart('rptStageChart');
+  _rptCharts['rptStageChart'] = new Chart(document.getElementById('rptStageChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: sLabels, datasets: [{
+      label: 'On-Time %', data: sPct,
+      backgroundColor: sPct.map(p=>p>=80?'rgba(39,174,96,.75)':p>=50?'rgba(245,158,11,.75)':'rgba(231,76,60,.75)'),
+      borderColor: sPct.map(p=>p>=80?'#27AE60':p>=50?'#F59E0B':'#E74C3C'), borderWidth:1, borderRadius:4,
+    }]},
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{ x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, y:{grid:{display:false}} },
+    },
+  });
+
+  /* ── Chart 4: Forward response rate ── */
+  const fwdStats = {};
+  filtered.forEach(r => (r.forwards||[]).forEach(fwd => {
+    const sentMs = TODAY - new Date(fwd.sentDate);
+    const respondedSet = new Set((fwd.messages||[]).filter(m=>fwd.toDepts.includes(m.dept)).map(m=>m.dept));
+    fwd.toDepts.forEach(d => {
+      if (!fwdStats[d]) fwdStats[d] = { on:0, ov:0 };
+      const slaMs = ((fwd.deptSLAs&&fwd.deptSLAs[d])||DEPT_SLA[d]||7)*86400000;
+      if (respondedSet.has(d)) {
+        const firstMsg = (fwd.messages||[]).find(m=>m.dept===d);
+        const respMs = firstMsg ? (new Date(firstMsg.date)-new Date(fwd.sentDate)) : slaMs;
+        if (respMs<=slaMs) fwdStats[d].on++; else fwdStats[d].ov++;
+      } else { if (sentMs>slaMs) fwdStats[d].ov++; else fwdStats[d].on++; }
+    });
+  }));
+  const fLabels  = Object.keys(fwdStats).filter(d=>fwdStats[d].on+fwdStats[d].ov>0);
+  const fOn  = fLabels.map(d=>fwdStats[d].on);
+  const fOv  = fLabels.map(d=>fwdStats[d].ov);
+  _destroyRptChart('rptFwdChart');
+  _rptCharts['rptFwdChart'] = new Chart(document.getElementById('rptFwdChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: fLabels.map(l=>l.length>12?l.slice(0,12)+'…':l), datasets: [
+      { label:'On-Time', data:fOn, backgroundColor:'rgba(39,174,96,.75)',  borderColor:'#27AE60', borderWidth:1, borderRadius:4 },
+      { label:'Overdue', data:fOv, backgroundColor:'rgba(231,76,60,.75)', borderColor:'#E74C3C', borderWidth:1, borderRadius:4 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'top'} },
+      scales:{ x:{stacked:true,grid:{display:false}}, y:{stacked:true,beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}} },
+    },
+  });
+
+  /* ── Chart 5: Trend (weekly) ── */
+  const weeks = {};
+  filtered.forEach(r => {
+    const d = new Date(r.openedDate);
+    const wNum = Math.floor((d - new Date(d.getFullYear(),0,1)) / (7*86400000));
+    const key  = `${d.getFullYear()}-W${String(wNum+1).padStart(2,'0')}`;
+    if (!weeks[key]) weeks[key] = { on:0, total:0 };
+    weeks[key].total++;
+    if (r.slaOk) weeks[key].on++;
+  });
+  const wKeys = Object.keys(weeks).sort();
+  const wPct  = wKeys.map(k => weeks[k].total ? Math.round(weeks[k].on/weeks[k].total*100) : 0);
+  _destroyRptChart('rptTrendChart');
+  _rptCharts['rptTrendChart'] = new Chart(document.getElementById('rptTrendChart').getContext('2d'), {
+    type: 'line',
+    data: { labels: wKeys, datasets: [{
+      label:'On-Time Rate %', data:wPct,
+      borderColor:'#27AE60', backgroundColor:'rgba(39,174,96,.1)', fill:true,
+      tension:0.4, pointBackgroundColor:'#27AE60', pointRadius:5,
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{ y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} },
+    },
+  });
+
+  /* ── Chart 6: Stage volume (doughnut) ── */
+  const stageVol = {};
+  REQUESTS.forEach(r => { stageVol[r.stage] = (stageVol[r.stage]||0)+1; });
+  const svLabels = Object.keys(stageVol);
+  const svData   = svLabels.map(s=>stageVol[s]);
+  const svColors = ['#875A7B','#1E7EC5','#00A09D','#E67E22','#27AE60','#5C6BC0','#E74C3C','#F59E0B','#00838F','#AD1457'];
+  _destroyRptChart('rptStageVolChart');
+  _rptCharts['rptStageVolChart'] = new Chart(document.getElementById('rptStageVolChart').getContext('2d'), {
+    type: 'doughnut',
+    data: { labels:svLabels, datasets:[{ data:svData, backgroundColor:svColors, borderWidth:2, borderColor:'#fff' }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'right',labels:{font:{size:10},boxWidth:12}} },
+      cutout:'60%',
+    },
+  });
+
+  /* ── Employee table ── */
+  const emp = {};
+  function addEmp(name, dept) { if(name&&!emp[name]) emp[name]={dept,reqs:0,msgs:0,fwds:0,fwdRcv:0,on:0,ov:0}; }
+  filtered.forEach(r => {
+    const owner = STAGE_OWNER[r.stage];
+    const mgr   = owner&&(SETTINGS.deptManagers||{})[owner];
+    if (mgr) { addEmp(mgr,owner); emp[mgr].reqs++; if(r.slaOk) emp[mgr].on++; else emp[mgr].ov++; }
+    (r.forwards||[]).forEach(fwd => {
+      if(fwd.sentBy) { addEmp(fwd.sentBy,'CTS'); emp[fwd.sentBy].fwds++; }
+      (fwd.messages||[]).forEach(m => {
+        if(m.from) { addEmp(m.from,m.dept||''); emp[m.from].msgs++; if(fwd.toDepts&&fwd.toDepts.includes(m.dept)) emp[m.from].fwdRcv++; }
+      });
+    });
+  });
+  const empRows = Object.entries(emp).map(([name,e]) => {
+    const total = e.on+e.ov;
+    const pct   = total ? Math.round(e.on/total*100) : null;
+    const pColor= pct===null?'#aaa':pct>=80?'#27AE60':pct>=50?'#F59E0B':'#E74C3C';
+    const pBar  = pct!==null ? `<div class="rpt-mini-bar-track"><div class="rpt-mini-bar-fill" style="width:${pct}%;background:${pColor};"></div></div>` : '';
+    return `<tr>
+      <td style="font-weight:700;">${name}</td>
+      <td><span style="background:#f3e5f5;color:#6A1B9A;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;">${e.dept}</span></td>
+      <td style="text-align:center;">${e.reqs||'—'}</td>
+      <td style="text-align:center;">${e.msgs||'—'}</td>
+      <td style="text-align:center;">${e.fwds||'—'}</td>
+      <td style="text-align:center;">${e.fwdRcv||'—'}</td>
+      <td>${pct!==null?`<span style="color:${pColor};font-weight:700;">${pct}%</span>${pBar}`:'—'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('rpt-emp-table-wrap').innerHTML = empRows
+    ? `<table class="rpt-emp-table"><thead><tr><th>Employee</th><th>Department</th><th>Requests</th><th>Messages</th><th>Fwds Sent</th><th>Fwds Received</th><th>On-Time %</th></tr></thead><tbody>${empRows}</tbody></table>`
+    : `<div style="text-align:center;color:#bbb;padding:20px;">No employee data available for this period</div>`;
+}
+
+function _destroyRptChart(id) {
+  if (_rptCharts[id]) { _rptCharts[id].destroy(); delete _rptCharts[id]; }
+}
+
 nav('home');
 </script>
+
+<!-- ══════ SETTINGS OVERLAY ══════ -->
+<div id="settingsOverlay" class="settings-overlay hidden">
+  <div class="settings-panel">
+    <div class="settings-header">
+      <i class="fas fa-cog"></i>
+      <h2>Settings</h2>
+      <button class="settings-close-btn" onclick="closeSettings()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="settings-tabs">
+      <div class="settings-tab active" id="stab-stage"    onclick="switchSettingsTab('stage')"><i class="fas fa-layer-group" style="margin-right:5px;"></i>Stage SLA</div>
+      <div class="settings-tab" id="stab-dept"       onclick="switchSettingsTab('dept')"><i class="fas fa-tasks" style="margin-right:5px;"></i>Work Types per Department</div>
+      <div class="settings-tab" id="stab-holidays"   onclick="switchSettingsTab('holidays')"><i class="fas fa-calendar-times" style="margin-right:5px;"></i>Weekends & Holidays</div>
+      <div class="settings-tab" id="stab-managers" onclick="switchSettingsTab('managers')"><i class="fas fa-user-tie" style="margin-right:5px;"></i>Managers & Justification</div>
+    </div>
+    <div class="settings-body">
+      <div id="settings-tab-stage"></div>
+      <div id="settings-tab-dept"     style="display:none;"></div>
+      <div id="settings-tab-holidays" style="display:none;"></div>
+      <div id="settings-tab-managers" style="display:none;"></div>
+    </div>
+    <div class="settings-save-bar">
+      <button class="settings-save-btn" onclick="saveSettings()"><i class="fas fa-save" style="margin-right:5px;"></i>Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ JUSTIFICATION OVERLAY ══════ -->
+<div id="jusOverlay" class="jus-overlay hidden">
+  <div class="jus-panel">
+    <div class="jus-header"><i class="fas fa-exclamation-circle"></i><h2>SLA Justification Requests</h2><button class="modal-close-btn" onclick="document.getElementById('jusOverlay').classList.add('hidden')"><i class="fas fa-times"></i></button></div>
+    <div class="jus-body" id="jus-body"></div>
+  </div>
+</div>
+<!-- ══════ REPORTS OVERLAY ══════ -->
+<div id="rptOverlay" class="rpt-overlay hidden">
+  <div class="rpt-panel">
+    <div class="rpt-header"><i class="fas fa-chart-bar"></i><h2>Reports</h2><button class="modal-close-btn" onclick="document.getElementById('rptOverlay').classList.add('hidden')"><i class="fas fa-times"></i></button></div>
+    <div class="rpt-tabs">
+      <div class="rpt-tab active" id="rtab-dept"     onclick="switchRptTab('dept')"><i class="fas fa-building" style="margin-right:4px;"></i>Department</div>
+      <div class="rpt-tab"       id="rtab-stage"    onclick="switchRptTab('stage')"><i class="fas fa-layer-group" style="margin-right:4px;"></i>Stage</div>
+      <div class="rpt-tab"       id="rtab-employee" onclick="switchRptTab('employee')"><i class="fas fa-users" style="margin-right:4px;"></i>Employee Activity</div>
+      <div class="rpt-tab"       id="rtab-compare"  onclick="switchRptTab('compare')"><i class="fas fa-balance-scale" style="margin-right:4px;"></i>On-Time vs Overdue</div>
+    </div>
+    <div class="rpt-body" id="rpt-body"></div>
+  </div>
+</div>
 </body>
 </html>
