@@ -332,6 +332,12 @@
     .fwd-msg-meta { font-size:10px; color:#bbb; margin-top:3px; padding:0 4px; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
     .fwd-wait-badge { font-size:9px; background:#fff3e0; color:#E65100; padding:1px 6px; border-radius:10px; font-weight:600; display:inline-flex; align-items:center; gap:2px; }
     .fwd-reply-area { border-top:1px solid #f0e8f5; padding-top:10px; margin-top:6px; }
+    .fwd-msg-unread .fwd-bubble { box-shadow:0 0 0 2px #F59E0B55; }
+    .fwd-msg-unread.fwd-msg-other .fwd-bubble { background:#FFFBEB !important; border-color:#F59E0B66 !important; font-weight:600; }
+    .fwd-unread-badge { font-size:9px; background:#1E7EC5; color:#fff; padding:1px 6px; border-radius:10px; font-weight:700; margin-left:2px; animation:unread-pulse 2s ease-in-out infinite; }
+    @keyframes unread-pulse { 0%,100%{opacity:1;} 50%{opacity:.55;} }
+    .fwd-unread-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#1E7EC5; margin-right:4px; flex-shrink:0; }
+    .dash-unread-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#1E7EC5; margin-right:5px; vertical-align:middle; animation:unread-pulse 2s ease-in-out infinite; }
     .fwd-reply-select { border:1px solid #d9b8d0; border-radius:4px; padding:4px 8px; font-size:11px; font-family:inherit; outline:none; color:#333; background:#fff; cursor:pointer; }
     .fwd-reply-select:focus { border-color:#875A7B; }
     .fwd-reply-send { padding:7px 14px; background:#875A7B; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; align-self:flex-end; }
@@ -848,6 +854,32 @@ let SETTINGS = (function(){
 })();
 
 function daysDiff(from, to) { return Math.round((new Date(to) - new Date(from)) / 86400000); }
+
+/* ── Unread message tracking ── */
+const _READ_KEY = 'telecom_read_msgs';
+function _getReadKeys() {
+  try { return new Set(JSON.parse(localStorage.getItem(_READ_KEY) || '[]')); } catch(e) { return new Set(); }
+}
+function _saveReadKeys(set) {
+  try { localStorage.setItem(_READ_KEY, JSON.stringify([...set])); } catch(e) {}
+}
+function _msgKey(fwdId, idx) { return `${fwdId}_${idx}`; }
+function _markRequestRead(r) {
+  const keys = _getReadKeys();
+  (r.forwards||[]).forEach(fwd => {
+    (fwd.messages||[]).forEach((m, mi) => keys.add(_msgKey(fwd.id, mi)));
+  });
+  _saveReadKeys(keys);
+  /* remove unread dots from dashboard row if visible */
+  const dot = document.getElementById('unread-dot-'+r.id);
+  if (dot) dot.remove();
+}
+function _hasUnread(r) {
+  const keys = _getReadKeys();
+  return (r.forwards||[]).some(fwd =>
+    (fwd.messages||[]).some((m, mi) => !keys.has(_msgKey(fwd.id, mi)))
+  );
+}
 
 function calcWorkDays(fromStr, toDate) {
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1754,35 +1786,40 @@ function buildForwardsSection(r) {
     const statusCls     = allApproved  ? 'fwds-approved' : allResponded ? 'fwds-complete' : respondedSet.size > 0 ? 'fwds-partial' : 'fwds-pending';
 
     /* thread messages */
-    const threadHtml = msgs.map(m => {
-      const isCts  = !fwd.toDepts.includes(m.dept);
-      const color  = isCts ? '#875A7B' : (colorMap[m.dept] || '#555');
+    const readKeys = _getReadKeys();
+    const threadHtml = msgs.map((m, mi) => {
+      const isCts    = !fwd.toDepts.includes(m.dept);
+      const color    = isCts ? '#875A7B' : (colorMap[m.dept] || '#555');
+      const isUnread = !readKeys.has(_msgKey(fwd.id, mi));
+      const unreadCls = isUnread ? ' fwd-msg-unread' : '';
+      const unreadBadge = isUnread ? `<span class="fwd-unread-badge">NEW</span>` : '';
+      const unreadDot   = isUnread ? `<span class="fwd-unread-dot"></span>` : '';
       const waitBadge = (!isCts && m.waitTime)
         ? `<span class="fwd-wait-badge"><i class="fas fa-stopwatch"></i> ${m.waitTime}</span>` : '';
       const deptPill = isCts
         ? `<span style="font-size:9px;background:#f3e5f5;color:#6A1B9A;padding:1px 6px;border-radius:3px;font-weight:700;">CTS</span>`
         : `<span style="font-size:9px;padding:1px 7px;border-radius:3px;font-weight:700;background:${color}22;color:${color};">${m.dept}</span>`;
       if (m.type === 'approval') {
-        return `<div class="fwd-msg fwd-msg-other">
+        return `<div class="fwd-msg fwd-msg-other${unreadCls}">
           <div class="fwd-approval-bubble"><i class="fas fa-check-circle" style="color:#27AE60;font-size:15px;"></i><span style="font-size:13px;font-weight:700;color:#1B5E20;">Approved</span></div>
-          <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date} ${waitBadge}</div>
+          <div class="fwd-msg-meta">${unreadDot}${deptPill} ${m.from} · ${m.date} ${waitBadge}${unreadBadge}</div>
         </div>`;
       }
       if (m.type === 'onhold') {
-        return `<div class="fwd-msg fwd-msg-other">
+        return `<div class="fwd-msg fwd-msg-other${unreadCls}">
           <div style="background:#fff8e1;border:2px solid #FF9800;border-radius:12px;border-bottom-left-radius:3px;padding:10px 14px;max-width:80%;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-pause-circle" style="color:#FF9800;font-size:14px;"></i><span style="font-size:12px;font-weight:700;color:#E65100;">On-Hold: <span style="font-weight:400;">${m.text}</span></span></div>
-          <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date}</div>
+          <div class="fwd-msg-meta">${unreadDot}${deptPill} ${m.from} · ${m.date}${unreadBadge}</div>
         </div>`;
       }
       if (m.type === 'resume') {
-        return `<div class="fwd-msg fwd-msg-other">
+        return `<div class="fwd-msg fwd-msg-other${unreadCls}">
           <div style="background:#e8f5e9;border:2px solid #27AE60;border-radius:12px;border-bottom-left-radius:3px;padding:10px 14px;max-width:80%;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-play-circle" style="color:#27AE60;font-size:14px;"></i><span style="font-size:12px;font-weight:700;color:#1B5E20;">Resumed — hold duration: ${m.holdDuration||'—'}</span></div>
-          <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date}</div>
+          <div class="fwd-msg-meta">${unreadDot}${deptPill} ${m.from} · ${m.date}${unreadBadge}</div>
         </div>`;
       }
-      return `<div class="fwd-msg ${isCts ? 'fwd-msg-cts' : 'fwd-msg-other'}">
+      return `<div class="fwd-msg ${isCts ? 'fwd-msg-cts' : 'fwd-msg-other'}${unreadCls}">
         <div class="fwd-bubble" style="${isCts ? '' : 'background:'+color+'18;color:#333;border:1px solid '+color+'30;'}">${m.text}</div>
-        <div class="fwd-msg-meta">${deptPill} ${m.from} · ${m.date} ${waitBadge}</div>
+        <div class="fwd-msg-meta">${unreadDot}${deptPill} <strong style="${isUnread?'color:#1E7EC5;':''}">${m.from}</strong> · ${m.date} ${waitBadge}${unreadBadge}</div>
       </div>`;
     }).join('');
 
@@ -1959,6 +1996,9 @@ function buildForwardsSection(r) {
     </div>
     ${forwards.length ? cardsHtml : '<div style="font-size:12px;color:#bbb;padding:14px 0;text-align:center;"><i class="fas fa-share-square" style="font-size:22px;display:block;margin-bottom:8px;"></i>No forwards sent for this stage yet.</div>'}
   `;
+  /* auto-mark as read after 4 seconds of viewing */
+  clearTimeout(wrap._readTimer);
+  wrap._readTimer = setTimeout(() => _markRequestRead(r), 4000);
 }
 
 function toggleFwdForm(reqId) {
@@ -2225,7 +2265,10 @@ function renderTable(f, dept) {
     return `
     <tr class="data-row ${!r.slaOk||r.deptExceeded.length>0?'row-exceeded':''}">
       <td onclick="openRequest('${r.id}')" style="cursor:pointer;" title="Open request detail">
-        <div class="cid-main" style="text-decoration:underline;text-underline-offset:3px;">${r.cid}</div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          ${_hasUnread(r) ? `<span class="dash-unread-dot" id="unread-dot-${r.id}" title="Unread updates"></span>` : ''}
+          <div class="cid-main" style="text-decoration:underline;text-underline-offset:3px;">${r.cid}</div>
+        </div>
         <div class="cid-ref">${r.id}</div>
       </td>
       <td><div class="cust-name">${r.customer}</div></td>
