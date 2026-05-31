@@ -470,6 +470,7 @@
 .rpt-sla-table td { padding:7px 10px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
 .rpt-sla-table tr:hover td { background:#fafafa; }
 .rpt-empty { text-align:center; color:#bbb; padding:24px; font-size:12px; }
+.rpt-section.hidden { display:none; }
   </style>
 </head>
 <body>
@@ -1081,6 +1082,253 @@ const REQUESTS = [
     serviceType:'L2 VPN',requestType:'New Activation',stage:'Closed',dept:'NOC',
     qosUp:300,qosDn:300,openedDate:'2026-05-01',closedDate:'2026-05-06',sla:'2026-05-07',slaOk:true,
     holdDays:0,deptExceeded:[],
+  },
+  /* ── extended demo data ── */
+  {
+    id:'ACT-019',cid:'NT-INT--68500',customer:'Erbil Chamber of Commerce',assignedTo:'Ahmed Hassan',
+    serviceType:'Internet',requestType:'New Activation',stage:'Service Delivery',dept:'CTS',
+    qosUp:500,qosDn:500,openedDate:'2026-04-14',sla:'2026-04-28',slaOk:false,
+    holdDays:1,deptExceeded:['CTS','Fiber Operation'],
+    forwards:[{
+      id:'FWD-019',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-14 11:00',
+      toDepts:['Fiber Operation','Power'],
+      subject:'Fiber & power availability check — Erbil CoC',
+      body:'Please confirm fiber route and power availability for this new activation.',
+      messages:[
+        {from:'Hassan Omar',dept:'Fiber Operation',text:'Route feasible via Node-EB05. 2 poles. Estimated 8 working days.',date:'2026-04-16 09:00',waitTime:'2d 22h'},
+        {from:'Basim Kamal',dept:'Power',text:'Power supply at this site is adequate — no upgrade needed.',date:'2026-04-15 14:00',waitTime:'1d 3h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-020',cid:'NT-VPN--68600',customer:'Sulaymaniyah University',assignedTo:'Zaid Nouri',
+    serviceType:'L2 VPN',requestType:'Upgrade',stage:'Done',dept:'CTS',
+    qosUp:1000,qosDn:1000,openedDate:'2026-04-07',closedDate:'2026-04-21',sla:'2026-04-21',slaOk:true,
+    holdDays:0,deptExceeded:[],
+    forwards:[{
+      id:'FWD-020',sentBy:'Zaid Nouri',sentByDept:'CTS',sentDate:'2026-04-08 09:30',
+      toDepts:['IP Core','NOC'],
+      subject:'VPN upgrade capacity check',
+      body:'Please verify capacity for 1G VPN upgrade.',
+      messages:[
+        {from:'Rania Salam',dept:'IP Core',text:'Capacity confirmed. MPLS config will take 2 days.',date:'2026-04-09 10:00',waitTime:'1d 0.5h'},
+        {from:'Zaid Nouri',dept:'NOC',text:'Monitoring setup ready. Link test passed.',date:'2026-04-09 15:00',waitTime:'1d 5.5h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-021',cid:'NT-INT--68700',customer:'Peshmerga HQ Erbil',assignedTo:'Omar Khalid',
+    serviceType:'Internet',requestType:'New Activation',stage:'Availability Confirm',dept:'CTS',
+    qosUp:2000,qosDn:2000,openedDate:'2026-04-25',sla:'2026-05-02',slaOk:false,
+    holdDays:0,deptExceeded:['CTS'],
+    onHoldData:[
+      {id:'OH-021',requestedBy:'Hassan Omar',dept:'Fiber Operation',reason:'Waiting for site access permit from security authorities.',status:'approved',date:'2026-04-28 11:00',ctsComment:'Approved — access permit expected by May 3rd.'},
+    ],
+  },
+  {
+    id:'ACT-022',cid:'NT-4G--68800',customer:'Kirkuk Municipal Council',assignedTo:'Lara Hassan',
+    serviceType:'4G',requestType:'New Activation',stage:'Survey',dept:'CTS',
+    qosUp:50,qosDn:50,openedDate:'2026-04-20',sla:'2026-04-30',slaOk:false,
+    holdDays:2,deptExceeded:['Fiber Operation','IP Core'],
+    forwards:[{
+      id:'FWD-022',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-21 08:00',
+      toDepts:['Fiber Operation','IP Core'],
+      subject:'4G survey — Kirkuk Municipality',
+      body:'Site survey required for 4G activation.',
+      messages:[
+        {from:'Hassan Omar',dept:'Fiber Operation',text:'Survey done. Aerial installation required, 5 poles.',date:'2026-04-24 09:00',waitTime:'3d 1h'},
+        {from:'Rania Salam',dept:'IP Core',text:'IP config feasible. BGP peering available.',date:'2026-04-23 14:00',waitTime:'2d 6h'},
+      ],
+    }],
+    onHoldData:[
+      {id:'OH-022',requestedBy:'Rania Salam',dept:'IP Core',reason:'Customer site not accessible — construction ongoing.',status:'resumed',date:'2026-04-22 10:00',ctsComment:'Resumed after site access confirmed.'},
+    ],
+  },
+  {
+    id:'ACT-023',cid:'NT-INT--68900',customer:'Dohuk Airport Authority',assignedTo:'Ahmed Hassan',
+    serviceType:'Internet',requestType:'New Activation',stage:'Service Delivery',dept:'CTS',
+    qosUp:500,qosDn:500,openedDate:'2026-04-18',sla:'2026-05-02',slaOk:true,
+    holdDays:2,deptExceeded:[],
+    forwards:[{
+      id:'FWD-023',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-19 10:00',
+      toDepts:['Fiber Operation','Procurement'],
+      subject:'Fiber installation & materials — Dohuk Airport',
+      body:'Please confirm fiber route and raise material request for airport activation.',
+      messages:[
+        {from:'Hassan Omar',dept:'Fiber Operation',text:'Route via Node-DH03 confirmed. Trench required — CIVIL to coordinate.',date:'2026-04-20 09:00',waitTime:'23h'},
+        {from:'Sara Ahmed',dept:'Procurement',text:'BoQ received. Material lead time 5 working days.',date:'2026-04-20 14:30',waitTime:'1d 4.5h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-024',cid:'NT-SIP--69000',customer:'Kurdistan Parliament',assignedTo:'Sara Ali',
+    serviceType:'SIP',requestType:'New Activation',stage:'Done',dept:'CTS',
+    qosUp:10,qosDn:10,openedDate:'2026-04-08',closedDate:'2026-04-18',sla:'2026-04-18',slaOk:true,
+    holdDays:0,deptExceeded:[],
+    forwards:[{
+      id:'FWD-024',sentBy:'Zaid Nouri',sentByDept:'CTS',sentDate:'2026-04-09 09:00',
+      toDepts:['NOC','Voice (DTD)'],
+      subject:'SIP trunk setup for Parliament',
+      body:'Please configure SIP trunk and run link test.',
+      messages:[
+        {from:'Zaid Nouri',dept:'NOC',text:'Link test passed. All channels verified.',date:'2026-04-10 10:00',waitTime:'1d 1h'},
+        {from:'Tariq Moussa',dept:'Voice (DTD)',text:'SIP trunk configured. 30 channels active.',date:'2026-04-10 11:30',waitTime:'1d 2.5h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-025',cid:'NT-INT--69100',customer:'Erbil International Hotel',assignedTo:'Faris Nouri',
+    serviceType:'Internet',requestType:'Upgrade',stage:'Service Delivery',dept:'CTS',
+    qosUp:10000,qosDn:10000,openedDate:'2026-04-15',sla:'2026-04-29',slaOk:false,
+    holdDays:3,deptExceeded:['CIVIL','Fiber Operation'],
+    forwards:[{
+      id:'FWD-025',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-16 08:00',
+      toDepts:['CIVIL','Fiber Operation'],
+      subject:'Civil works & fiber route — hotel upgrade 10G',
+      body:'Requires trench civil works and new fiber route for 10G upgrade.',
+      messages:[
+        {from:'Murad Farhan',dept:'CIVIL',text:'Trench plan submitted. Expected 14 working days for permits + execution.',date:'2026-04-22 10:00',waitTime:'6d 2h'},
+        {from:'Hassan Omar',dept:'Fiber Operation',text:'Awaiting CIVIL completion before fiber pull. Design ready.',date:'2026-04-19 09:00',waitTime:'3d 1h'},
+      ],
+    }],
+    onHoldData:[
+      {id:'OH-025a',requestedBy:'Murad Farhan',dept:'CIVIL',reason:'Municipality permit for road excavation delayed.',status:'approved',date:'2026-04-18 14:00',ctsComment:'Approved — permit expected within 2 weeks.'},
+      {id:'OH-025b',requestedBy:'Hassan Omar',dept:'Fiber Operation',reason:'Cannot proceed until CIVIL trench is ready.',status:'pending',date:'2026-04-20 09:00',ctsComment:null},
+    ],
+  },
+  {
+    id:'ACT-026',cid:'NT-VPN--69200',customer:'Sulaymanyiah Free Zone',assignedTo:'Dina Majid',
+    serviceType:'L2 VPN',requestType:'New Activation',stage:'WS Discuss',dept:'Wholesale',
+    qosUp:200,qosDn:200,openedDate:'2026-04-10',sla:'2026-04-20',slaOk:false,
+    holdDays:1,deptExceeded:['Wholesale'],
+  },
+  {
+    id:'ACT-027',cid:'NT-INT--69300',customer:'Erbil Polytechnic Univ.',assignedTo:'Omar Khalid',
+    serviceType:'Internet',requestType:'New Activation',stage:'Availability Confirm',dept:'CTS',
+    qosUp:300,qosDn:300,openedDate:'2026-05-01',sla:'2026-05-07',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-028',cid:'NT-INT--69400',customer:'Halabja Municipality',assignedTo:'Ahmed Hassan',
+    serviceType:'Internet',requestType:'Upgrade',stage:'Done',dept:'CTS',
+    qosUp:100,qosDn:100,openedDate:'2026-04-11',closedDate:'2026-04-22',sla:'2026-04-25',slaOk:true,
+    holdDays:0,deptExceeded:[],
+    forwards:[{
+      id:'FWD-028',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-12 09:00',
+      toDepts:['Fiber Planning','IP Core'],
+      subject:'Route design + IP config for Halabja upgrade',
+      body:'Route design and IP config needed for 100M upgrade.',
+      messages:[
+        {from:'Ali Karimi',dept:'Fiber Planning',text:'Route design complete. 3.2km cable required.',date:'2026-04-14 10:00',waitTime:'2d 1h'},
+        {from:'Rania Salam',dept:'IP Core',text:'IP config prepared. Ready to activate on signal.',date:'2026-04-13 16:00',waitTime:'1d 7h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-029',cid:'NT-4G--69500',customer:'Akre Town Council',assignedTo:'Tariq Salih',
+    serviceType:'4G',requestType:'New Activation',stage:'Survey',dept:'CTS',
+    qosUp:25,qosDn:25,openedDate:'2026-04-28',sla:'2026-05-08',slaOk:true,
+    holdDays:0,deptExceeded:[],
+    forwards:[{
+      id:'FWD-029',sentBy:'Zaid Nouri',sentByDept:'CTS',sentDate:'2026-04-28 10:00',
+      toDepts:['RF','Optics'],
+      subject:'4G coverage survey — Akre',
+      body:'RF coverage check and optics availability for 4G site.',
+      messages:[
+        {from:'Nour Salih',dept:'RF',text:'Coverage survey done. Signal strength adequate at -78dBm.',date:'2026-04-29 11:00',waitTime:'1d 1h'},
+        {from:'Karim Adel',dept:'Optics',text:'Backhaul fiber available at this location.',date:'2026-04-29 14:00',waitTime:'1d 4h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-030',cid:'NT-INT--69600',customer:'Khanaqin Industrial Est.',assignedTo:'Lara Hassan',
+    serviceType:'Internet',requestType:'New Activation',stage:'Service Delivery',dept:'CTS',
+    qosUp:200,qosDn:200,openedDate:'2026-04-09',sla:'2026-04-23',slaOk:false,
+    holdDays:0,deptExceeded:['NOC','Power'],
+    forwards:[{
+      id:'FWD-030',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-10 09:00',
+      toDepts:['NOC','Power'],
+      subject:'NOC monitoring + power check — Khanaqin',
+      body:'Please set up monitoring and confirm power stability.',
+      messages:[
+        {from:'Zaid Nouri',dept:'NOC',text:'Monitoring setup complete. Alerting configured.',date:'2026-04-14 10:00',waitTime:'4d 1h'},
+        {from:'Basim Kamal',dept:'Power',text:'Power fluctuation issue found — UPS upgrade required. ETA 5 days.',date:'2026-04-16 11:00',waitTime:'6d 2h'},
+      ],
+    }],
+    onHoldData:[
+      {id:'OH-030',requestedBy:'Basim Kamal',dept:'Power',reason:'UPS unit not available in warehouse. Procurement needed.',status:'approved',date:'2026-04-12 09:00',ctsComment:'Approved — procurement request raised.'},
+    ],
+  },
+  {
+    id:'ACT-031',cid:'NT-VPN--69700',customer:'Chamchamal Sugar Factory',assignedTo:'Ahmed Hassan',
+    serviceType:'L2 VPN',requestType:'Upgrade',stage:'Done',dept:'CTS',
+    qosUp:500,qosDn:500,openedDate:'2026-03-20',closedDate:'2026-04-05',sla:'2026-04-03',slaOk:false,
+    holdDays:2,deptExceeded:['CTS','IP Core'],
+  },
+  {
+    id:'ACT-032',cid:'NT-INT--69800',customer:'Soran University',assignedTo:'Sara Ali',
+    serviceType:'Internet',requestType:'New Activation',stage:'Service Activation',dept:'CTS',
+    qosUp:1000,qosDn:1000,openedDate:'2026-05-01',sla:'2026-05-07',slaOk:true,
+    holdDays:0,deptExceeded:[],
+    forwards:[{
+      id:'FWD-032',sentBy:'Zaid Nouri',sentByDept:'CTS',sentDate:'2026-05-01 10:00',
+      toDepts:['IP Core','NOC'],
+      subject:'Final activation — Soran University 1G',
+      body:'Please complete IP config and monitoring for final activation.',
+      messages:[
+        {from:'Rania Salam',dept:'IP Core',text:'BGP session up. Traffic flowing at expected levels.',date:'2026-05-02 09:00',waitTime:'23h'},
+        {from:'Zaid Nouri',dept:'NOC',text:'All checks passed. Service live.',date:'2026-05-02 11:00',waitTime:'1d 1h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-033',cid:'NT-INT--69900',customer:'Rawanduz Municipality',assignedTo:'Omar Khalid',
+    serviceType:'Internet',requestType:'New Activation',stage:'Survey',dept:'CTS',
+    qosUp:200,qosDn:200,openedDate:'2026-05-02',sla:'2026-05-12',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-034',cid:'NT-4G--70000',customer:'Tuz Khurmatu District',assignedTo:'Karim Aziz',
+    serviceType:'4G',requestType:'New Activation',stage:'Availability Confirm',dept:'CTS',
+    qosUp:50,qosDn:50,openedDate:'2026-04-22',sla:'2026-04-29',slaOk:false,
+    holdDays:1,deptExceeded:['CTS'],
+    onHoldData:[
+      {id:'OH-034',requestedBy:'Ahmed Hassan',dept:'CTS',reason:'Customer pending internal approval for budget.',status:'pending',date:'2026-04-25 10:00',ctsComment:null},
+    ],
+  },
+  {
+    id:'ACT-035',cid:'NT-INT--70100',customer:'Raparin University',assignedTo:'Ahmed Hassan',
+    serviceType:'Internet',requestType:'Upgrade',stage:'Done',dept:'CTS',
+    qosUp:500,qosDn:500,openedDate:'2026-03-15',closedDate:'2026-03-28',sla:'2026-03-29',slaOk:true,
+    holdDays:0,deptExceeded:[],
+  },
+  {
+    id:'ACT-036',cid:'NT-SIP--70200',customer:'Koya Telecom Hub',assignedTo:'Lara Hassan',
+    serviceType:'SIP',requestType:'New Activation',stage:'Service Delivery',dept:'CTS',
+    qosUp:5,qosDn:5,openedDate:'2026-04-30',sla:'2026-05-07',slaOk:true,
+    holdDays:0,deptExceeded:[],
+    forwards:[{
+      id:'FWD-036',sentBy:'Ahmed Hassan',sentByDept:'CTS',sentDate:'2026-04-30 11:00',
+      toDepts:['Voice (DTD)','IN'],
+      subject:'SIP trunk configuration — Koya Hub',
+      body:'Configure SIP trunk and IN services for new customer.',
+      messages:[
+        {from:'Tariq Moussa',dept:'Voice (DTD)',text:'SIP configured. 10 channels activated.',date:'2026-05-01 10:00',waitTime:'23h'},
+        {from:'Faris Hadi',dept:'IN',text:'IN services mapped. All routes verified.',date:'2026-05-01 14:00',waitTime:'1d 3h'},
+      ],
+    }],
+  },
+  {
+    id:'ACT-037',cid:'NT-INT--70300',customer:'Sulaymaniyah Free Trade Zone',assignedTo:'Zaid Nouri',
+    serviceType:'Internet',requestType:'New Activation',stage:'WS Request',dept:'Wholesale',
+    qosUp:1000,qosDn:1000,openedDate:'2026-04-29',sla:'2026-05-05',slaOk:false,
+    holdDays:0,deptExceeded:['Wholesale'],
+  },
+  {
+    id:'ACT-038',cid:'NT-INT--70400',customer:'Erbil Media City',assignedTo:'Sara Ali',
+    serviceType:'Internet',requestType:'New Activation',stage:'Done',dept:'CTS',
+    qosUp:300,qosDn:300,openedDate:'2026-03-25',closedDate:'2026-04-08',sla:'2026-04-08',slaOk:true,
+    holdDays:1,deptExceeded:[],
   },
 ];
 
