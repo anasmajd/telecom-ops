@@ -49,6 +49,7 @@
     .app-tile-icon { width: 72px; height: 72px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; margin-bottom: 10px; transition: transform .2s, box-shadow .2s; }
     .app-tile:hover .app-tile-icon { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,.22); }
     .app-tile-label { font-size: 12px; text-align: center; color: #555; font-weight: 500; line-height: 1.35; }
+    .home-unread-badge { position:absolute; top:10px; right:10px; min-width:20px; height:20px; background:#E74C3C; color:#fff; border-radius:10px; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; padding:0 5px; box-shadow:0 2px 6px rgba(231,76,60,.5); animation:unread-pulse 2s ease-in-out infinite; }
     .bg-purple{background:linear-gradient(135deg,#875A7B,#6b4663);}
     .bg-blue  {background:linear-gradient(135deg,#1E7EC5,#1261a0);}
     .bg-teal  {background:linear-gradient(135deg,#00A09D,#007a78);}
@@ -496,9 +497,10 @@
   <div style="padding:44px 40px;">
     <div class="home-label">Applications</div>
     <div class="app-grid">
-      <div class="app-tile" onclick="nav('dashboard')">
+      <div class="app-tile" onclick="nav('dashboard')" style="position:relative;">
         <div class="app-tile-icon bg-purple"><i class="fas fa-tachometer-alt"></i></div>
         <span class="app-tile-label">Activation Dashboard</span>
+        <span id="home-unread-badge" class="home-unread-badge" style="display:none;"></span>
       </div>
       <div class="app-tile"><div class="app-tile-icon bg-blue"><i class="fas fa-users"></i></div><span class="app-tile-label">Customers</span></div>
       <div class="app-tile"><div class="app-tile-icon bg-teal"><i class="fas fa-network-wired"></i></div><span class="app-tile-label">Network Management</span></div>
@@ -870,15 +872,29 @@ function _markRequestRead(r) {
     (fwd.messages||[]).forEach((m, mi) => keys.add(_msgKey(fwd.id, mi)));
   });
   _saveReadKeys(keys);
-  /* remove unread dots from dashboard row if visible */
+  /* remove unread dot from dashboard row */
   const dot = document.getElementById('unread-dot-'+r.id);
   if (dot) dot.remove();
+  _updateHomeBadge();
 }
 function _hasUnread(r) {
   const keys = _getReadKeys();
   return (r.forwards||[]).some(fwd =>
     (fwd.messages||[]).some((m, mi) => !keys.has(_msgKey(fwd.id, mi)))
   );
+}
+function _updateHomeBadge() {
+  const count = REQUESTS.filter(_hasUnread).length;
+  const badge = document.getElementById('home-unread-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+  /* browser tab title */
+  document.title = count > 0 ? `(${count}) TelecomOps — CTS` : 'TelecomOps — CTS';
 }
 
 function calcWorkDays(fromStr, toDate) {
@@ -1373,6 +1389,7 @@ function nav(page) {
   document.getElementById('reportsPage').classList.toggle('hidden', page !== 'reports');
   if (page === 'dashboard') initDashboard();
   if (page === 'reports') buildReportsPage();
+  if (page === 'home') _updateHomeBadge();
 }
 
 /* ── Request detail ─────────────────────────────────────────── */
