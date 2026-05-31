@@ -249,6 +249,20 @@
     .avail-part { background:#fff3e0; color:#E65100; }
     .avail-no   { background:#fde8e8; color:#B71C1C; }
     .avail-pend { background:#f5f5f5; color:#999; }
+    /* survey validity */
+    .surv-validity-bar { background:#e0e0e0; border-radius:4px; height:8px; margin:8px 0 4px; overflow:hidden; }
+    .surv-validity-fill { height:100%; border-radius:4px; transition:width .4s; }
+    .surv-valid-banner { background:#e8f5e9; border:1px solid #A5D6A7; border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+    .surv-expiring-banner { background:#fff8e1; border:1px solid #FFE082; border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+    .surv-expired-banner { background:#fde8e8; border:1px solid #ffcdd2; border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+    .surv-pending-banner { background:#f3f4f6; border:1px solid #e0e0e0; border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+    .surv-rejected-banner { background:#fde8e8; border:1px solid #E74C3C; border-radius:8px; padding:12px 16px; margin-bottom:14px; }
+    .surv-extend-btn { padding:6px 14px; background:#1E7EC5; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:700; cursor:pointer; }
+    .surv-approve-btn { padding:6px 14px; background:#27AE60; color:#fff; border:none; border-radius:5px; font-size:12px; font-weight:700; cursor:pointer; }
+    .surv-reject-btn { padding:6px 14px; background:none; border:1px solid #E74C3C; color:#E74C3C; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; }
+    .surv-ext-log { background:#f9f9f9; border:1px solid #e0e0e0; border-radius:6px; padding:10px 14px; margin-top:10px; }
+    .surv-ext-row { display:flex; align-items:center; gap:10px; padding:5px 0; border-bottom:1px solid #f0f0f0; font-size:11px; }
+    .surv-ext-row:last-child { border-bottom:none; }
 
     /* ── On-Hold panel ── */
     .oh-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
@@ -447,6 +461,15 @@
 .rpt-mini-bar-track { height:6px; background:#f0f0f0; border-radius:3px; margin-top:3px; min-width:80px; }
 .rpt-mini-bar-fill { height:100%; border-radius:3px; }
 .rpt-section-title { font-size:13px; font-weight:700; color:#333; margin:0 0 12px; display:flex; align-items:center; gap:8px; }
+.rpt-sec-tabs { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.rpt-sec-tab { background:#fff; border:1.5px solid #e0e0e0; color:#555; border-radius:8px; padding:9px 18px; font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; display:inline-flex; align-items:center; gap:7px; }
+.rpt-sec-tab:hover { border-color:#875A7B; color:#875A7B; }
+.rpt-sec-tab.active { background:#875A7B; border-color:#875A7B; color:#fff; }
+.rpt-sla-table { width:100%; border-collapse:collapse; font-size:12px; }
+.rpt-sla-table th { background:#f5f5f5; padding:8px 10px; text-align:left; font-weight:700; color:#555; border-bottom:2px solid #e0e0e0; white-space:nowrap; font-size:11px; }
+.rpt-sla-table td { padding:7px 10px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+.rpt-sla-table tr:hover td { background:#fafafa; }
+.rpt-empty { text-align:center; color:#bbb; padding:24px; font-size:12px; }
   </style>
 </head>
 <body>
@@ -609,52 +632,94 @@
     </div>
   </div>
   <div class="rpt-page-content">
-    <!-- KPI row -->
     <div class="rpt-kpi-row" id="rpt-kpis"></div>
-    <!-- Charts row 1: Dept SLA + Avg Days -->
-    <div class="rpt-charts-grid">
-      <div class="rpt-chart-card">
-        <h3><i class="fas fa-building" style="color:#875A7B;margin-right:7px;"></i>SLA Performance by Department</h3>
-        <p>On-time vs exceeded SLA — direct stage ownership</p>
-        <div class="rpt-chart-wrap"><canvas id="rptDeptSlaChart"></canvas></div>
-      </div>
-      <div class="rpt-chart-card">
-        <h3><i class="fas fa-stopwatch" style="color:#1E7EC5;margin-right:7px;"></i>Avg Working Days vs SLA Target</h3>
-        <p>Average days spent per department vs their allowed SLA</p>
-        <div class="rpt-chart-wrap"><canvas id="rptAvgDaysChart"></canvas></div>
+
+    <div class="rpt-sec-tabs">
+      <button class="rpt-sec-tab active" id="rss-dept"   onclick="switchRptSection('dept')"><i class="fas fa-building"></i> By Department</button>
+      <button class="rpt-sec-tab"        id="rss-stage"  onclick="switchRptSection('stage')"><i class="fas fa-layer-group"></i> By Stage</button>
+      <button class="rpt-sec-tab"        id="rss-person" onclick="switchRptSection('person')"><i class="fas fa-users"></i> By Person</button>
+      <button class="rpt-sec-tab"        id="rss-onhold" onclick="switchRptSection('onhold')"><i class="fas fa-pause-circle"></i> On-Hold Analysis</button>
+    </div>
+
+    <!-- ── DEPARTMENT SECTION ── -->
+    <div id="rpt-sec-dept" class="rpt-section">
+      <div class="rpt-charts-grid">
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-building" style="color:#875A7B;margin-right:7px;"></i>Compliance % by Department</h3>
+          <p>Requests handled within configured SLA per owning department</p>
+          <div class="rpt-chart-wrap" style="height:270px;"><canvas id="rptDeptChart"></canvas></div>
+        </div>
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-table" style="color:#1E7EC5;margin-right:7px;"></i>Department Detail</h3>
+          <p>SLA target · total · on-time · exceeded · avg days · on-hold count</p>
+          <div id="rpt-dept-table" style="overflow-x:auto;margin-top:8px;"></div>
+        </div>
       </div>
     </div>
-    <!-- Charts row 2: Stage + Forward -->
-    <div class="rpt-charts-grid">
-      <div class="rpt-chart-card">
-        <h3><i class="fas fa-layer-group" style="color:#00A09D;margin-right:7px;"></i>Stage Performance</h3>
-        <p>On-time % per stage — horizontal view</p>
-        <div class="rpt-chart-wrap"><canvas id="rptStageChart"></canvas></div>
-      </div>
-      <div class="rpt-chart-card">
-        <h3><i class="fas fa-share-square" style="color:#E67E22;margin-right:7px;"></i>Forward Response Rate by Department</h3>
-        <p>On-time vs overdue forward responses per receiving dept</p>
-        <div class="rpt-chart-wrap"><canvas id="rptFwdChart"></canvas></div>
-      </div>
-    </div>
-    <!-- Charts row 3: Trend + Volume -->
-    <div class="rpt-charts-grid">
-      <div class="rpt-chart-card">
-        <h3><i class="fas fa-chart-line" style="color:#27AE60;margin-right:7px;"></i>On-Time Rate Trend</h3>
-        <p>Weekly on-time compliance rate over time</p>
-        <div class="rpt-chart-wrap"><canvas id="rptTrendChart"></canvas></div>
-      </div>
-      <div class="rpt-chart-card">
-        <h3><i class="fas fa-chart-pie" style="color:#5C6BC0;margin-right:7px;"></i>Request Volume by Stage</h3>
-        <p>Distribution of requests currently across all stages</p>
-        <div class="rpt-chart-wrap-sm"><canvas id="rptStageVolChart"></canvas></div>
+
+    <!-- ── STAGE SECTION ── -->
+    <div id="rpt-sec-stage" class="rpt-section hidden">
+      <div class="rpt-charts-grid">
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-layer-group" style="color:#00A09D;margin-right:7px;"></i>Compliance % by Stage</h3>
+          <p>Requests meeting configured SLA target per activation stage</p>
+          <div class="rpt-chart-wrap" style="height:320px;"><canvas id="rptStageChart"></canvas></div>
+        </div>
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-table" style="color:#00A09D;margin-right:7px;"></i>Stage Detail</h3>
+          <p>Stage owner · SLA target · total · on-time · exceeded · compliance %</p>
+          <div id="rpt-stage-table" style="overflow-x:auto;margin-top:8px;"></div>
+        </div>
       </div>
     </div>
-    <!-- Employee table -->
-    <div class="rpt-chart-card" style="margin-bottom:20px;">
-      <div class="rpt-section-title"><i class="fas fa-users" style="color:#875A7B;"></i> Employee Activity</div>
-      <div id="rpt-emp-table-wrap"></div>
+
+    <!-- ── PERSON SECTION ── -->
+    <div id="rpt-sec-person" class="rpt-section hidden">
+      <div class="rpt-charts-grid" style="margin-bottom:16px;">
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-users" style="color:#E67E22;margin-right:7px;"></i>Team Activity — On-Time vs Exceeded</h3>
+          <p>Top persons by activity — forward response SLA compliance</p>
+          <div class="rpt-chart-wrap" style="height:230px;"><canvas id="rptPersonChart"></canvas></div>
+        </div>
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-stopwatch" style="color:#5C6BC0;margin-right:7px;"></i>Avg First Response Time by Department</h3>
+          <p>Hours from forward sent → first reply from each department</p>
+          <div class="rpt-chart-wrap" style="height:230px;"><canvas id="rptRespTimeChart"></canvas></div>
+        </div>
+      </div>
+      <div class="rpt-chart-card">
+        <h3><i class="fas fa-table" style="color:#E67E22;margin-right:7px;"></i>Person Detail</h3>
+        <p>Fwds sent · replies · on-time · exceeded · compliance % · avg first response · on-holds requested</p>
+        <div id="rpt-person-table" style="overflow-x:auto;margin-top:8px;"></div>
+      </div>
     </div>
+
+    <!-- ── ON-HOLD SECTION ── -->
+    <div id="rpt-sec-onhold" class="rpt-section hidden">
+      <div class="rpt-charts-grid" style="margin-bottom:16px;">
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-pause-circle" style="color:#1E7EC5;margin-right:7px;"></i>On-Hold Count by Department</h3>
+          <p>Total on-hold requests raised per department</p>
+          <div class="rpt-chart-wrap"><canvas id="rptOhDeptChart"></canvas></div>
+        </div>
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-chart-line" style="color:#875A7B;margin-right:7px;"></i>Monthly On-Hold Trend</h3>
+          <p>Total on-hold requests per month over the selected period</p>
+          <div class="rpt-chart-wrap"><canvas id="rptOhMonthChart"></canvas></div>
+        </div>
+      </div>
+      <div class="rpt-charts-grid">
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-building" style="color:#1E7EC5;margin-right:7px;"></i>On-Hold by Department</h3>
+          <div id="rpt-oh-dept-table" style="overflow-x:auto;margin-top:8px;"></div>
+        </div>
+        <div class="rpt-chart-card">
+          <h3><i class="fas fa-user" style="color:#875A7B;margin-right:7px;"></i>On-Hold by Person</h3>
+          <div id="rpt-oh-person-table" style="overflow-x:auto;margin-top:8px;"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -889,6 +954,11 @@ const REQUESTS = [
     surveyData:{
       wholesaleRequest:{ sentBy:'Ahmed Karwan', dept:'Wholesale', date:'2026-04-23 09:00', capacity:'10 Gbps', notes:'Customer requires fiber upgrade to HQ. Site access confirmed. Urgent — contract signed.' },
       ctsResponse:{ status:'Partial', estimatedCost:'~$18,000 installation', estimatedTimeline:'45–60 days', notes:'Fiber route available via Node-EB12 but IP Core uplink at 78% — upgrade required. Alternative route via Node-EB07 under assessment.', respondedBy:'Zaid Nouri', date:'2026-04-25 14:00' },
+      approvedBy:'Zaid Nouri', approvedByDept:'CTS', approvedDate:'2026-02-15',
+      validityDays:90,
+      extensions:[
+        { by:'Ahmed Hassan', dept:'CTS', date:'2026-05-01', newExpiry:'2026-08-13', reason:'Project delayed due to civil works — extended for 90 days.' },
+      ],
     },
     forwards:[
       {
@@ -1093,9 +1163,9 @@ function openRequest(id) {
     <div class="rdg-field" style="grid-column:1/-1;"><label>Departments Exceeded SLA</label><div style="margin-top:4px;">${excTags}</div></div>
   `;
 
-  /* Survey section */
+  /* Survey section — visible in all stages when survey data exists */
   const survSec = document.getElementById('req-survey-section');
-  if (r.stage === 'Survey' && r.surveyData) {
+  if (r.surveyData) {
     survSec.style.display = '';
     buildSurveyPanel(r);
   } else { survSec.style.display = 'none'; }
@@ -1116,6 +1186,25 @@ function openRequest(id) {
 }
 
 /* ── Survey panel ───────────────────────────────────────────── */
+function getSurveyValidity(sd) {
+  if (!sd.approvedDate) return { status: sd.rejectedDate ? 'rejected' : 'pending' };
+  const vDays  = sd.validityDays || 90;
+  /* find latest expiry (original or from last extension) */
+  let expiryDate = new Date(sd.approvedDate);
+  expiryDate.setDate(expiryDate.getDate() + vDays);
+  if (sd.extensions && sd.extensions.length) {
+    const lastExt = sd.extensions[sd.extensions.length - 1];
+    expiryDate = new Date(lastExt.newExpiry);
+  }
+  const totalMs   = expiryDate - new Date(sd.approvedDate.split('T')[0]);
+  const usedMs    = TODAY - new Date(sd.approvedDate.split('T')[0]);
+  const daysLeft  = Math.ceil((expiryDate - TODAY) / 86400000);
+  const pctUsed   = Math.min(Math.round(usedMs / totalMs * 100), 100);
+  const isExpired = daysLeft <= 0;
+  const isExpiring = !isExpired && daysLeft <= 14;
+  return { status: isExpired ? 'expired' : isExpiring ? 'expiring' : 'valid', expiryDate, daysLeft, pctUsed };
+}
+
 function buildSurveyPanel(r) {
   const sd = r.surveyData;
   const availMap = {
@@ -1124,9 +1213,80 @@ function buildSurveyPanel(r) {
     'NotAvailable': ['avail-no',  'fa-times-circle',        'Not Available'],
     'Pending':      ['avail-pend','fa-clock',               'Pending Response'],
   };
-  const av = availMap[sd.ctsResponse.status] || availMap['Pending'];
+  const av  = availMap[sd.ctsResponse.status] || availMap['Pending'];
+  const val = getSurveyValidity(sd);
 
-  document.getElementById('req-survey-content').innerHTML = `
+  /* ── validity banner ── */
+  let validityHtml = '';
+  if (val.status === 'pending') {
+    validityHtml = `
+    <div class="surv-pending-banner">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div><span style="font-size:13px;font-weight:700;color:#555;"><i class="fas fa-clock" style="color:#F59E0B;margin-right:6px;"></i>Awaiting Approval</span>
+          <div style="font-size:11px;color:#888;margin-top:3px;">Survey response not yet approved by the responsible department.</div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="surv-approve-btn" onclick="approveSurvey('${r.id}')"><i class="fas fa-check-circle"></i> Approve Survey</button>
+          <button class="surv-reject-btn"  onclick="showRejectSurvey('${r.id}')"><i class="fas fa-times"></i> Reject</button>
+        </div>
+      </div>
+      <div id="surv-reject-form-${r.id}" style="display:none;margin-top:10px;">
+        <input id="surv-reject-reason-${r.id}" type="text" placeholder="Rejection reason (required)…" style="width:100%;padding:7px 10px;border:1px solid #E74C3C;border-radius:4px;font-size:12px;margin-bottom:7px;">
+        <button onclick="rejectSurvey('${r.id}')" style="padding:5px 14px;background:#E74C3C;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;"><i class="fas fa-times-circle"></i> Confirm Rejection</button>
+      </div>
+    </div>`;
+  } else if (val.status === 'rejected') {
+    validityHtml = `
+    <div class="surv-rejected-banner">
+      <span style="font-size:13px;font-weight:700;color:#B71C1C;"><i class="fas fa-times-circle" style="margin-right:6px;"></i>Survey Rejected</span>
+      ${sd.rejectionReason ? `<div style="font-size:12px;color:#c62828;margin-top:4px;"><b>Reason:</b> ${sd.rejectionReason}</div>` : ''}
+      ${sd.rejectedBy ? `<div style="font-size:11px;color:#999;margin-top:3px;">Rejected by ${sd.rejectedBy} · ${sd.rejectedDate||''}</div>` : ''}
+    </div>`;
+  } else {
+    const barColor = val.status==='expired' ? '#E74C3C' : val.status==='expiring' ? '#F59E0B' : '#27AE60';
+    const bannerCls = val.status==='expired' ? 'surv-expired-banner' : val.status==='expiring' ? 'surv-expiring-banner' : 'surv-valid-banner';
+    const icon  = val.status==='expired' ? 'fa-times-circle' : val.status==='expiring' ? 'fa-exclamation-triangle' : 'fa-check-circle';
+    const label = val.status==='expired' ? 'Survey Expired — Must be renewed' : val.status==='expiring' ? `Expiring soon — ${val.daysLeft} day(s) left` : `Valid — ${val.daysLeft} day(s) remaining`;
+    const extLog = (sd.extensions||[]).length ? `
+      <div class="surv-ext-log" style="margin-top:10px;">
+        <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">Extension History</div>
+        ${sd.extensions.map(e=>`<div class="surv-ext-row">
+          <i class="fas fa-history" style="color:#1E7EC5;font-size:10px;"></i>
+          <span style="font-weight:700;">${e.date}</span>
+          <span>Extended to <b>${e.newExpiry}</b></span>
+          <span style="color:#888;">by ${e.by} (${e.dept})</span>
+          ${e.reason?`<span style="color:#aaa;font-style:italic;">— ${e.reason}</span>`:''}
+        </div>`).join('')}
+      </div>` : '';
+    validityHtml = `
+    <div class="${bannerCls}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:${val.status==='expired'?'#B71C1C':val.status==='expiring'?'#E65100':'#1B5E20'};">
+            <i class="fas ${icon}" style="margin-right:6px;"></i>${label}</div>
+          <div style="font-size:11px;color:#666;margin-top:4px;">
+            Approved by <b>${sd.approvedBy}</b> (${sd.approvedByDept}) on ${sd.approvedDate}
+            &nbsp;·&nbsp; Expiry: <b>${val.expiryDate.toISOString().slice(0,10)}</b>
+          </div>
+          <div class="surv-validity-bar">
+            <div class="surv-validity-fill" style="width:${val.pctUsed}%;background:${barColor};"></div>
+          </div>
+          <div style="font-size:10px;color:#888;">${val.pctUsed}% of validity period used</div>
+        </div>
+        <div>
+          <button class="surv-extend-btn" onclick="showExtendSurvey('${r.id}')"><i class="fas fa-calendar-plus"></i> Extend Validity +90 days</button>
+        </div>
+      </div>
+      <div id="surv-extend-form-${r.id}" style="display:none;margin-top:10px;background:rgba(255,255,255,.6);border-radius:6px;padding:10px;">
+        <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;"><i class="fas fa-calendar-plus"></i> Extend Survey Validity</div>
+        <input id="surv-ext-reason-${r.id}" type="text" placeholder="Reason for extension (optional)…" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:12px;margin-bottom:7px;">
+        <button onclick="extendSurvey('${r.id}')" class="surv-extend-btn"><i class="fas fa-check"></i> Confirm Extension (+90 days)</button>
+        <button onclick="document.getElementById('surv-extend-form-${r.id}').style.display='none'" style="margin-left:8px;background:none;border:none;color:#888;cursor:pointer;font-size:12px;">Cancel</button>
+      </div>
+      ${extLog}
+    </div>`;
+  }
+
+  document.getElementById('req-survey-content').innerHTML = validityHtml + `
     <div class="survey-two">
       <div class="survey-side">
         <h5 style="color:#1565C0;"><i class="fas fa-building"></i> Wholesale Request</h5>
@@ -1144,6 +1304,65 @@ function buildSurveyPanel(r) {
         <div class="survey-field"><label>Responded By</label><span>${sd.ctsResponse.respondedBy} · ${sd.ctsResponse.date}</span></div>
       </div>
     </div>`;
+}
+
+function showRejectSurvey(reqId) {
+  const f = document.getElementById('surv-reject-form-' + reqId);
+  if (f) f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+function showExtendSurvey(reqId) {
+  const f = document.getElementById('surv-extend-form-' + reqId);
+  if (f) f.style.display = f.style.display === 'none' ? '' : 'none';
+}
+
+function approveSurvey(reqId) {
+  const r = REQUESTS.find(x => x.id === reqId);
+  if (!r || !r.surveyData) return;
+  const now = new Date();
+  r.surveyData.approvedBy     = ME;
+  r.surveyData.approvedByDept = 'CTS';
+  r.surveyData.approvedDate   = now.toISOString().slice(0,10);
+  r.surveyData.validityDays   = 90;
+  if (!r.surveyData.extensions) r.surveyData.extensions = [];
+  delete r.surveyData.rejectedBy;
+  delete r.surveyData.rejectedDate;
+  delete r.surveyData.rejectionReason;
+  buildSurveyPanel(r);
+}
+
+function rejectSurvey(reqId) {
+  const r = REQUESTS.find(x => x.id === reqId);
+  if (!r || !r.surveyData) return;
+  const reasonEl = document.getElementById('surv-reject-reason-' + reqId);
+  const reason   = reasonEl ? reasonEl.value.trim() : '';
+  if (!reason) { alert('Please enter a rejection reason.'); return; }
+  const now = new Date();
+  r.surveyData.rejectedBy      = ME;
+  r.surveyData.rejectedDate    = now.toISOString().slice(0,10);
+  r.surveyData.rejectionReason = reason;
+  delete r.surveyData.approvedBy;
+  delete r.surveyData.approvedDate;
+  buildSurveyPanel(r);
+}
+
+function extendSurvey(reqId) {
+  const r = REQUESTS.find(x => x.id === reqId);
+  if (!r || !r.surveyData) return;
+  const reasonEl  = document.getElementById('surv-ext-reason-' + reqId);
+  const reason    = reasonEl ? reasonEl.value.trim() : '';
+  const val       = getSurveyValidity(r.surveyData);
+  const baseExpiry = val.expiryDate || new Date();
+  const newExpiry  = new Date(baseExpiry);
+  newExpiry.setDate(newExpiry.getDate() + 90);
+  const now = new Date();
+  if (!r.surveyData.extensions) r.surveyData.extensions = [];
+  r.surveyData.extensions.push({
+    by: ME, dept: 'CTS',
+    date: now.toISOString().slice(0,10),
+    newExpiry: newExpiry.toISOString().slice(0,10),
+    reason: reason || null,
+  });
+  buildSurveyPanel(r);
 }
 
 /* ── On-Hold panel ──────────────────────────────────────────── */
@@ -2579,8 +2798,9 @@ function renderSettingsManagersTab() {
 }
 
 /* ══════ Reports Page ══════ */
-let _rptPeriod = 'month';
-let _rptCharts = {};
+let _rptPeriod  = 'month';
+let _rptSection = 'dept';
+let _rptCharts  = {};
 
 function setRptPeriod(btn, period) {
   _rptPeriod = period;
@@ -2596,198 +2816,332 @@ function getRptCutoff() {
   return d;
 }
 
+function switchRptSection(sec) {
+  _rptSection = sec;
+  ['dept','stage','person','onhold'].forEach(s => {
+    document.getElementById('rpt-sec-'+s).classList.toggle('hidden', s !== sec);
+    document.getElementById('rss-'+s).classList.toggle('active', s === sec);
+  });
+}
+
+/* ── helpers ── */
+function _complianceBar(pct, color) {
+  return `<div class="rpt-mini-bar-track" style="min-width:60px;"><div class="rpt-mini-bar-fill" style="width:${pct}%;background:${color};"></div></div>`;
+}
+function _pctColor(pct) { return pct >= 80 ? '#27AE60' : pct >= 50 ? '#F59E0B' : '#E74C3C'; }
+function _destroyRptChart(id) { if (_rptCharts[id]) { _rptCharts[id].destroy(); delete _rptCharts[id]; } }
+
 function buildReportsPage() {
-  const cutoff = getRptCutoff();
+  const cutoff   = getRptCutoff();
   const filtered = REQUESTS.filter(r => new Date(r.openedDate) >= cutoff);
 
   /* ── KPIs ── */
   const totalReqs  = filtered.length;
   const onTimeReqs = filtered.filter(r => r.slaOk).length;
-  const overdueReqs= filtered.filter(r => !r.slaOk).length;
+  const overdueReqs= totalReqs - onTimeReqs;
   const onTimePct  = totalReqs ? Math.round(onTimeReqs / totalReqs * 100) : 0;
-  const fwdCount   = filtered.reduce((s, r) => s + (r.forwards||[]).length, 0);
-  const kpiColor   = onTimePct >= 80 ? '#27AE60' : onTimePct >= 50 ? '#F59E0B' : '#E74C3C';
+  const totalOH    = filtered.reduce((s,r) => s+(r.onHoldData||[]).length, 0);
+  const kpiColor   = _pctColor(onTimePct);
   document.getElementById('rpt-kpis').innerHTML = `
     <div class="rpt-kpi-card"><div class="val" style="color:#875A7B;">${totalReqs}</div><div class="lbl">Total Requests</div></div>
     <div class="rpt-kpi-card"><div class="val" style="color:#27AE60;">${onTimeReqs}</div><div class="lbl">On-Time</div></div>
-    <div class="rpt-kpi-card"><div class="val" style="color:#E74C3C;">${overdueReqs}</div><div class="lbl">Overdue</div></div>
-    <div class="rpt-kpi-card"><div class="val" style="color:${kpiColor};">${onTimePct}%</div><div class="lbl">On-Time Rate</div></div>
-    <div class="rpt-kpi-card"><div class="val" style="color:#1E7EC5;">${fwdCount}</div><div class="lbl">Forwards Sent</div></div>`;
+    <div class="rpt-kpi-card"><div class="val" style="color:#E74C3C;">${overdueReqs}</div><div class="lbl">Exceeded SLA</div></div>
+    <div class="rpt-kpi-card"><div class="val" style="color:${kpiColor};">${onTimePct}%</div><div class="lbl">Compliance Rate</div></div>
+    <div class="rpt-kpi-card"><div class="val" style="color:#1E7EC5;">${totalOH}</div><div class="lbl">On-Hold Requests</div></div>`;
 
-  /* ── Chart 1: Dept SLA ── */
-  const depts      = Object.keys(DEPT_SLA);
-  const dOnTime    = depts.map(d => filtered.filter(r => STAGE_OWNER[r.stage] === d && r.slaOk).length);
-  const dOverdue   = depts.map(d => filtered.filter(r => STAGE_OWNER[r.stage] === d && !r.slaOk).length);
-  const deptLabels = depts.map(d => d.length > 12 ? d.slice(0,12)+'…' : d);
-  _destroyRptChart('rptDeptSlaChart');
-  _rptCharts['rptDeptSlaChart'] = new Chart(document.getElementById('rptDeptSlaChart').getContext('2d'), {
-    type: 'bar',
-    data: { labels: deptLabels, datasets: [
-      { label:'On-Time', data:dOnTime,  backgroundColor:'rgba(39,174,96,.75)',  borderColor:'#27AE60', borderWidth:1, borderRadius:4 },
-      { label:'Overdue', data:dOverdue, backgroundColor:'rgba(231,76,60,.75)', borderColor:'#E74C3C', borderWidth:1, borderRadius:4 },
-    ]},
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{position:'top'}, tooltip:{mode:'index',intersect:false} },
-      scales:{ x:{stacked:true,grid:{display:false}}, y:{stacked:true,beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}} },
-    },
-  });
-
-  /* ── Chart 2: Avg Days vs Target ── */
-  const avgSpent = depts.map(d => {
-    const dr = filtered.filter(r => STAGE_OWNER[r.stage] === d);
-    if (!dr.length) return 0;
-    const tot = dr.reduce((s,r)=>{ const e=r.closedDate?new Date(r.closedDate):TODAY; return s+Math.max(0,calcWorkDays(r.openedDate,e)-(r.holdDays||0)); },0);
-    return Math.round(tot/dr.length*10)/10;
-  });
-  const targets = depts.map(d => DEPT_SLA[d]);
-  _destroyRptChart('rptAvgDaysChart');
-  _rptCharts['rptAvgDaysChart'] = new Chart(document.getElementById('rptAvgDaysChart').getContext('2d'), {
-    type: 'bar',
-    data: { labels: deptLabels, datasets: [
-      { type:'bar',  label:'Avg Working Days', data:avgSpent,
-        backgroundColor: avgSpent.map((v,i)=>v>targets[i]?'rgba(231,76,60,.70)':'rgba(30,126,197,.70)'),
-        borderColor: avgSpent.map((v,i)=>v>targets[i]?'#E74C3C':'#1E7EC5'), borderWidth:1, borderRadius:4 },
-      { type:'line', label:'SLA Target (days)', data:targets,
-        borderColor:'#E67E22', backgroundColor:'transparent', borderDash:[5,4],
-        pointBackgroundColor:'#E67E22', pointRadius:4, tension:0 },
-    ]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{position:'top'}, tooltip:{mode:'index',intersect:false} },
-      scales:{ y:{beginAtZero:true,title:{display:true,text:'Days',color:'#999',font:{size:11}},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} },
-    },
-  });
-
-  /* ── Chart 3: Stage performance (horizontal bar) ── */
-  const stageStats = {};
-  filtered.forEach(r => {
-    if (!stageStats[r.stage]) stageStats[r.stage] = { on:0, ov:0 };
-    if (r.slaOk) stageStats[r.stage].on++; else stageStats[r.stage].ov++;
-  });
-  const sLabels = Object.keys(stageStats);
-  const sPct    = sLabels.map(s => { const t=stageStats[s].on+stageStats[s].ov; return t?Math.round(stageStats[s].on/t*100):0; });
-  _destroyRptChart('rptStageChart');
-  _rptCharts['rptStageChart'] = new Chart(document.getElementById('rptStageChart').getContext('2d'), {
-    type: 'bar',
-    data: { labels: sLabels, datasets: [{
-      label: 'On-Time %', data: sPct,
-      backgroundColor: sPct.map(p=>p>=80?'rgba(39,174,96,.75)':p>=50?'rgba(245,158,11,.75)':'rgba(231,76,60,.75)'),
-      borderColor: sPct.map(p=>p>=80?'#27AE60':p>=50?'#F59E0B':'#E74C3C'), borderWidth:1, borderRadius:4,
-    }]},
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false} },
-      scales:{ x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, y:{grid:{display:false}} },
-    },
-  });
-
-  /* ── Chart 4: Forward response rate ── */
-  const fwdStats = {};
-  filtered.forEach(r => (r.forwards||[]).forEach(fwd => {
-    const sentMs = TODAY - new Date(fwd.sentDate);
-    const respondedSet = new Set((fwd.messages||[]).filter(m=>fwd.toDepts.includes(m.dept)).map(m=>m.dept));
-    fwd.toDepts.forEach(d => {
-      if (!fwdStats[d]) fwdStats[d] = { on:0, ov:0 };
-      const slaMs = ((fwd.deptSLAs&&fwd.deptSLAs[d])||DEPT_SLA[d]||7)*86400000;
-      if (respondedSet.has(d)) {
-        const firstMsg = (fwd.messages||[]).find(m=>m.dept===d);
-        const respMs = firstMsg ? (new Date(firstMsg.date)-new Date(fwd.sentDate)) : slaMs;
-        if (respMs<=slaMs) fwdStats[d].on++; else fwdStats[d].ov++;
-      } else { if (sentMs>slaMs) fwdStats[d].ov++; else fwdStats[d].on++; }
-    });
-  }));
-  const fLabels  = Object.keys(fwdStats).filter(d=>fwdStats[d].on+fwdStats[d].ov>0);
-  const fOn  = fLabels.map(d=>fwdStats[d].on);
-  const fOv  = fLabels.map(d=>fwdStats[d].ov);
-  _destroyRptChart('rptFwdChart');
-  _rptCharts['rptFwdChart'] = new Chart(document.getElementById('rptFwdChart').getContext('2d'), {
-    type: 'bar',
-    data: { labels: fLabels.map(l=>l.length>12?l.slice(0,12)+'…':l), datasets: [
-      { label:'On-Time', data:fOn, backgroundColor:'rgba(39,174,96,.75)',  borderColor:'#27AE60', borderWidth:1, borderRadius:4 },
-      { label:'Overdue', data:fOv, backgroundColor:'rgba(231,76,60,.75)', borderColor:'#E74C3C', borderWidth:1, borderRadius:4 },
-    ]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{position:'top'} },
-      scales:{ x:{stacked:true,grid:{display:false}}, y:{stacked:true,beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}} },
-    },
-  });
-
-  /* ── Chart 5: Trend (weekly) ── */
-  const weeks = {};
-  filtered.forEach(r => {
-    const d = new Date(r.openedDate);
-    const wNum = Math.floor((d - new Date(d.getFullYear(),0,1)) / (7*86400000));
-    const key  = `${d.getFullYear()}-W${String(wNum+1).padStart(2,'0')}`;
-    if (!weeks[key]) weeks[key] = { on:0, total:0 };
-    weeks[key].total++;
-    if (r.slaOk) weeks[key].on++;
-  });
-  const wKeys = Object.keys(weeks).sort();
-  const wPct  = wKeys.map(k => weeks[k].total ? Math.round(weeks[k].on/weeks[k].total*100) : 0);
-  _destroyRptChart('rptTrendChart');
-  _rptCharts['rptTrendChart'] = new Chart(document.getElementById('rptTrendChart').getContext('2d'), {
-    type: 'line',
-    data: { labels: wKeys, datasets: [{
-      label:'On-Time Rate %', data:wPct,
-      borderColor:'#27AE60', backgroundColor:'rgba(39,174,96,.1)', fill:true,
-      tension:0.4, pointBackgroundColor:'#27AE60', pointRadius:5,
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false} },
-      scales:{ y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} },
-    },
-  });
-
-  /* ── Chart 6: Stage volume (doughnut) ── */
-  const stageVol = {};
-  REQUESTS.forEach(r => { stageVol[r.stage] = (stageVol[r.stage]||0)+1; });
-  const svLabels = Object.keys(stageVol);
-  const svData   = svLabels.map(s=>stageVol[s]);
-  const svColors = ['#875A7B','#1E7EC5','#00A09D','#E67E22','#27AE60','#5C6BC0','#E74C3C','#F59E0B','#00838F','#AD1457'];
-  _destroyRptChart('rptStageVolChart');
-  _rptCharts['rptStageVolChart'] = new Chart(document.getElementById('rptStageVolChart').getContext('2d'), {
-    type: 'doughnut',
-    data: { labels:svLabels, datasets:[{ data:svData, backgroundColor:svColors, borderWidth:2, borderColor:'#fff' }]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{position:'right',labels:{font:{size:10},boxWidth:12}} },
-      cutout:'60%',
-    },
-  });
-
-  /* ── Employee table ── */
-  const emp = {};
-  function addEmp(name, dept) { if(name&&!emp[name]) emp[name]={dept,reqs:0,msgs:0,fwds:0,fwdRcv:0,on:0,ov:0}; }
-  filtered.forEach(r => {
-    const owner = STAGE_OWNER[r.stage];
-    const mgr   = owner&&(SETTINGS.deptManagers||{})[owner];
-    if (mgr) { addEmp(mgr,owner); emp[mgr].reqs++; if(r.slaOk) emp[mgr].on++; else emp[mgr].ov++; }
-    (r.forwards||[]).forEach(fwd => {
-      if(fwd.sentBy) { addEmp(fwd.sentBy,'CTS'); emp[fwd.sentBy].fwds++; }
-      (fwd.messages||[]).forEach(m => {
-        if(m.from) { addEmp(m.from,m.dept||''); emp[m.from].msgs++; if(fwd.toDepts&&fwd.toDepts.includes(m.dept)) emp[m.from].fwdRcv++; }
-      });
-    });
-  });
-  const empRows = Object.entries(emp).map(([name,e]) => {
-    const total = e.on+e.ov;
-    const pct   = total ? Math.round(e.on/total*100) : null;
-    const pColor= pct===null?'#aaa':pct>=80?'#27AE60':pct>=50?'#F59E0B':'#E74C3C';
-    const pBar  = pct!==null ? `<div class="rpt-mini-bar-track"><div class="rpt-mini-bar-fill" style="width:${pct}%;background:${pColor};"></div></div>` : '';
-    return `<tr>
-      <td style="font-weight:700;">${name}</td>
-      <td><span style="background:#f3e5f5;color:#6A1B9A;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;">${e.dept}</span></td>
-      <td style="text-align:center;">${e.reqs||'—'}</td>
-      <td style="text-align:center;">${e.msgs||'—'}</td>
-      <td style="text-align:center;">${e.fwds||'—'}</td>
-      <td style="text-align:center;">${e.fwdRcv||'—'}</td>
-      <td>${pct!==null?`<span style="color:${pColor};font-weight:700;">${pct}%</span>${pBar}`:'—'}</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('rpt-emp-table-wrap').innerHTML = empRows
-    ? `<table class="rpt-emp-table"><thead><tr><th>Employee</th><th>Department</th><th>Requests</th><th>Messages</th><th>Fwds Sent</th><th>Fwds Received</th><th>On-Time %</th></tr></thead><tbody>${empRows}</tbody></table>`
-    : `<div style="text-align:center;color:#bbb;padding:20px;">No employee data available for this period</div>`;
+  _buildDeptReport(filtered);
+  _buildStageReport(filtered);
+  _buildPersonReport(filtered);
+  _buildOnHoldReport(filtered);
 }
 
-function _destroyRptChart(id) {
-  if (_rptCharts[id]) { _rptCharts[id].destroy(); delete _rptCharts[id]; }
+/* ════════════════════════ DEPARTMENT ════════════════════════ */
+function _buildDeptReport(filtered) {
+  const rows = Object.keys(DEPT_SLA).map(dept => {
+    const dReqs   = filtered.filter(r => STAGE_OWNER[r.stage] === dept);
+    const exceeded= dReqs.filter(r => (r.deptExceeded||[]).includes(dept)).length;
+    const onTime  = dReqs.length - exceeded;
+    const pct     = dReqs.length ? Math.round(onTime / dReqs.length * 100) : null;
+    const avgDays = dReqs.length ? Math.round(dReqs.reduce((s,r)=>{
+      const e = r.closedDate ? new Date(r.closedDate) : TODAY;
+      return s + Math.max(0, calcWorkDays(r.openedDate,e) - (r.holdDays||0));
+    },0) / dReqs.length * 10) / 10 : null;
+    const ohCount = filtered.reduce((s,r) => s+(r.onHoldData||[]).filter(oh=>oh.dept===dept).length, 0);
+    return { dept, sla:DEPT_SLA[dept], total:dReqs.length, onTime, exceeded, pct, avgDays, ohCount };
+  }).filter(r => r.total > 0);
+
+  _destroyRptChart('rptDeptChart');
+  if (rows.length) {
+    const labels = rows.map(r => r.dept.length > 14 ? r.dept.slice(0,14)+'…' : r.dept);
+    const pcts   = rows.map(r => r.pct || 0);
+    _rptCharts['rptDeptChart'] = new Chart(document.getElementById('rptDeptChart').getContext('2d'), {
+      type:'bar',
+      data:{ labels, datasets:[{ label:'Compliance %', data:pcts,
+        backgroundColor: pcts.map(p => p>=80?'rgba(39,174,96,.8)':p>=50?'rgba(245,158,11,.8)':'rgba(231,76,60,.8)'),
+        borderRadius:4 }]},
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{label:c=>c.raw+'%'} } },
+        scales:{ x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, y:{grid:{display:false}} } },
+    });
+  }
+
+  const tableHtml = rows.map(r => {
+    const c = r.pct===null ? '#bbb' : _pctColor(r.pct);
+    const diff = r.avgDays!==null ? (r.avgDays>r.sla
+      ? `<span style="color:#E74C3C;font-size:10px;margin-left:4px;">+${Math.round((r.avgDays-r.sla)*10)/10}d</span>`
+      : `<span style="color:#27AE60;font-size:10px;margin-left:4px;">-${Math.round((r.sla-r.avgDays)*10)/10}d</span>`) : '';
+    return `<tr>
+      <td style="font-weight:700;">${r.dept}</td>
+      <td style="text-align:center;color:#875A7B;font-weight:700;">${r.sla}d</td>
+      <td style="text-align:center;">${r.total}</td>
+      <td style="text-align:center;color:#27AE60;font-weight:700;">${r.onTime}</td>
+      <td style="text-align:center;color:#E74C3C;font-weight:700;">${r.exceeded}</td>
+      <td>${r.pct!==null?`<span style="color:${c};font-weight:700;">${r.pct}%</span>${_complianceBar(r.pct,c)}`:'—'}</td>
+      <td style="text-align:center;">${r.avgDays!==null?r.avgDays+'d':'—'}${diff}</td>
+      <td style="text-align:center;color:#1E7EC5;font-weight:700;">${r.ohCount||'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('rpt-dept-table').innerHTML = tableHtml
+    ? `<table class="rpt-sla-table"><thead><tr><th>Department</th><th>SLA Target</th><th>Total</th><th>On-Time</th><th>Exceeded</th><th>Compliance %</th><th>Avg Days</th><th>On-Hold</th></tr></thead><tbody>${tableHtml}</tbody></table>`
+    : `<div class="rpt-empty">No data for this period</div>`;
+}
+
+/* ════════════════════════ STAGE ════════════════════════ */
+function _buildStageReport(filtered) {
+  const rows = Object.keys(SETTINGS.stageSLA).filter(s => (SETTINGS.stageSLA[s]||0) > 0).map(stage => {
+    const sReqs    = filtered.filter(r => r.stage === stage);
+    const slaTarget= SETTINGS.stageSLA[stage] || 7;
+    const owner    = STAGE_OWNER[stage] || '—';
+    const exceeded = sReqs.filter(r => {
+      const end   = r.closedDate ? new Date(r.closedDate) : TODAY;
+      const spent = Math.max(0, calcWorkDays(r.openedDate, end) - (r.holdDays||0));
+      return spent > slaTarget;
+    }).length;
+    const onTime = sReqs.length - exceeded;
+    const pct    = sReqs.length ? Math.round(onTime / sReqs.length * 100) : null;
+    return { stage, owner, sla:slaTarget, total:sReqs.length, onTime, exceeded, pct };
+  }).filter(r => r.total > 0);
+
+  _destroyRptChart('rptStageChart');
+  if (rows.length) {
+    const labels = rows.map(r => r.stage.length > 20 ? r.stage.slice(0,20)+'…' : r.stage);
+    const pcts   = rows.map(r => r.pct || 0);
+    _rptCharts['rptStageChart'] = new Chart(document.getElementById('rptStageChart').getContext('2d'), {
+      type:'bar',
+      data:{ labels, datasets:[{ label:'Compliance %', data:pcts,
+        backgroundColor: pcts.map(p => p>=80?'rgba(39,174,96,.8)':p>=50?'rgba(245,158,11,.8)':'rgba(231,76,60,.8)'),
+        borderRadius:4 }]},
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{label:c=>c.raw+'%'} } },
+        scales:{ x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}, y:{grid:{display:false}} } },
+    });
+  }
+
+  const ownerColors = { CTS:'#875A7B', Wholesale:'#1565C0', Legal:'#AD1457', Management:'#1B5E20', Finance:'#E65100' };
+  const tableHtml = rows.map(r => {
+    const c   = r.pct===null ? '#bbb' : _pctColor(r.pct);
+    const oc  = ownerColors[r.owner] || '#555';
+    return `<tr>
+      <td style="font-weight:700;">${r.stage}</td>
+      <td><span style="background:${oc}22;color:${oc};padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;">${r.owner}</span></td>
+      <td style="text-align:center;color:#875A7B;font-weight:700;">${r.sla}d</td>
+      <td style="text-align:center;">${r.total}</td>
+      <td style="text-align:center;color:#27AE60;font-weight:700;">${r.onTime}</td>
+      <td style="text-align:center;color:#E74C3C;font-weight:700;">${r.exceeded}</td>
+      <td>${r.pct!==null?`<span style="color:${c};font-weight:700;">${r.pct}%</span>${_complianceBar(r.pct,c)}`:'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('rpt-stage-table').innerHTML = tableHtml
+    ? `<table class="rpt-sla-table"><thead><tr><th>Stage</th><th>Owner</th><th>SLA Target</th><th>Total</th><th>On-Time</th><th>Exceeded</th><th>Compliance %</th></tr></thead><tbody>${tableHtml}</tbody></table>`
+    : `<div class="rpt-empty">No data for this period</div>`;
+}
+
+/* ════════════════════════ PERSON ════════════════════════ */
+function _buildPersonReport(filtered) {
+  const persons = {};
+  function ep(name, dept) {
+    if (!name) return;
+    if (!persons[name]) persons[name] = { dept, fwdsSent:0, replies:0, onTime:0, exceeded:0, ohReq:0, respTimes:[] };
+  }
+
+  /* collect response-time data per dept for the chart */
+  const deptRespTimes = {};
+
+  filtered.forEach(r => {
+    (r.forwards||[]).forEach(fwd => {
+      if (fwd.sentBy) { ep(fwd.sentBy, 'CTS'); persons[fwd.sentBy].fwdsSent++; }
+      const sentMs = new Date(fwd.sentDate).getTime();
+      const seenDepts = new Set();
+      (fwd.messages||[]).forEach(m => {
+        if (!m.from || !m.dept) return;
+        ep(m.from, m.dept);
+        persons[m.from].replies++;
+        const slaMs = ((fwd.deptSLAs&&fwd.deptSLAs[m.dept])||DEPT_SLA[m.dept]||7)*86400000;
+        const respMs = new Date(m.date).getTime() - sentMs;
+        if (respMs <= slaMs) persons[m.from].onTime++; else persons[m.from].exceeded++;
+        /* first response per dept per forward */
+        if (!seenDepts.has(m.dept)) {
+          seenDepts.add(m.dept);
+          const hrs = Math.round(respMs / 3600000 * 10) / 10;
+          persons[m.from].respTimes.push(hrs);
+          if (!deptRespTimes[m.dept]) deptRespTimes[m.dept] = [];
+          deptRespTimes[m.dept].push(hrs);
+        }
+      });
+    });
+    (r.onHoldData||[]).forEach(oh => {
+      if (oh.requestedBy) { ep(oh.requestedBy, oh.dept||'Unknown'); persons[oh.requestedBy].ohReq++; }
+    });
+  });
+
+  /* Response-time chart (per dept) */
+  _destroyRptChart('rptRespTimeChart');
+  const rtDepts  = Object.keys(deptRespTimes).filter(d => deptRespTimes[d].length > 0);
+  const rtAvgs   = rtDepts.map(d => { const a=deptRespTimes[d]; return Math.round(a.reduce((s,v)=>s+v,0)/a.length*10)/10; });
+  const rtSlas   = rtDepts.map(d => (DEPT_SLA[d]||7)*24); /* SLA in hours */
+  if (rtDepts.length) {
+    _rptCharts['rptRespTimeChart'] = new Chart(document.getElementById('rptRespTimeChart').getContext('2d'), {
+      type:'bar',
+      data:{ labels: rtDepts.map(d=>d.length>12?d.slice(0,12)+'…':d), datasets:[
+        { type:'bar', label:'Avg First Response (hrs)', data:rtAvgs,
+          backgroundColor: rtAvgs.map((v,i)=>v<=rtSlas[i]?'rgba(39,174,96,.8)':'rgba(231,76,60,.8)'),
+          borderRadius:4 },
+        { type:'line', label:'SLA Limit (hrs)', data:rtSlas,
+          borderColor:'#E67E22', backgroundColor:'transparent', borderDash:[5,4],
+          pointBackgroundColor:'#E67E22', pointRadius:4, tension:0 },
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'top'}, tooltip:{mode:'index',intersect:false} },
+        scales:{ y:{beginAtZero:true,title:{display:true,text:'Hours',color:'#999',font:{size:11}},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } },
+    });
+  }
+
+  /* Person chart (top 10) */
+  _destroyRptChart('rptPersonChart');
+  const allPersons = Object.entries(persons).sort((a,b)=>(b[1].replies+b[1].fwdsSent)-(a[1].replies+a[1].fwdsSent)).slice(0,10);
+  if (allPersons.length) {
+    _rptCharts['rptPersonChart'] = new Chart(document.getElementById('rptPersonChart').getContext('2d'), {
+      type:'bar',
+      data:{ labels: allPersons.map(([n])=>n.split(' ')[0]), datasets:[
+        { label:'On-Time',  data:allPersons.map(([,p])=>p.onTime),   backgroundColor:'rgba(39,174,96,.8)',  borderRadius:4 },
+        { label:'Exceeded', data:allPersons.map(([,p])=>p.exceeded), backgroundColor:'rgba(231,76,60,.8)',  borderRadius:4 },
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'top'} },
+        scales:{ x:{stacked:true,grid:{display:false}}, y:{stacked:true,beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}} } },
+    });
+  }
+
+  /* Person table */
+  const tableHtml = Object.entries(persons)
+    .sort((a,b)=>(b[1].replies+b[1].fwdsSent)-(a[1].replies+a[1].fwdsSent))
+    .map(([name,p]) => {
+      const total = p.onTime + p.exceeded;
+      const pct   = total ? Math.round(p.onTime/total*100) : null;
+      const c     = pct===null ? '#bbb' : _pctColor(pct);
+      const avgResp = p.respTimes.length ? (Math.round(p.respTimes.reduce((s,v)=>s+v,0)/p.respTimes.length*10)/10)+'h' : '—';
+      return `<tr>
+        <td style="font-weight:700;">${name}</td>
+        <td><span style="background:#f3e5f5;color:#6A1B9A;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;">${p.dept}</span></td>
+        <td style="text-align:center;">${p.fwdsSent||'—'}</td>
+        <td style="text-align:center;">${p.replies||'—'}</td>
+        <td style="text-align:center;color:#27AE60;font-weight:700;">${p.onTime||'—'}</td>
+        <td style="text-align:center;color:#E74C3C;font-weight:700;">${p.exceeded||'—'}</td>
+        <td>${pct!==null?`<span style="color:${c};font-weight:700;">${pct}%</span>${_complianceBar(pct,c)}`:'—'}</td>
+        <td style="text-align:center;color:#5C6BC0;font-weight:700;">${avgResp}</td>
+        <td style="text-align:center;color:#1E7EC5;font-weight:700;">${p.ohReq||'—'}</td></tr>`;
+    }).join('');
+  document.getElementById('rpt-person-table').innerHTML = tableHtml
+    ? `<table class="rpt-sla-table"><thead><tr><th>Person</th><th>Department</th><th>Fwds Sent</th><th>Replies</th><th>On-Time</th><th>Exceeded</th><th>Compliance %</th><th>Avg 1st Response</th><th>On-Holds</th></tr></thead><tbody>${tableHtml}</tbody></table>`
+    : `<div class="rpt-empty">No data for this period</div>`;
+}
+
+/* ════════════════════════ ON-HOLD ════════════════════════ */
+function _buildOnHoldReport(filtered) {
+  const allOH = [];
+  filtered.forEach(r => (r.onHoldData||[]).forEach(oh => allOH.push({...oh, reqId:r.id})));
+
+  /* by dept */
+  const byDept = {};
+  allOH.forEach(oh => {
+    const d = oh.dept || 'Unknown';
+    if (!byDept[d]) byDept[d] = { total:0, pending:0, approved:0, rejected:0, resumed:0 };
+    byDept[d].total++;
+    byDept[d][oh.status] = (byDept[d][oh.status]||0)+1;
+  });
+
+  /* by person */
+  const byPerson = {};
+  allOH.forEach(oh => {
+    const p = oh.requestedBy || 'Unknown';
+    if (!byPerson[p]) byPerson[p] = { dept:oh.dept||'?', total:0, pending:0, approved:0 };
+    byPerson[p].total++;
+    if (oh.status==='approved') byPerson[p].approved++;
+    if (oh.status==='pending')  byPerson[p].pending++;
+  });
+
+  /* monthly */
+  const byMonth = {};
+  allOH.forEach(oh => {
+    const d = oh.date ? new Date(oh.date) : null;
+    if (!d || isNaN(d)) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    byMonth[key] = (byMonth[key]||0)+1;
+  });
+
+  /* Dept chart */
+  _destroyRptChart('rptOhDeptChart');
+  const ohDeptLabels = Object.keys(byDept);
+  if (ohDeptLabels.length) {
+    _rptCharts['rptOhDeptChart'] = new Chart(document.getElementById('rptOhDeptChart').getContext('2d'), {
+      type:'bar',
+      data:{ labels:ohDeptLabels, datasets:[{ label:'On-Hold Count', data:ohDeptLabels.map(d=>byDept[d].total), backgroundColor:'rgba(30,126,197,.75)', borderRadius:4 }]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false} },
+        scales:{ y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } },
+    });
+  } else {
+    document.getElementById('rptOhDeptChart').parentElement.innerHTML = '<div class="rpt-empty">No on-hold data</div>';
+  }
+
+  /* Monthly chart */
+  _destroyRptChart('rptOhMonthChart');
+  const mKeys = Object.keys(byMonth).sort();
+  if (mKeys.length) {
+    _rptCharts['rptOhMonthChart'] = new Chart(document.getElementById('rptOhMonthChart').getContext('2d'), {
+      type:'line',
+      data:{ labels:mKeys, datasets:[{ label:'On-Hold Requests', data:mKeys.map(k=>byMonth[k]),
+        borderColor:'#875A7B', backgroundColor:'rgba(135,90,123,.1)', fill:true, tension:0.3,
+        pointBackgroundColor:'#875A7B', pointRadius:5 }]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false} },
+        scales:{ y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'#f0f0f0'}}, x:{grid:{display:false}} } },
+    });
+  } else {
+    document.getElementById('rptOhMonthChart').parentElement.innerHTML = '<div class="rpt-empty">No monthly data</div>';
+  }
+
+  /* Dept table */
+  const deptRows = Object.entries(byDept).sort((a,b)=>b[1].total-a[1].total).map(([dept,d])=>
+    `<tr><td style="font-weight:700;">${dept}</td>
+      <td style="text-align:center;font-weight:700;">${d.total}</td>
+      <td style="text-align:center;color:#F59E0B;">${d.pending||0}</td>
+      <td style="text-align:center;color:#E74C3C;">${d.approved||0}</td>
+      <td style="text-align:center;color:#27AE60;">${d.resumed||0}</td></tr>`
+  ).join('');
+  document.getElementById('rpt-oh-dept-table').innerHTML = deptRows
+    ? `<table class="rpt-sla-table"><thead><tr><th>Department</th><th>Total</th><th>Pending</th><th>Approved/Active</th><th>Resumed</th></tr></thead><tbody>${deptRows}</tbody></table>`
+    : `<div class="rpt-empty">No on-hold data</div>`;
+
+  /* Person table */
+  const personRows = Object.entries(byPerson).sort((a,b)=>b[1].total-a[1].total).map(([name,p])=>
+    `<tr><td style="font-weight:700;">${name}</td>
+      <td><span style="background:#f3e5f5;color:#6A1B9A;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;">${p.dept}</span></td>
+      <td style="text-align:center;font-weight:700;">${p.total}</td>
+      <td style="text-align:center;color:#F59E0B;">${p.pending}</td>
+      <td style="text-align:center;color:#E74C3C;">${p.approved}</td></tr>`
+  ).join('');
+  document.getElementById('rpt-oh-person-table').innerHTML = personRows
+    ? `<table class="rpt-sla-table"><thead><tr><th>Person</th><th>Department</th><th>Total</th><th>Pending</th><th>Approved/Active</th></tr></thead><tbody>${personRows}</tbody></table>`
+    : `<div class="rpt-empty">No on-hold data</div>`;
 }
 
 nav('home');
