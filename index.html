@@ -644,51 +644,45 @@
 
     <!-- ── DEPARTMENT SECTION ── -->
     <div id="rpt-sec-dept" class="rpt-section">
-      <div class="rpt-charts-grid">
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-building" style="color:#875A7B;margin-right:7px;"></i>Compliance % by Department</h3>
-          <p>Requests handled within configured SLA per owning department</p>
-          <div class="rpt-chart-wrap" style="height:270px;"><canvas id="rptDeptChart"></canvas></div>
-        </div>
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-table" style="color:#1E7EC5;margin-right:7px;"></i>Department Detail</h3>
-          <p>SLA target · total · on-time · exceeded · avg days · on-hold count</p>
-          <div id="rpt-dept-table" style="overflow-x:auto;margin-top:8px;"></div>
-        </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-building" style="color:#875A7B;margin-right:7px;"></i>Compliance % by Department</h3>
+        <p>Requests handled within configured SLA per owning department</p>
+        <div class="rpt-chart-wrap" style="height:260px;"><canvas id="rptDeptChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-table" style="color:#1E7EC5;margin-right:7px;"></i>Department Detail</h3>
+        <p>SLA target · total · on-time · exceeded · avg days · on-hold count</p>
+        <div id="rpt-dept-table" style="overflow-x:auto;margin-top:8px;"></div>
       </div>
     </div>
 
     <!-- ── STAGE SECTION ── -->
     <div id="rpt-sec-stage" class="rpt-section hidden">
-      <div class="rpt-charts-grid">
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-layer-group" style="color:#00A09D;margin-right:7px;"></i>Compliance % by Stage</h3>
-          <p>Requests meeting configured SLA target per activation stage</p>
-          <div class="rpt-chart-wrap" style="height:320px;"><canvas id="rptStageChart"></canvas></div>
-        </div>
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-table" style="color:#00A09D;margin-right:7px;"></i>Stage Detail</h3>
-          <p>Stage owner · SLA target · total · on-time · exceeded · compliance %</p>
-          <div id="rpt-stage-table" style="overflow-x:auto;margin-top:8px;"></div>
-        </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-layer-group" style="color:#00A09D;margin-right:7px;"></i>Compliance % by Stage</h3>
+        <p>Requests meeting configured SLA target per activation stage</p>
+        <div class="rpt-chart-wrap" style="height:320px;"><canvas id="rptStageChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-table" style="color:#00A09D;margin-right:7px;"></i>Stage Detail</h3>
+        <p>Stage owner · SLA target · total · on-time · exceeded · compliance %</p>
+        <div id="rpt-stage-table" style="overflow-x:auto;margin-top:8px;"></div>
       </div>
     </div>
 
     <!-- ── PERSON SECTION ── -->
     <div id="rpt-sec-person" class="rpt-section hidden">
-      <div class="rpt-charts-grid" style="margin-bottom:16px;">
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-users" style="color:#E67E22;margin-right:7px;"></i>Team Activity — On-Time vs Exceeded</h3>
-          <p>Top persons by activity — forward response SLA compliance</p>
-          <div class="rpt-chart-wrap" style="height:230px;"><canvas id="rptPersonChart"></canvas></div>
-        </div>
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-stopwatch" style="color:#5C6BC0;margin-right:7px;"></i>Avg First Response Time by Department</h3>
-          <p>Hours from forward sent → first reply from each department</p>
-          <div class="rpt-chart-wrap" style="height:230px;"><canvas id="rptRespTimeChart"></canvas></div>
-        </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-users" style="color:#E67E22;margin-right:7px;"></i>Team Activity — On-Time vs Exceeded</h3>
+        <p>Top persons by activity — forward response SLA compliance</p>
+        <div class="rpt-chart-wrap" style="height:240px;"><canvas id="rptPersonChart"></canvas></div>
       </div>
-      <div class="rpt-chart-card">
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-stopwatch" style="color:#5C6BC0;margin-right:7px;"></i>Avg First Response Time by Department</h3>
+        <p>Hours from forward sent → first reply from each department</p>
+        <div class="rpt-chart-wrap" style="height:240px;"><canvas id="rptRespTimeChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
         <h3><i class="fas fa-table" style="color:#E67E22;margin-right:7px;"></i>Person Detail</h3>
         <p>Fwds sent · replies · on-time · exceeded · compliance % · avg first response · on-holds requested</p>
         <div id="rpt-person-table" style="overflow-x:auto;margin-top:8px;"></div>
@@ -697,27 +691,23 @@
 
     <!-- ── ON-HOLD SECTION ── -->
     <div id="rpt-sec-onhold" class="rpt-section hidden">
-      <div class="rpt-charts-grid" style="margin-bottom:16px;">
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-pause-circle" style="color:#1E7EC5;margin-right:7px;"></i>On-Hold Count by Department</h3>
-          <p>Total on-hold requests raised per department</p>
-          <div class="rpt-chart-wrap"><canvas id="rptOhDeptChart"></canvas></div>
-        </div>
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-chart-line" style="color:#875A7B;margin-right:7px;"></i>Monthly On-Hold Trend</h3>
-          <p>Total on-hold requests per month over the selected period</p>
-          <div class="rpt-chart-wrap"><canvas id="rptOhMonthChart"></canvas></div>
-        </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-pause-circle" style="color:#1E7EC5;margin-right:7px;"></i>On-Hold Count by Department</h3>
+        <p>Total on-hold requests raised per department</p>
+        <div class="rpt-chart-wrap"><canvas id="rptOhDeptChart"></canvas></div>
       </div>
-      <div class="rpt-charts-grid">
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-building" style="color:#1E7EC5;margin-right:7px;"></i>On-Hold by Department</h3>
-          <div id="rpt-oh-dept-table" style="overflow-x:auto;margin-top:8px;"></div>
-        </div>
-        <div class="rpt-chart-card">
-          <h3><i class="fas fa-user" style="color:#875A7B;margin-right:7px;"></i>On-Hold by Person</h3>
-          <div id="rpt-oh-person-table" style="overflow-x:auto;margin-top:8px;"></div>
-        </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-chart-line" style="color:#875A7B;margin-right:7px;"></i>Monthly On-Hold Trend</h3>
+        <p>Total on-hold requests per month over the selected period</p>
+        <div class="rpt-chart-wrap"><canvas id="rptOhMonthChart"></canvas></div>
+      </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-building" style="color:#1E7EC5;margin-right:7px;"></i>On-Hold by Department</h3>
+        <div id="rpt-oh-dept-table" style="overflow-x:auto;margin-top:8px;"></div>
+      </div>
+      <div class="rpt-chart-card" style="margin-bottom:16px;">
+        <h3><i class="fas fa-user" style="color:#875A7B;margin-right:7px;"></i>On-Hold by Person</h3>
+        <div id="rpt-oh-person-table" style="overflow-x:auto;margin-top:8px;"></div>
       </div>
     </div>
 
