@@ -2200,7 +2200,8 @@ function setFilter(btn, f) {
 function kpiFilter(f) {
   document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
   clearKpiActive();
-  document.getElementById('kpicard-' + f).classList.add('kpi-active');
+  const kc = document.getElementById('kpicard-' + f);
+  if (kc) kc.classList.add('kpi-active');
   renderTable(f, null);
 }
 
@@ -2344,19 +2345,22 @@ function renderTable(f, dept) {
 }
 
 /* ── KPI & badge counts ─────────────────────────────────────── */
+function _setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function updateKPIs() {
-  const R = REQUESTS;
-  document.getElementById('cnt-all').textContent        = R.length;
-  document.getElementById('cnt-myteam').textContent     = filterData('myteam').length;
-  document.getElementById('cnt-mine').textContent       = filterData('mine').length;
-  document.getElementById('cnt-survey').textContent     = filterData('survey').length;
-  document.getElementById('cnt-delivery').textContent   = filterData('delivery').length;
-  document.getElementById('cnt-activation').textContent = filterData('activation').length;
-  document.getElementById('cnt-exceeded').textContent      = filterData('exceeded').length;
-  document.getElementById('cnt-onhold').textContent        = filterData('onhold').length;
-  document.getElementById('cnt-onhold-active').textContent = filterData('onhold-active').length;
-  document.getElementById('cnt-forwarded').textContent     = filterData('forwarded').length;
-  updateJusBadge();
+  try {
+    const R = REQUESTS;
+    _setEl('cnt-all',          R.length);
+    _setEl('cnt-myteam',       filterData('myteam').length);
+    _setEl('cnt-mine',         filterData('mine').length);
+    _setEl('cnt-survey',       filterData('survey').length);
+    _setEl('cnt-delivery',     filterData('delivery').length);
+    _setEl('cnt-activation',   filterData('activation').length);
+    _setEl('cnt-exceeded',     filterData('exceeded').length);
+    _setEl('cnt-onhold',       filterData('onhold').length);
+    _setEl('cnt-onhold-active',filterData('onhold-active').length);
+    _setEl('cnt-forwarded',    filterData('forwarded').length);
+    updateJusBadge();
+  } catch(e) { console.error('updateKPIs error:', e); }
 }
 
 /* ── Charts ─────────────────────────────────────────────────── */
