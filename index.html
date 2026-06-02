@@ -2346,12 +2346,6 @@ function renderTable(f, dept) {
 /* ── KPI & badge counts ─────────────────────────────────────── */
 function updateKPIs() {
   const R = REQUESTS;
-  document.getElementById('kpi-total').textContent     = R.length;
-  document.getElementById('kpi-new').textContent       = R.filter(r=>r.stage==='New').length;
-  document.getElementById('kpi-survey').textContent    = R.filter(r=>r.stage==='Survey').length;
-  document.getElementById('kpi-delivery').textContent  = R.filter(r=>r.stage==='Service Delivery').length;
-  document.getElementById('kpi-done').textContent      = R.filter(r=>r.stage==='Done'||r.stage==='Closed').length;
-  document.getElementById('kpi-exceeded').textContent  = R.filter(r=>!r.slaOk||r.deptExceeded.length>0).length;
   document.getElementById('cnt-all').textContent        = R.length;
   document.getElementById('cnt-myteam').textContent     = filterData('myteam').length;
   document.getElementById('cnt-mine').textContent       = filterData('mine').length;
